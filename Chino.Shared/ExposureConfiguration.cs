@@ -15,7 +15,7 @@
 
         public int[] DurationScores { get; set; }
 
-        public int DurationWeights { get; set; }
+        public int DurationWeight { get; set; }
 
         public int MinimumRiskScore { get; set; }
 
