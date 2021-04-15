@@ -1,5 +1,4 @@
-﻿using System;
-namespace Chino
+﻿namespace Chino
 {
     public interface IExposureNotificationClient
     {

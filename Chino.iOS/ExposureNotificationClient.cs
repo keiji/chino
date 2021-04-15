@@ -7,7 +7,7 @@ namespace Chino
     {
         public ExposureNotificationClient()
         {
-            ENTemporaryExposureKey keys = null;
+            TemporaryExposureKey keys = null;
 
         }
     }
