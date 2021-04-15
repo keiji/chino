@@ -25,6 +25,8 @@
     <MtouchFastDev>true</MtouchFastDev>
     <IOSDebuggerPort>64192</IOSDebuggerPort>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <MtouchLink>SdkOnly</MtouchLink>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,15 +38,21 @@
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
+    <Reference Include="Xamarin.iOS.ExposureNotification">
+      <HintPath>..\packages\Xamarin.iOS.ExposureNotification.1.2.2-preview1\lib\xamarinios10\Xamarin.iOS.ExposureNotification.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing.Common.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ExposureNotificationClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -52,4 +60,5 @@
   <Import Project="..\Chino.Shared\Chino.Shared.projitems" Label="Shared" Condition="Exists('..\Chino.Shared\Chino.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets" Condition="Exists('..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets')" />
+  <Import Project="..\packages\Xamarin.iOS.ExposureNotification.1.2.2-preview1\build\Xamarin.iOS.ExposureNotification.targets" Condition="Exists('..\packages\Xamarin.iOS.ExposureNotification.1.2.2-preview1\build\Xamarin.iOS.ExposureNotification.targets')" />
 </Project>

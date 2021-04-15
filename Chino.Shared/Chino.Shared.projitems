@@ -9,6 +9,6 @@
     <Import_RootNamespace>Chino</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)MyClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IExposureNotificationClient.cs" />
   </ItemGroup>
 </Project>
