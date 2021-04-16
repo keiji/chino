@@ -41,12 +41,13 @@ namespace Chino
                 }
 
                 ExposureNotificationClient? enClient = null;
-                if (context.ApplicationContext is ExposureNotificationHandler) {
+                if (context.ApplicationContext is ExposureNotificationHandler)
+                {
                     var exposureNotificationHandler = (ExposureNotificationHandler)context.ApplicationContext;
                     enClient = exposureNotificationHandler.GetEnClient();
                 }
 
-                if(enClient == null)
+                if (enClient == null)
                 {
                     return;
                 }
@@ -89,7 +90,7 @@ namespace Chino
             return await EnClient.IsEnabledAsync();
         }
 
-        public override async Task<long> getVersion()
+        public override async Task<long> GetVersion()
         {
             return await EnClient.GetVersionAsync();
         }
