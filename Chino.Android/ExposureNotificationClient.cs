@@ -40,9 +40,9 @@ namespace Chino
                 }
 
                 ExposureNotificationClient? enClient = null;
-                if (context.ApplicationContext is ExposureNotificationHandler)
+                if (context.ApplicationContext is IExposureNotificationHandler)
                 {
-                    var exposureNotificationHandler = (ExposureNotificationHandler)context.ApplicationContext;
+                    var exposureNotificationHandler = (IExposureNotificationHandler)context.ApplicationContext;
                     enClient = exposureNotificationHandler.GetEnClient();
                 }
 

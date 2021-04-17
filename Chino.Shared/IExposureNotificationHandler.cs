@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Chino
 {
-    public interface ExposureNotificationHandler
+    public interface IExposureNotificationHandler
     {
         ExposureNotificationClient GetEnClient();
 
         void ExposureDetected(List<IExposureWindow> exposureWindows);
 
-        void ExposureDetected(List<ExposureInformation> exposureInformations);
+        void ExposureDetected(List<IExposureInformation> exposureInformations);
 
         void ExposureNotDetected();
     }

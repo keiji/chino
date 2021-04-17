@@ -12,7 +12,7 @@ namespace Sample.Android
 #else
     [Application(Debuggable = false)]
 #endif
-    public class MainApplication : Application, ExposureNotificationHandler
+    public class MainApplication : Application, IExposureNotificationHandler
     {
         public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
         {

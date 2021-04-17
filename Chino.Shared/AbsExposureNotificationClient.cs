@@ -8,7 +8,7 @@ namespace Chino
     {
 
 #nullable enable
-        public static ExposureNotificationHandler? Handler { get; set; }
+        public static IExposureNotificationHandler? Handler { get; set; }
 #nullable disable
 
         public abstract Task Start();
