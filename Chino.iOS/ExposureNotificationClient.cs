@@ -55,7 +55,7 @@ namespace Chino
              });
         }
 
-        public override Task<List<ExposureWindow>> GetExposureWindowsAsync()
+        public override Task<List<IExposureWindow>> GetExposureWindowsAsync()
         {
             throw new NotImplementedException();
         }

@@ -3,21 +3,17 @@
 namespace Chino
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureWindow
-    public class ExposureWindow
+    public interface IExposureWindow
     {
-        public ExposureWindow()
-        {
-        }
+        public CalibrationConfidence CalibrationConfidence { get; }
 
-        public CalibrationConfidence CalibrationConfidence { get; set; }
+        public long DateMillisSinceEpoch { get; }
 
-        public long DateMillisSinceEpoch { get; set; }
+        public Infectiousness Infectiousness { get; }
 
-        public Infectiousness Infectiousness { get; set; }
+        public ReportType ReportType { get; }
 
-        public ReportType ReportType { get; set; }
-
-        public List<ScanInstance> ScanInstances { get; set; }
+        public List<IScanInstance> ScanInstances { get; }
     }
 
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/CalibrationConfidence
@@ -29,11 +25,11 @@ namespace Chino
     }
 
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ScanInstance
-    public class ScanInstance
+    public interface IScanInstance
     {
-        public int MinAttenuationDb { get; set; }
-        public int SecondsSinceLastScan { get; set; }
-        public int TypicalAttenuationDb { get; set; }
+        public int MinAttenuationDb { get; }
+        public int SecondsSinceLastScan { get; }
+        public int TypicalAttenuationDb { get; }
     }
 
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/Infectiousness

@@ -34,7 +34,7 @@ namespace Sample.Android
             return EnClient;
         }
 
-        public void ExposureDetected(List<ExposureWindow> exposureWindows)
+        public void ExposureDetected(List<IExposureWindow> exposureWindows)
         {
             throw new NotImplementedException();
         }

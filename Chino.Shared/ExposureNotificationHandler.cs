@@ -7,7 +7,7 @@ namespace Chino
     {
         ExposureNotificationClient GetEnClient();
 
-        void ExposureDetected(List<ExposureWindow> exposureWindows);
+        void ExposureDetected(List<IExposureWindow> exposureWindows);
 
         void ExposureDetected(List<ExposureInformation> exposureInformations);
 

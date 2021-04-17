@@ -12,7 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)AbsExposureNotificationClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ITemporaryExposureKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RiskLevel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExposureWindow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IExposureWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DailySummary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExposureSummary.cs" />

@@ -121,6 +121,7 @@
     <Compile Include="ExposureNotificationClient.cs" />
     <Compile Include="ExposureNotificationStatus.cs" />
     <Compile Include="TemporaryExposureKey.cs" />
+    <Compile Include="ExposureWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

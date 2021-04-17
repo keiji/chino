@@ -29,7 +29,7 @@ namespace Chino
 
         public abstract Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration, string token);
 
-        public abstract Task<List<ExposureWindow>> GetExposureWindowsAsync();
+        public abstract Task<List<IExposureWindow>> GetExposureWindowsAsync();
 
         //public abstract Task RequestPreAuthorizedTemporaryExposureKeyHistory();
 

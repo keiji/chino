@@ -111,11 +111,11 @@ namespace Chino
             await ProvideDiagnosisKeys(keyFiles, configuration, Guid.NewGuid().ToString());
         }
 
-        public override async Task<List<ExposureWindow>> GetExposureWindowsAsync()
+        public override async Task<List<IExposureWindow>> GetExposureWindowsAsync()
         {
             var exposureWindows = await EnClient.GetExposureWindowsAsync();
 
-            return exposureWindows.Select(ew => Convert(ew)).ToList();
+            return exposureWindows.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
 
         }
 
@@ -134,31 +134,6 @@ namespace Chino
             await EnClient.ProvideDiagnosisKeysAsync(files, Convert(configuration), token);
         }
 #pragma warning restore CS0618 // Type or member is obsolete
-
-        private ExposureWindow Convert(Android.Gms.Nearby.ExposureNotification.ExposureWindow exposureWindow)
-        {
-            var ew = new ExposureWindow
-            {
-                CalibrationConfidence = (CalibrationConfidence)Enum.ToObject(typeof(CalibrationConfidence), exposureWindow.CalibrationConfidence),
-                DateMillisSinceEpoch = exposureWindow.DateMillisSinceEpoch,
-                Infectiousness = (Infectiousness)Enum.ToObject(typeof(Infectiousness), exposureWindow.Infectiousness),
-                ReportType = (ReportType)Enum.ToObject(typeof(ReportType), exposureWindow.ReportType),
-                ScanInstances = exposureWindow.ScanInstances.Select(si => Convert(si)).ToList()
-            };
-
-            return ew;
-        }
-
-        private ScanInstance Convert(Android.Gms.Nearby.ExposureNotification.ScanInstance scanInstance)
-        {
-            var si = new ScanInstance
-            {
-                MinAttenuationDb = scanInstance.MinAttenuationDb,
-                SecondsSinceLastScan = scanInstance.SecondsSinceLastScan,
-                TypicalAttenuationDb = scanInstance.TypicalAttenuationDb
-            };
-            return si;
-        }
 
 #pragma warning disable CS0618 // Type or member is obsolete
         private Android.Gms.Nearby.ExposureNotification.ExposureConfiguration Convert(ExposureConfiguration exposureConfiguration)
