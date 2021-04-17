@@ -1,4 +1,5 @@
-﻿using Foundation;
+﻿using Chino;
+using Foundation;
 using UIKit;
 
 namespace Sample.iOS
@@ -8,15 +9,14 @@ namespace Sample.iOS
     [Register("AppDelegate")]
     public class AppDelegate : UIResponder, IUIApplicationDelegate
     {
-
         [Export("window")]
         public UIWindow Window { get; set; }
 
         [Export("application:didFinishLaunchingWithOptions:")]
         public bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            // Override point for customization after application launch.
-            // If not required for your application you can safely delete this method
+            ExposureNotificationClient.Shared.Init();
+
             return true;
         }
 

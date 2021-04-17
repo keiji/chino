@@ -1,5 +1,6 @@
-﻿using Foundation;
+﻿using Chino;
 using System;
+using System.Diagnostics;
 using UIKit;
 
 namespace Sample.iOS
@@ -13,7 +14,15 @@ namespace Sample.iOS
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            // Perform any additional setup after loading the view, typically from a nib.
+
+            buttonEnableEn.TouchUpInside += async (sender, e) =>
+            {
+                Debug.Print("buttonEnableEn");
+                await ExposureNotificationClient.Shared.Start();
+            };
+            buttonShowTeksHistory.TouchUpInside += (sender, e) =>
+            {
+            };
         }
 
         public override void DidReceiveMemoryWarning()

@@ -1,18 +1,34 @@
-﻿// WARNING
+// WARNING
 //
-// This file has been generated automatically by Visual Studio from the outlets and
-// actions declared in your storyboard file.
-// Manual changes to this file will not be maintained.
+// This file has been generated automatically by Visual Studio to store outlets and
+// actions made in the UI designer. If it is removed, they will be lost.
+// Manual changes to this file may not be handled correctly.
 //
 using Foundation;
-using System;
 using System.CodeDom.Compiler;
-using UIKit;
 
 namespace Sample.iOS
 {
-    [Register("ViewController")]
-    partial class ViewController
-    {
-    }
+	[Register ("ViewController")]
+	partial class ViewController
+	{
+		[Outlet]
+		UIKit.UIButton buttonEnableEn { get; set; }
+
+		[Outlet]
+		UIKit.UIButton buttonShowTeksHistory { get; set; }
+		
+		void ReleaseDesignerOutlets ()
+		{
+			if (buttonEnableEn != null) {
+				buttonEnableEn.Dispose ();
+				buttonEnableEn = null;
+			}
+
+			if (buttonShowTeksHistory != null) {
+				buttonShowTeksHistory.Dispose ();
+				buttonShowTeksHistory = null;
+			}
+		}
+	}
 }

@@ -1,20 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ExposureNotifications;
 
 namespace Chino
 {
-    public class ExposureNotificationClient: AbsExposureNotificationClient
+    public class ExposureNotificationClient : AbsExposureNotificationClient
     {
 
-        public override Task Start()
+        public static ExposureNotificationClient Shared = new ExposureNotificationClient();
+
+
+        private ENManager EnManager = new ENManager();
+
+        public Task Init()
         {
-            throw new NotImplementedException();
+            return Task.Run(async () =>
+            {
+                await EnManager.ActivateAsync();
+            });
         }
 
-        public override Task Stop()
+        ~ExposureNotificationClient()
         {
-            throw new NotImplementedException();
+            EnManager.Invalidate();
+        }
+
+        public async override Task Start()
+        {
+            if (EnManager == null)
+            {
+                return;
+            }
+
+            await EnManager.SetExposureNotificationEnabledAsync(true);
+        }
+
+        public async override Task Stop()
+        {
+            if (EnManager == null)
+            {
+                return;
+            }
+
+            await EnManager.SetExposureNotificationEnabledAsync(false);
         }
 
         public override Task<bool> IsEnabledAsync()
