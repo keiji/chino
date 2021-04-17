@@ -3,6 +3,7 @@ using ExposureNotifications;
 
 namespace Chino
 {
+    // https://developer.apple.com/documentation/exposurenotification/entemporaryexposurekey
     public class TemporaryExposureKey : ITemporaryExposureKey
     {
         public readonly ENTemporaryExposureKey Source;

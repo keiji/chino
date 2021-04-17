@@ -56,6 +56,10 @@
     <Compile Include="ExposureNotificationStatus.cs" />
     <Compile Include="TemporaryExposureKey.cs" />
     <Compile Include="ExposureWindow.cs" />
+    <Compile Include="ExposureInformation.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="DailySummary.cs" />
+    <Compile Include="ExposureSummary.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

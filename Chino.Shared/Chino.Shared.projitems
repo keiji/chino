@@ -13,12 +13,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)ITemporaryExposureKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RiskLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IExposureWindow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DailySummary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IDailySummary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReportType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExposureSummary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IExposureSummary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExposureConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DailySummariesConfig.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ExposureInformation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IExposureInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExposureNotificationHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IExposureNotificationStatus.cs" />
   </ItemGroup>

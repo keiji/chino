@@ -1,6 +1,7 @@
 ﻿using System;
 namespace Chino
 {
+    // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/TemporaryExposureKey
     public class TemporaryExposureKey : ITemporaryExposureKey
     {
 

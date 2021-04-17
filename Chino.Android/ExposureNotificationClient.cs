@@ -9,7 +9,6 @@ using Java.IO;
 using Android.Gms.Nearby.ExposureNotification;
 using System.Threading.Tasks;
 using System.Linq;
-using Android.Gms.Common.Apis;
 
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]

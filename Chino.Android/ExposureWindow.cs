@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Chino
 {
+    // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureWindow
     public class ExposureWindow : IExposureWindow
     {
         public readonly Android.Gms.Nearby.ExposureNotification.ExposureWindow Source;
@@ -24,6 +25,7 @@ namespace Chino
         public List<IScanInstance> ScanInstances => Source.ScanInstances.Select(si => (IScanInstance)new ScanInstance(si)).ToList();
     }
 
+    // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ScanInstance
     public class ScanInstance : IScanInstance
     {
         public readonly Android.Gms.Nearby.ExposureNotification.ScanInstance Source;
