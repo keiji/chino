@@ -1,4 +1,5 @@
-﻿using Chino;
+﻿using System.Diagnostics;
+using Chino;
 using Foundation;
 using UIKit;
 
@@ -15,7 +16,7 @@ namespace Sample.iOS
         [Export("application:didFinishLaunchingWithOptions:")]
         public bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            ExposureNotificationClient.Shared.Init();
+            Debug.Print("FinishedLaunching");
 
             return true;
         }

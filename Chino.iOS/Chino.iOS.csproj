@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExposureNotificationClient.cs" />
+    <Compile Include="ExposureNotificationStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -5,7 +5,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Sample.iOS</string>
 	<key>CFBundleIdentifier</key>
-	<string>dev.keiji.chino.sample.SampleiOS</string>
+	<string>jp.go.mhlw.covid19radar</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
@@ -65,7 +65,7 @@
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>ENAPIVersion</key>
 	<integer>2</integer>
-	<key>ENDeveloperRegion</key>
-	<string>JP</string>
+	<key>Custom Property</key>
+	<string></string>
 </dict>
 </plist>

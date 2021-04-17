@@ -95,6 +95,11 @@ namespace Chino
             return await EnClient.GetVersionAsync();
         }
 
+        public override async Task<IExposureNotificationStatus> GetStatus()
+        {
+            return new ExposureNotificationStatus(await EnClient.GetStatusAsync());
+        }
+
         public override async Task ProvideDiagnosisKeys(List<string> keyFiles)
         {
             var files = keyFiles.Select(f => new File(f)).ToList();

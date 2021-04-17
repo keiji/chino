@@ -20,5 +20,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DailySummariesConfig.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExposureInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExposureNotificationHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IExposureNotificationStatus.cs" />
   </ItemGroup>
 </Project>

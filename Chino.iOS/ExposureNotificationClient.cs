@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ExposureNotifications;
 
@@ -8,10 +9,10 @@ namespace Chino
     public class ExposureNotificationClient : AbsExposureNotificationClient
     {
 
-        public static ExposureNotificationClient Shared = new ExposureNotificationClient();
+        public static readonly ExposureNotificationClient Shared = new ExposureNotificationClient();
 
 
-        private ENManager EnManager = new ENManager();
+        private readonly ENManager EnManager = new ENManager();
 
         public Task Init()
         {
@@ -28,21 +29,11 @@ namespace Chino
 
         public async override Task Start()
         {
-            if (EnManager == null)
-            {
-                return;
-            }
-
             await EnManager.SetExposureNotificationEnabledAsync(true);
         }
 
         public async override Task Stop()
         {
-            if (EnManager == null)
-            {
-                return;
-            }
-
             await EnManager.SetExposureNotificationEnabledAsync(false);
         }
 
@@ -56,14 +47,23 @@ namespace Chino
             throw new NotImplementedException();
         }
 
+        public override Task<IExposureNotificationStatus> GetStatus()
+        {
+            return Task.Run(() =>
+             {
+                 return (IExposureNotificationStatus)new ExposureNotificationStatus(EnManager.ExposureNotificationStatus);
+             });
+        }
+
         public override Task<List<ExposureWindow>> GetExposureWindowsAsync()
         {
             throw new NotImplementedException();
         }
 
-        public override Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistory()
+        public async override Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistory()
         {
-            throw new NotImplementedException();
+            ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
+            return teks.Select(tek => ToTek(tek)).ToList();
         }
 
         public override Task ProvideDiagnosisKeys(List<string> keyFiles)
@@ -90,5 +90,22 @@ namespace Chino
         //{
         //    throw new NotImplementedException();
         //}
+
+        private static TemporaryExposureKey ToTek(ENTemporaryExposureKey temporaryExposureKey)
+        {
+            Foundation.NSData keyData = temporaryExposureKey.KeyData;
+            byte[] dataBytes = new byte[keyData.Length];
+            System.Runtime.InteropServices.Marshal.Copy(keyData.Bytes, dataBytes, 0, Convert.ToInt32(keyData.Length));
+
+            var tek = new TemporaryExposureKey
+            {
+                KeyData = dataBytes,
+                RollingPeriod = (int)temporaryExposureKey.RollingPeriod,
+                RollingStartIntervalNumber = (int)temporaryExposureKey.RollingStartNumber,
+                RiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), temporaryExposureKey.TransmissionRiskLevel)
+            };
+
+            return tek;
+        }
     }
 }

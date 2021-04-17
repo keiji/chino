@@ -19,6 +19,8 @@ namespace Chino
 
         public abstract Task<long> GetVersion();
 
+        public abstract Task<IExposureNotificationStatus> GetStatus();
+
         public abstract Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistory();
 
         public abstract Task ProvideDiagnosisKeys(List<string> keyFiles);
