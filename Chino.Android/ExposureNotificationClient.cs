@@ -119,11 +119,11 @@ namespace Chino
 
         }
 
-        public override async Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistory()
+        public override async Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistory()
         {
             var teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
 
-            return teks.Select(tek => Convert(tek)).ToList();
+            return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
 
         }
 
@@ -134,19 +134,6 @@ namespace Chino
             await EnClient.ProvideDiagnosisKeysAsync(files, Convert(configuration), token);
         }
 #pragma warning restore CS0618 // Type or member is obsolete
-
-        private TemporaryExposureKey Convert(Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey temporaryExposureKey)
-        {
-            var tek = new TemporaryExposureKey
-            {
-                KeyData = temporaryExposureKey.GetKeyData(),
-                RollingPeriod = temporaryExposureKey.RollingPeriod,
-                RollingStartIntervalNumber = temporaryExposureKey.RollingStartIntervalNumber,
-                RiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), temporaryExposureKey.TransmissionRiskLevel)
-            };
-
-            return tek;
-        }
 
         private ExposureWindow Convert(Android.Gms.Nearby.ExposureNotification.ExposureWindow exposureWindow)
         {

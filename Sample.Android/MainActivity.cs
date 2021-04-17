@@ -69,7 +69,7 @@ namespace Sample.Android
             buttonGetTekHistory.Text = str;
         }
 
-        private async Task<List<TemporaryExposureKey>> GetTekHistory()
+        private async Task<List<ITemporaryExposureKey>> GetTekHistory()
         {
             Log.Debug(TAG, "GetTekHistory");
             try
@@ -86,7 +86,7 @@ namespace Sample.Android
                 }
             }
 
-            return new List<TemporaryExposureKey>();
+            return new List<ITemporaryExposureKey>();
         }
 
         private async Task EnableEnAsync()

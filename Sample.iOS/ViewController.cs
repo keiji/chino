@@ -37,7 +37,7 @@ namespace Sample.iOS
 
         private async Task ShowTeksAsync()
         {
-            List<TemporaryExposureKey> teks = await ExposureNotificationClient.Shared.GetTemporaryExposureKeyHistory();
+            List<ITemporaryExposureKey> teks = await ExposureNotificationClient.Shared.GetTemporaryExposureKeyHistory();
             List<string> tekKeyData = teks.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
             var str = string.Join("\n", tekKeyData);
             buttonShowTeksHistory.SetTitle(str, UIControlState.Normal);

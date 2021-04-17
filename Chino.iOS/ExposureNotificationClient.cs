@@ -60,10 +60,10 @@ namespace Chino
             throw new NotImplementedException();
         }
 
-        public async override Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistory()
+        public async override Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistory()
         {
             ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
-            return teks.Select(tek => ToTek(tek)).ToList();
+            return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
         }
 
         public override Task ProvideDiagnosisKeys(List<string> keyFiles)
@@ -90,22 +90,5 @@ namespace Chino
         //{
         //    throw new NotImplementedException();
         //}
-
-        private static TemporaryExposureKey ToTek(ENTemporaryExposureKey temporaryExposureKey)
-        {
-            Foundation.NSData keyData = temporaryExposureKey.KeyData;
-            byte[] dataBytes = new byte[keyData.Length];
-            System.Runtime.InteropServices.Marshal.Copy(keyData.Bytes, dataBytes, 0, Convert.ToInt32(keyData.Length));
-
-            var tek = new TemporaryExposureKey
-            {
-                KeyData = dataBytes,
-                RollingPeriod = (int)temporaryExposureKey.RollingPeriod,
-                RollingStartIntervalNumber = (int)temporaryExposureKey.RollingStartNumber,
-                RiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), temporaryExposureKey.TransmissionRiskLevel)
-            };
-
-            return tek;
-        }
     }
 }
