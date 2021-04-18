@@ -145,8 +145,7 @@ namespace Chino
                 Logger.D(url.AbsoluteString);
             }
 
-            ExposureConfiguration.AppleExposureConfiguration appleExposureConfiguration = configuration.AppleExposureConfig;
-            ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(appleExposureConfiguration);
+            ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(configuration);
 
             ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
 
@@ -217,9 +216,12 @@ namespace Chino
             }
         }
 
-        private ENExposureConfiguration GetExposureConfiguration(ExposureConfiguration.AppleExposureConfiguration appleExposureConfiguration)
+        private ENExposureConfiguration GetExposureConfiguration(ExposureConfiguration exposureConfiguration)
         {
-            IDictionary<int, int> infectiousnessForDaysSinceOnsetOfSymptoms = appleExposureConfiguration.InfectiousnessForDaysSinceOnsetOfSymptoms;
+            var appleExposureConfigurationV2 = exposureConfiguration.AppleExposureV2Config;
+            var appleExposureConfigurationV1 = exposureConfiguration.AppleExposureV1Config;
+
+            IDictionary<int, int> infectiousnessForDaysSinceOnsetOfSymptoms = appleExposureConfigurationV2.InfectiousnessForDaysSinceOnsetOfSymptoms;
 
             var pairs = infectiousnessForDaysSinceOnsetOfSymptoms.Keys.Zip(infectiousnessForDaysSinceOnsetOfSymptoms.Values, (k, v) => new NSNumber[] { k, v });
             NSMutableDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsMutableDict = new NSMutableDictionary<NSNumber, NSNumber>();
@@ -234,23 +236,43 @@ namespace Chino
                             infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Keys,
                             (nint)infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Count);
 
-            return new ENExposureConfiguration()
+            if (appleExposureConfigurationV2 != null)
             {
-                AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThreshold,
-                ImmediateDurationWeight = appleExposureConfiguration.ImmediateDurationWeight,
-                MediumDurationWeight = appleExposureConfiguration.MediumDurationWeight,
-                NearDurationWeight = appleExposureConfiguration.NearDurationWeight,
-                OtherDurationWeight = appleExposureConfiguration.OtherDurationWeight,
-                DaysSinceLastExposureThreshold = appleExposureConfiguration.DaysSinceLastExposureThreshold,
-                InfectiousnessForDaysSinceOnsetOfSymptoms = infectiousnessForDaysSinceOnsetOfSymptomsNSDict,
-                InfectiousnessHighWeight = appleExposureConfiguration.InfectiousnessHighWeight,
-                InfectiousnessStandardWeight = appleExposureConfiguration.InfectiousnessStandardWeight,
-                ReportTypeConfirmedClinicalDiagnosisWeight = appleExposureConfiguration.ReportTypeConfirmedClinicalDiagnosisWeight,
-                ReportTypeConfirmedTestWeight = appleExposureConfiguration.ReportTypeConfirmedTestWeight,
-                ReportTypeRecursiveWeight = appleExposureConfiguration.ReportTypeRecursiveWeight,
-                ReportTypeSelfReportedWeight = appleExposureConfiguration.ReportTypeSelfReportedWeight,
-                ReportTypeNoneMap = (ENDiagnosisReportType)Enum.ToObject(typeof(ENDiagnosisReportType), appleExposureConfiguration.ReportTypeNoneMap)
-            };
+                return new ENExposureConfiguration()
+                {
+                    AttenuationDurationThresholds = appleExposureConfigurationV2.AttenuationDurationThreshold,
+                    ImmediateDurationWeight = appleExposureConfigurationV2.ImmediateDurationWeight,
+                    MediumDurationWeight = appleExposureConfigurationV2.MediumDurationWeight,
+                    NearDurationWeight = appleExposureConfigurationV2.NearDurationWeight,
+                    OtherDurationWeight = appleExposureConfigurationV2.OtherDurationWeight,
+                    DaysSinceLastExposureThreshold = appleExposureConfigurationV2.DaysSinceLastExposureThreshold,
+                    InfectiousnessForDaysSinceOnsetOfSymptoms = infectiousnessForDaysSinceOnsetOfSymptomsNSDict,
+                    InfectiousnessHighWeight = appleExposureConfigurationV2.InfectiousnessHighWeight,
+                    InfectiousnessStandardWeight = appleExposureConfigurationV2.InfectiousnessStandardWeight,
+                    ReportTypeConfirmedClinicalDiagnosisWeight = appleExposureConfigurationV2.ReportTypeConfirmedClinicalDiagnosisWeight,
+                    ReportTypeConfirmedTestWeight = appleExposureConfigurationV2.ReportTypeConfirmedTestWeight,
+                    ReportTypeRecursiveWeight = appleExposureConfigurationV2.ReportTypeRecursiveWeight,
+                    ReportTypeSelfReportedWeight = appleExposureConfigurationV2.ReportTypeSelfReportedWeight,
+                    ReportTypeNoneMap = (ENDiagnosisReportType)Enum.ToObject(typeof(ENDiagnosisReportType), appleExposureConfigurationV2.ReportTypeNoneMap)
+                };
+            }
+            else if (appleExposureConfigurationV1 != null)
+            {
+                return new ENExposureConfiguration()
+                {
+                    AttenuationDurationThresholds = appleExposureConfigurationV1.AttenuationDurationThreshold,
+                    DaysSinceLastExposureLevelValues = appleExposureConfigurationV1.DaysSinceLastExposureLevelValues,
+                    DurationLevelValues = appleExposureConfigurationV1.DurationLevelValues,
+                    TransmissionRiskLevelValues = appleExposureConfigurationV1.TransmissionRiskLevelValues,
+                    // Metadata = appleExposureConfigurationV1.Metadata,
+                    MinimumRiskScore = appleExposureConfigurationV1.MinimumRiskScore,
+                    MinimumRiskScoreFullRange = appleExposureConfigurationV1.MinimumRiskScoreFullRange
+                };
+            } else
+            {
+                Logger.E("AppleExposureV2Config and AppleExposureV1Config are missing.");
+                return new ENExposureConfiguration();
+            }
         }
 
         //public override Task RequestPreAuthorizedTemporaryExposureKeyHistory()

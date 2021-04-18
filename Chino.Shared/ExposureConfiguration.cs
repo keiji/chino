@@ -5,60 +5,72 @@ namespace Chino
     public class ExposureConfiguration
     {
         public GoogleExposureConfiguration GoogleExposureConfig { get; set; }
-        public AppleExposureConfiguration AppleExposureConfig { get; set; }
+
+        public AppleExposureConfigurationV2 AppleExposureV2Config { get; set; }
+
+        public AppleExposureConfigurationV1 AppleExposureV1Config { get; set; }
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureConfiguration
-        public class GoogleExposureConfiguration {
-            public int[] AttenuationScores { get; set; }
+        public class GoogleExposureConfiguration
+        {
+            public int[] AttenuationScores { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
-            public int AttenuationWeight { get; set; }
+            public int AttenuationWeight { get; set; } = 50;
 
-            public int[] DaysSinceLastExposureScores { get; set; }
+            public int[] DaysSinceLastExposureScores { get; set; } = { 1, 1, 1, 1, 1, 1, 1, 1 };
 
-            public int DaysSinceLastExposureWeight { get; set; }
+            public int DaysSinceLastExposureWeight { get; set; } = 50;
 
             public int[] DurationAtAttenuationThresholds { get; set; }
 
-            public int[] DurationScores { get; set; }
+            public int[] DurationScores { get; set; } = { 1, 1, 1, 1, 1, 1, 1, 1 };
 
-            public int DurationWeight { get; set; }
+            public int DurationWeight { get; set; } = 50;
 
-            public int MinimumRiskScore { get; set; }
+            public int MinimumRiskScore { get; set; } = 21;
 
-            public int[] TransmissionRiskScores { get; set; }
+            public int[] TransmissionRiskScores { get; set; } = { 7, 7, 7, 7, 7, 7, 7, 7 };
 
-            public int TransmissionRiskWeight { get; set; }
+            public int TransmissionRiskWeight { get; set; } = 50;
         }
 
         // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
-        public class AppleExposureConfiguration
+        public class AppleExposureConfigurationV2
         {
             // Configuring Duration
-            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70 };
+
+            // This property is available in iOS 12.5, and in iOS 13.6 and later.
+            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70, 90 };
+
+            #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
 
             public double ImmediateDurationWeight { get; set; } = 100;
             public double MediumDurationWeight { get; set; } = 100;
             public double NearDurationWeight { get; set; } = 100;
             public double OtherDurationWeight { get; set; } = 100;
 
-            public int DaysSinceLastExposureThreshold { get; set; }
+            public int DaysSinceLastExposureThreshold { get; set; } = 0;
 
             // Configuring Infectiousness
 
             // Must Specify v2
             public IDictionary<int, int> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, int>();
-            public double InfectiousnessHighWeight { get; set; }
-            public double InfectiousnessStandardWeight { get; set; }
+
+            public double InfectiousnessHighWeight { get; set; } = 100.0; // The range of this value is 0-250%
+            public double InfectiousnessStandardWeight { get; set; } = 100.0; // The range of this value is 0-250%
             // public int DaysSinceOnsetOfSymptomsUnknown { get; set; }
 
             // Configuring Report Types
-            public double ReportTypeConfirmedClinicalDiagnosisWeight { get; set; }
-            public double ReportTypeConfirmedTestWeight { get; set; }
-            public double ReportTypeRecursiveWeight { get; set; }
-            public double ReportTypeSelfReportedWeight { get; set; }
+
+            public double ReportTypeConfirmedClinicalDiagnosisWeight { get; set; } = 100.0;
+            public double ReportTypeConfirmedTestWeight { get; set; } = 100.0;
+            public double ReportTypeRecursiveWeight { get; set; } = 100.0;
+            public double ReportTypeSelfReportedWeight { get; set; } = 100.0;
             public ReportType ReportTypeNoneMap { get; set; } = ReportType.Unknown;
 
-            public AppleExposureConfiguration()
+            #endregion
+
+            public AppleExposureConfigurationV2()
             {
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-14, 1);
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-13, 1);
@@ -90,6 +102,52 @@ namespace Chino
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(13, 1);
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(14, 1);
             }
+        }
+
+        // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration/exposure_risk_value_calculation_in_exposurenotification_version_1
+        public class AppleExposureConfigurationV1
+        {
+            // Exposure Information
+
+            // Level Configuration
+
+            #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
+
+            public int[] AttenuationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public int[] DaysSinceLastExposureLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public int[] DurationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public int[] TransmissionRiskLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public IDictionary<object, object> Metadata { get; set; } = new Dictionary<object, object>();
+
+            public byte MinimumRiskScore { get; set; } = 0;
+
+            // This weight parameter is not used.
+            // public double AttenuationWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double DaysSinceLastExposureWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double DurationWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double TransmissionRiskWeight { get; set; }
+
+            #endregion
+
+            #region These properties are available in iOS 12.5, and in iOS 13.6 and later.
+
+            // This property is available in iOS 12.5, and in iOS 13.6 and later.
+            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70, 90 };
+
+            // This property is available in iOS 12.5, and in iOS 13.6 and later.
+            public double MinimumRiskScoreFullRange { get; set; } = 0.0;
+
+            #endregion
         }
     }
 }

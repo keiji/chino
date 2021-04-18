@@ -1,5 +1,4 @@
 ﻿using Chino;
-using Foundation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,7 +60,8 @@ namespace Sample.iOS
 
             ExposureConfiguration exposureConfiguration = new ExposureConfiguration()
             {
-                AppleExposureConfig = new ExposureConfiguration.AppleExposureConfiguration()
+                AppleExposureV2Config = new ExposureConfiguration.AppleExposureConfigurationV2(),
+                AppleExposureV1Config = new ExposureConfiguration.AppleExposureConfigurationV1()
             };
 
             await ExposureNotificationClient.Shared.ProvideDiagnosisKeys(diagnosisKeyPaths, exposureConfiguration);
