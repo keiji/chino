@@ -35,15 +35,9 @@ namespace Chino
             EnManager.Invalidate();
         }
 
-        public async override Task Start()
-        {
-            await EnManager.SetExposureNotificationEnabledAsync(true);
-        }
+        public async override Task Start() => await EnManager.SetExposureNotificationEnabledAsync(true);
 
-        public async override Task Stop()
-        {
-            await EnManager.SetExposureNotificationEnabledAsync(false);
-        }
+        public async override Task Stop() => await EnManager.SetExposureNotificationEnabledAsync(false);
 
         public override Task<bool> IsEnabled()
         {
