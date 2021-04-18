@@ -19,6 +19,7 @@ namespace Sample.iOS
             Logger.D("FinishedLaunching");
 
             AbsExposureNotificationClient.Handler = this;
+            ExposureNotificationClient.Shared.IsTest = true;
 
             return true;
         }

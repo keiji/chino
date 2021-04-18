@@ -18,6 +18,8 @@ namespace Chino
 
         private readonly ENManager EnManager = new ENManager();
 
+        public bool IsTest = false;
+
         public string UserExplanation { private get; set; }
 
         public Task Init(string userExplanation)
@@ -59,8 +61,16 @@ namespace Chino
 
         public async override Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistory()
         {
-            ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
-            return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+            if (!IsTest)
+            {
+                ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
+                return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+            }
+            else
+            {
+                ENTemporaryExposureKey[] teks = await EnManager.GetTestDiagnosisKeysAsync();
+                return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+            }
         }
 
         public override Task ProvideDiagnosisKeys(List<string> keyFiles)
