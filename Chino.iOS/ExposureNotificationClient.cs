@@ -74,18 +74,6 @@ namespace Chino
             throw new NotImplementedException();
         }
 
-        private static string Trim(string path)
-        {
-            if (path.StartsWith("/private"))
-            {
-                return path.Substring("/private".Length);
-            }
-            else
-            {
-                return path;
-            }
-        }
-
         // https://developer.apple.com/documentation/exposurenotification/enmanager/3586331-detectexposures
         private async Task<(string?, string?)> DecompressZip(string zipFilePath)
         {
