@@ -8,7 +8,6 @@ using Android.Content.PM;
 using Android.Gms.Common.Apis;
 using Android.OS;
 using Android.Runtime;
-using Android.Util;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using Chino;
@@ -18,8 +17,6 @@ namespace Sample.Android
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        private const string TAG = "MainActivity";
-
         private const int REQUEST_EN_START = 0x10;
         private const int REQUEST_GET_TEK_HISTORY = 0x11;
 
@@ -40,14 +37,15 @@ namespace Sample.Android
             buttonEn = FindViewById<Button>(Resource.Id.btn_enable_en);
             buttonEn.Click += async delegate
             {
-                Log.Debug(TAG, "EnableEnAsync clicked");
+                Logger.D("EnableEnAsync clicked");
+
                 await EnableEnAsync();
             };
 
             buttonGetTekHistory = FindViewById<Button>(Resource.Id.btn_get_teks);
             buttonGetTekHistory.Click += async delegate
             {
-                Log.Debug(TAG, "buttonGetTekHistory clicked");
+                Logger.D("buttonGetTekHistory clicked");
 
                 await ShowTekHistory();
             };
@@ -71,14 +69,14 @@ namespace Sample.Android
 
         private async Task<List<ITemporaryExposureKey>> GetTekHistory()
         {
-            Log.Debug(TAG, "GetTekHistory");
+            Logger.D("GetTekHistory");
             try
             {
                 return await EnClient.GetTemporaryExposureKeyHistory();
             }
             catch (ApiException apiException)
             {
-                Log.Debug(TAG, $"GetTekHistory ApiException {apiException.StatusCode}");
+                Logger.D($"GetTekHistory ApiException {apiException.StatusCode}");
 
                 if (apiException.StatusCode == CommonStatusCodes.ResolutionRequired)
                 {
@@ -91,14 +89,14 @@ namespace Sample.Android
 
         private async Task EnableEnAsync()
         {
-            Log.Debug(TAG, "EnableEnAsync");
+            Logger.D("EnableEnAsync");
             try
             {
                 await EnClient.Start();
             }
             catch (ApiException apiException)
             {
-                Log.Debug(TAG, $"EnableEnAsync ApiException {apiException.StatusCode}");
+                Logger.D($"EnableEnAsync ApiException {apiException.StatusCode}");
 
                 if (apiException.StatusCode == CommonStatusCodes.ResolutionRequired)
                 {

@@ -21,5 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)IExposureInformation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IExposureNotificationHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IExposureNotificationStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
   </ItemGroup>
 </Project>

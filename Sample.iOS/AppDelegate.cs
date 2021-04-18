@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Chino;
+﻿using Chino;
 using Foundation;
 using UIKit;
 
@@ -16,7 +15,7 @@ namespace Sample.iOS
         [Export("application:didFinishLaunchingWithOptions:")]
         public bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
-            Debug.Print("FinishedLaunching");
+            Logger.D("FinishedLaunching");
 
             return true;
         }

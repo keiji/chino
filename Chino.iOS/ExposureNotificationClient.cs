@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using ExposureNotifications;
@@ -97,7 +96,7 @@ namespace Chino
             }
             else
             {
-                Debug.Print("Exposure Notifications not supported on this version of iOS.");
+                Logger.I("Exposure Notifications not supported on this version of iOS.");
             }
         }
 

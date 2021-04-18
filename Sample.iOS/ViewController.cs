@@ -1,7 +1,6 @@
 ﻿using Chino;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
@@ -20,14 +19,14 @@ namespace Sample.iOS
         {
             base.ViewDidLoad();
 
-            Debug.Print("ViewDidLoad");
+            Logger.D("ViewDidLoad");
 
             await ExposureNotificationClient.Shared.Init(USER_EXPLANATION);
             await ShowStatusAsync();
 
             buttonEnableEn.TouchUpInside += async (sender, e) =>
             {
-                Debug.Print("buttonEnableEn");
+                Logger.D("buttonEnableEn");
                 await ExposureNotificationClient.Shared.Start();
                 await ShowStatusAsync();
             };
