@@ -8,7 +8,7 @@ namespace Chino
 
         void ExposureDetected(List<IExposureWindow> exposureWindows);
 
-        void ExposureDetected(List<IExposureInformation> exposureInformations);
+        void ExposureDetected(IExposureSummary exposureSummary, List<IExposureInformation> exposureInformations);
 
         void ExposureNotDetected();
     }

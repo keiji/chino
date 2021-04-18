@@ -15,7 +15,7 @@ namespace Chino
 
         public abstract Task Stop();
 
-        public abstract Task<bool> IsEnabledAsync();
+        public abstract Task<bool> IsEnabled();
 
         public abstract Task<long> GetVersion();
 
@@ -25,11 +25,9 @@ namespace Chino
 
         public abstract Task ProvideDiagnosisKeys(List<string> keyFiles);
 
-        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration);
+        public abstract Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration);
 
         public abstract Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration, string token);
-
-        public abstract Task<List<IExposureWindow>> GetExposureWindowsAsync();
 
         //public abstract Task RequestPreAuthorizedTemporaryExposureKeyHistory();
 

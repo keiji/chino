@@ -39,7 +39,7 @@ namespace Sample.Android
             throw new NotImplementedException();
         }
 
-        public void ExposureDetected(List<ExposureInformation> exposureInformations)
+        public void ExposureDetected(IExposureSummary exposureSummary, List<IExposureInformation> exposureInformations)
         {
             throw new NotImplementedException();
         }

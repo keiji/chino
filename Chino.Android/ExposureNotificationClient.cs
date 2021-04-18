@@ -24,6 +24,8 @@ namespace Chino
         public const string ACTION_EXPOSURE_NOT_FOUND = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_NOT_FOUND";
         public const string SERVICE_STATE_UPDATED = "com.google.android.gms.exposurenotification.SERVICE_STATE_UPDATED";
 
+        public const string EXTRA_TOKEN = "com.google.android.gms.exposurenotification.EXTRA_TOKEN";
+
         [BroadcastReceiver(
             Exported = true,
             Permission = PERMISSION_EXPOSURE_CALLBACK
@@ -51,18 +53,42 @@ namespace Chino
                     return;
                 }
 
+                bool v1 = intent.HasExtra(EXTRA_TOKEN);
+
                 var action = intent.Action;
                 switch (action)
                 {
                     case ACTION_EXPOSURE_STATE_UPDATE:
-                        var exposureWindows = await enClient.GetExposureWindowsAsync();
-                        Handler.ExposureDetected(exposureWindows);
+                        if (v1)
+                        {
+                            string token = intent.GetStringExtra(EXTRA_TOKEN);
+                            await GetExposureV1Async(enClient.EnClient, token);
+                        }
+                        else
+                        {
+                            await GetExposureV2Async(enClient.EnClient);
+                        }
                         break;
                     case ACTION_EXPOSURE_NOT_FOUND:
                         Handler.ExposureNotDetected();
                         break;
                 }
             }
+
+            private async Task GetExposureV1Async(IExposureNotificationClient enClient, string token)
+            {
+                IList<Android.Gms.Nearby.ExposureNotification.ExposureInformation> eis = await enClient.GetExposureInformationAsync(token);
+                List<IExposureWindow> exposureInformations = eis.Select(ei => (IExposureWindow)new ExposureInformation(ei)).ToList();
+                Handler.ExposureDetected(exposureInformations);
+            }
+
+            private async Task GetExposureV2Async(IExposureNotificationClient enClient)
+            {
+                IList<Android.Gms.Nearby.ExposureNotification.ExposureWindow> ews = await enClient.GetExposureWindowsAsync();
+                List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
+                Handler.ExposureDetected(exposureWindows);
+            }
+
         }
 
 #nullable enable
@@ -84,7 +110,7 @@ namespace Chino
             await EnClient.StopAsync();
         }
 
-        public override async Task<bool> IsEnabledAsync()
+        public override async Task<bool> IsEnabled()
         {
             return await EnClient.IsEnabledAsync();
         }
@@ -105,17 +131,9 @@ namespace Chino
             await EnClient.ProvideDiagnosisKeysAsync(new DiagnosisKeyFileProvider(files));
         }
 
-        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration)
+        public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration)
         {
             await ProvideDiagnosisKeys(keyFiles, configuration, Guid.NewGuid().ToString());
-        }
-
-        public override async Task<List<IExposureWindow>> GetExposureWindowsAsync()
-        {
-            var exposureWindows = await EnClient.GetExposureWindowsAsync();
-
-            return exposureWindows.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
-
         }
 
         public override async Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistory()
@@ -137,17 +155,19 @@ namespace Chino
 #pragma warning disable CS0618 // Type or member is obsolete
         private Android.Gms.Nearby.ExposureNotification.ExposureConfiguration Convert(ExposureConfiguration exposureConfiguration)
         {
+            ExposureConfiguration.IGoogleExposureConfiguration googleExposureConfiguration = exposureConfiguration.GoogleExposureConfiguration;
+
             return new Android.Gms.Nearby.ExposureNotification.ExposureConfiguration.ExposureConfigurationBuilder()
-                .SetAttenuationScores(exposureConfiguration.AttenuationScores)
-                .SetAttenuationWeight(exposureConfiguration.AttenuationWeight)
-                .SetDaysSinceLastExposureScores(exposureConfiguration.DaysSinceLastExposureScores)
-                .SetDaysSinceLastExposureWeight(exposureConfiguration.DaysSinceLastExposureWeight)
-                .SetDurationAtAttenuationThresholds(exposureConfiguration.DurationAtAttenuationThresholds)
-                .SetDurationScores(exposureConfiguration.DurationScores)
-                .SetDurationWeight(exposureConfiguration.DurationWeight)
-                .SetMinimumRiskScore(exposureConfiguration.MinimumRiskScore)
-                .SetTransmissionRiskScores(exposureConfiguration.TransmissionRiskScores)
-                .SetTransmissionRiskWeight(exposureConfiguration.TransmissionRiskWeight)
+                .SetAttenuationScores(googleExposureConfiguration.AttenuationScores)
+                .SetAttenuationWeight(googleExposureConfiguration.AttenuationWeight)
+                .SetDaysSinceLastExposureScores(googleExposureConfiguration.DaysSinceLastExposureScores)
+                .SetDaysSinceLastExposureWeight(googleExposureConfiguration.DaysSinceLastExposureWeight)
+                .SetDurationAtAttenuationThresholds(googleExposureConfiguration.DurationAtAttenuationThresholds)
+                .SetDurationScores(googleExposureConfiguration.DurationScores)
+                .SetDurationWeight(googleExposureConfiguration.DurationWeight)
+                .SetMinimumRiskScore(googleExposureConfiguration.MinimumRiskScore)
+                .SetTransmissionRiskScores(googleExposureConfiguration.TransmissionRiskScores)
+                .SetTransmissionRiskWeight(googleExposureConfiguration.TransmissionRiskWeight)
                 .Build();
         }
 #pragma warning restore CS0618 // Type or member is obsolete

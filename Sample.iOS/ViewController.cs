@@ -10,6 +10,8 @@ namespace Sample.iOS
 {
     public partial class ViewController : UIViewController
     {
+        private const string USER_EXPLANATION = "User notification";
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -20,7 +22,7 @@ namespace Sample.iOS
 
             Debug.Print("ViewDidLoad");
 
-            await ExposureNotificationClient.Shared.Init();
+            await ExposureNotificationClient.Shared.Init(USER_EXPLANATION);
             await ShowStatusAsync();
 
             buttonEnableEn.TouchUpInside += async (sender, e) =>
