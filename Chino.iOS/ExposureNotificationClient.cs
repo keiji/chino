@@ -10,6 +10,7 @@ using UIKit;
 
 namespace Chino
 {
+    // https://developer.apple.com/documentation/exposurenotification/enmanager
     public class ExposureNotificationClient : AbsExposureNotificationClient
     {
         private const long MAXIMUM_ZIP_ARCHIVE_ENTRY_SIZE = 10 * 1024 * 1024;
@@ -41,15 +42,9 @@ namespace Chino
 
         public async override Task Stop() => await EnManager.SetExposureNotificationEnabledAsync(false);
 
-        public override Task<bool> IsEnabled()
-        {
-            throw new NotImplementedException();
-        }
+        public override Task<bool> IsEnabled() => Task.Run(() => EnManager.ExposureNotificationEnabled);
 
-        public override Task<long> GetVersion()
-        {
-            throw new NotImplementedException();
-        }
+        public override Task<long> GetVersion() => Task.Run(() => long.Parse(NSBundle.MainBundle.InfoDictionary["ENAPIVersion"].ToString()));
 
         public override Task<IExposureNotificationStatus> GetStatus()
         {
@@ -73,15 +68,11 @@ namespace Chino
             }
         }
 
-        public override Task ProvideDiagnosisKeys(List<string> keyFiles)
-        {
-            throw new NotImplementedException();
-        }
+        public override Task ProvideDiagnosisKeys(List<string> keyFiles) => ProvideDiagnosisKeys(keyFiles, new ExposureConfiguration());
 
         // https://developer.apple.com/documentation/exposurenotification/enmanager/3586331-detectexposures
         private async Task<(string?, string?)> DecompressZip(string zipFilePath)
         {
-
             string baseDirectory = Path.GetDirectoryName(zipFilePath);
             string baseFileName = Guid.NewGuid().ToString();
 
@@ -125,12 +116,18 @@ namespace Chino
             return (binFilePath, sigFilePath);
         }
 
-        public async override Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration)
+        public async override Task ProvideDiagnosisKeys(List<string> zippedKeyFiles, ExposureConfiguration configuration)
         {
             List<string> decompressedFiles = new List<string>();
 
-            foreach (string filePath in keyFiles)
+            foreach (string filePath in zippedKeyFiles)
             {
+                if (!filePath.EndsWith(".zip"))
+                {
+                    Logger.W($"File {filePath} do not seem Zip file.");
+                    continue;
+                }
+
                 var (binFilePath, sigFilePath) = await DecompressZip(filePath);
                 if (binFilePath != null && sigFilePath != null)
                 {

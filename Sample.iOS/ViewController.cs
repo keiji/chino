@@ -31,6 +31,9 @@ namespace Sample.iOS
                 Logger.D("buttonEnableEn");
                 await ExposureNotificationClient.Shared.Start();
                 await ShowStatusAsync();
+
+                long version = await ExposureNotificationClient.Shared.GetVersion();
+                Logger.D($"ENAPIVersion: {version}");
             };
             buttonShowTeksHistory.TouchUpInside += async (sender, e) =>
             {

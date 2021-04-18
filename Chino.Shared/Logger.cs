@@ -20,6 +20,11 @@ namespace Chino
             Debug.Print(message);
         }
 
+        public static void W(string message)
+        {
+            Debug.Print(message);
+        }
+
         public static void E(string message)
         {
             Debug.Print(message);
