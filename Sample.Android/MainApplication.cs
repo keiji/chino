@@ -36,17 +36,18 @@ namespace Sample.Android
 
         public void ExposureDetected(List<IExposureWindow> exposureWindows)
         {
-            throw new NotImplementedException();
+            Logger.D("ExposureDetected V2");
         }
 
         public void ExposureDetected(IExposureSummary exposureSummary, List<IExposureInformation> exposureInformations)
         {
-            throw new NotImplementedException();
+            Logger.D("ExposureDetected V1");
         }
 
         public void ExposureNotDetected()
         {
-            throw new NotImplementedException();
+            Logger.D("ExposureNotDetected");
         }
+
     }
 }

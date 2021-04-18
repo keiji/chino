@@ -38,27 +38,33 @@ namespace Chino
             {
                 if (Handler == null)
                 {
+                    Logger.E("ExposureStateBroadcastReceiver: Handler is not set.");
                     return;
                 }
 
                 ExposureNotificationClient? enClient = null;
                 if (context.ApplicationContext is IExposureNotificationHandler)
                 {
-                    var exposureNotificationHandler = (IExposureNotificationHandler)context.ApplicationContext;
+                    IExposureNotificationHandler exposureNotificationHandler = (IExposureNotificationHandler)context.ApplicationContext;
                     enClient = exposureNotificationHandler.GetEnClient();
                 }
 
                 if (enClient == null)
                 {
+                    Logger.E("ExposureStateBroadcastReceiver: enClient is null.");
                     return;
                 }
 
                 bool v1 = intent.HasExtra(EXTRA_TOKEN);
 
+                string varsionStr = v1 ? "1" : "2";
+                Logger.D($"EN version {varsionStr}");
+
                 var action = intent.Action;
                 switch (action)
                 {
                     case ACTION_EXPOSURE_STATE_UPDATE:
+                        Logger.D($"ACTION_EXPOSURE_STATE_UPDATE");
                         if (v1)
                         {
                             string token = intent.GetStringExtra(EXTRA_TOKEN);
@@ -70,6 +76,7 @@ namespace Chino
                         }
                         break;
                     case ACTION_EXPOSURE_NOT_FOUND:
+                        Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
                         Handler.ExposureNotDetected();
                         break;
                 }
@@ -77,6 +84,8 @@ namespace Chino
 
             private async Task GetExposureV1Async(IExposureNotificationClient enClient, string token)
             {
+                Logger.D($"GetExposureV1Async");
+
                 IList<Android.Gms.Nearby.ExposureNotification.ExposureInformation> eis = await enClient.GetExposureInformationAsync(token);
                 List<IExposureWindow> exposureInformations = eis.Select(ei => (IExposureWindow)new ExposureInformation(ei)).ToList();
                 Handler.ExposureDetected(exposureInformations);
@@ -84,6 +93,8 @@ namespace Chino
 
             private async Task GetExposureV2Async(IExposureNotificationClient enClient)
             {
+                Logger.D($"GetExposureV2Async");
+
                 IList<Android.Gms.Nearby.ExposureNotification.ExposureWindow> ews = await enClient.GetExposureWindowsAsync();
                 List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
                 Handler.ExposureDetected(exposureWindows);
@@ -127,6 +138,18 @@ namespace Chino
 
         public override async Task ProvideDiagnosisKeys(List<string> keyFiles)
         {
+            Logger.D($"DiagnosisKey {keyFiles.Count}");
+
+            if (keyFiles.Count == 0)
+            {
+                Logger.D($"No DiagnosisKey found.");
+                return;
+            }
+
+            foreach (string path in keyFiles)
+            {
+                Logger.D($"{path}");
+            }
             var files = keyFiles.Select(f => new File(f)).ToList();
             await EnClient.ProvideDiagnosisKeysAsync(new DiagnosisKeyFileProvider(files));
         }
@@ -155,7 +178,7 @@ namespace Chino
 #pragma warning disable CS0618 // Type or member is obsolete
         private Android.Gms.Nearby.ExposureNotification.ExposureConfiguration Convert(ExposureConfiguration exposureConfiguration)
         {
-            ExposureConfiguration.IGoogleExposureConfiguration googleExposureConfiguration = exposureConfiguration.GoogleExposureConfiguration;
+            ExposureConfiguration.GoogleExposureConfiguration googleExposureConfiguration = exposureConfiguration.GoogleExposureConfig;
 
             return new Android.Gms.Nearby.ExposureNotification.ExposureConfiguration.ExposureConfigurationBuilder()
                 .SetAttenuationScores(googleExposureConfiguration.AttenuationScores)

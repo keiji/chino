@@ -20,4 +20,10 @@
     android:text="Show TEKs History"
     />
 
+  <Button
+    android:id="@+id/btn_provide_diagnosis_keys"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Provide Diagnosis Keys" />
+
 </LinearLayout>

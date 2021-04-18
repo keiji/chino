@@ -13,6 +13,9 @@ namespace Sample.iOS
 	partial class ViewController
 	{
 		[Outlet]
+		UIKit.UIButton buttonDetectExposure { get; set; }
+
+		[Outlet]
 		UIKit.UIButton buttonEnableEn { get; set; }
 
 		[Outlet]
@@ -28,6 +31,11 @@ namespace Sample.iOS
 			if (buttonShowTeksHistory != null) {
 				buttonShowTeksHistory.Dispose ();
 				buttonShowTeksHistory = null;
+			}
+
+			if (buttonDetectExposure != null) {
+				buttonDetectExposure.Dispose ();
+				buttonDetectExposure = null;
 			}
 		}
 	}

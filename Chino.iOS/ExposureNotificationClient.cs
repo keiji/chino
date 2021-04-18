@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using ExposureNotifications;
@@ -10,9 +12,9 @@ namespace Chino
 {
     public class ExposureNotificationClient : AbsExposureNotificationClient
     {
+        private const long MAXIMUM_ZIP_ARCHIVE_ENTRY_SIZE = 10 * 1024 * 1024;
 
         public static readonly ExposureNotificationClient Shared = new ExposureNotificationClient();
-
 
         private readonly ENManager EnManager = new ENManager();
 
@@ -72,14 +74,101 @@ namespace Chino
             throw new NotImplementedException();
         }
 
+        private static string Trim(string path)
+        {
+            if (path.StartsWith("/private"))
+            {
+                return path.Substring("/private".Length);
+            }
+            else
+            {
+                return path;
+            }
+        }
+
+        // https://developer.apple.com/documentation/exposurenotification/enmanager/3586331-detectexposures
+        private async Task<(string?, string?)> DecompressZip(string zipFilePath)
+        {
+
+            string baseDirectory = Path.GetDirectoryName(zipFilePath);
+            string baseFileName = Guid.NewGuid().ToString();
+
+            string binFilePath = Path.Combine(baseDirectory, $"{baseFileName}.bin");
+            string sigFilePath = Path.Combine(baseDirectory, $"{baseFileName}.sig");
+
+            Logger.D($"binFilePath: {binFilePath}");
+            Logger.D($"sigFilePath: {sigFilePath}");
+
+            using FileStream fs = File.OpenRead(zipFilePath);
+            using ZipArchive zipArchive = new ZipArchive(fs, ZipArchiveMode.Read);
+
+            // Check entry size
+            foreach (ZipArchiveEntry entry in zipArchive.Entries)
+            {
+                if (entry.Length > MAXIMUM_ZIP_ARCHIVE_ENTRY_SIZE)
+                {
+                    Logger.E($"Maximum zip archive entry size exceeded - ${zipFilePath} - Size: {entry.Length}");
+                    return (null, null);
+                }
+            }
+
+            using (FileStream binFileWriter = File.Create(binFilePath))
+            {
+                var entry = zipArchive.GetEntry("export.bin");
+                Logger.D($"Extract export.bin - Size: {entry.Length}");
+
+                using var reader = entry.Open();
+                await reader.CopyToAsync(binFileWriter);
+            }
+
+            using (FileStream binFileWriter = File.Create(sigFilePath))
+            {
+                var entry = zipArchive.GetEntry("export.sig");
+                Logger.D($"Extract export.sig - Size: {entry.Length}");
+
+                using var reader = entry.Open();
+                await reader.CopyToAsync(binFileWriter);
+            }
+
+            return (binFilePath, sigFilePath);
+        }
+
         public async override Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration)
         {
-            NSUrl[] urls = keyFiles.Select(keyFile => new NSUrl(keyFile)).ToArray();
+            List<string> decompressedFiles = new List<string>();
 
-            ExposureConfiguration.IAppleExposureConfiguration appleExposureConfiguration = configuration.AppleExposureConfiguration;
+            foreach (string filePath in keyFiles)
+            {
+                var (binFilePath, sigFilePath) = await DecompressZip(filePath);
+                if (binFilePath != null && sigFilePath != null)
+                {
+                    decompressedFiles.Add(binFilePath);
+                    decompressedFiles.Add(sigFilePath);
+                }
+            }
+
+            Logger.D($"{decompressedFiles.Count()} files are created.");
+
+            NSUrl[] urls = decompressedFiles.Select(keyFile => new NSUrl(keyFile, false)).ToArray();
+
+            foreach (NSUrl url in urls)
+            {
+                Logger.D(url.AbsoluteString);
+            }
+
+            ExposureConfiguration.AppleExposureConfiguration appleExposureConfiguration = configuration.AppleExposureConfig;
             ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(appleExposureConfiguration);
 
             ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
+
+            // Delete decompressed files
+            Logger.D($" {decompressedFiles.Count()} files will be deleted.");
+
+            foreach (string file in decompressedFiles)
+            {
+                File.Delete(file);
+                Logger.D($"File {file} is deleted.");
+            }
 
             if (UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
             {
@@ -92,7 +181,6 @@ namespace Chino
             else if (ObjCRuntime.Class.GetHandle("ENManager") != null)
             {
                 await GetExposureV2(summary);
-
             }
             else
             {
@@ -108,6 +196,8 @@ namespace Chino
 
         private async Task GetExposureV2(ENExposureDetectionSummary summary)
         {
+            Logger.D($"GetExposureV2");
+
             if (summary.MatchedKeyCount > 1)
             {
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
@@ -123,6 +213,8 @@ namespace Chino
 
         private async Task GetExposureV1(ENExposureDetectionSummary summary)
         {
+            Logger.D($"GetExposureV1");
+
             if (summary.MatchedKeyCount > 1)
             {
                 ENExposureInfo[] eis = await EnManager.GetExposureInfoAsync(summary, UserExplanation);
@@ -136,11 +228,22 @@ namespace Chino
             }
         }
 
-        private ENExposureConfiguration GetExposureConfiguration(ExposureConfiguration.IAppleExposureConfiguration appleExposureConfiguration)
+        private ENExposureConfiguration GetExposureConfiguration(ExposureConfiguration.AppleExposureConfiguration appleExposureConfiguration)
         {
             IDictionary<int, int> infectiousnessForDaysSinceOnsetOfSymptoms = appleExposureConfiguration.InfectiousnessForDaysSinceOnsetOfSymptoms;
-            NSNumber[] infectiousnessForDaysSinceOnsetOfSymptomsKeys = infectiousnessForDaysSinceOnsetOfSymptoms.Keys.Select(key => (NSNumber)key).ToArray();
-            NSNumber[] infectiousnessForDaysSinceOnsetOfSymptomsValues = infectiousnessForDaysSinceOnsetOfSymptoms.Values.Select(key => (NSNumber)key).ToArray();
+
+            var pairs = infectiousnessForDaysSinceOnsetOfSymptoms.Keys.Zip(infectiousnessForDaysSinceOnsetOfSymptoms.Values, (k, v) => new NSNumber[] { k, v });
+            NSMutableDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsMutableDict = new NSMutableDictionary<NSNumber, NSNumber>();
+
+            foreach (NSNumber[] pair in pairs)
+            {
+                infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Add(pair[0], pair[1]);
+            }
+
+            NSDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsNSDict = NSDictionary<NSNumber, NSNumber>.FromObjectsAndKeys(
+                            infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Values,
+                            infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Keys,
+                            (nint)infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Count);
 
             return new ENExposureConfiguration()
             {
@@ -150,10 +253,7 @@ namespace Chino
                 NearDurationWeight = appleExposureConfiguration.NearDurationWeight,
                 OtherDurationWeight = appleExposureConfiguration.OtherDurationWeight,
                 DaysSinceLastExposureThreshold = appleExposureConfiguration.DaysSinceLastExposureThreshold,
-                InfectiousnessForDaysSinceOnsetOfSymptoms = (NSDictionary<NSNumber, NSNumber>)NSDictionary.FromObjectsAndKeys(
-                    infectiousnessForDaysSinceOnsetOfSymptomsKeys,
-                    infectiousnessForDaysSinceOnsetOfSymptomsKeys
-                    ),
+                InfectiousnessForDaysSinceOnsetOfSymptoms = infectiousnessForDaysSinceOnsetOfSymptomsNSDict,
                 InfectiousnessHighWeight = appleExposureConfiguration.InfectiousnessHighWeight,
                 InfectiousnessStandardWeight = appleExposureConfiguration.InfectiousnessStandardWeight,
                 ReportTypeConfirmedClinicalDiagnosisWeight = appleExposureConfiguration.ReportTypeConfirmedClinicalDiagnosisWeight,

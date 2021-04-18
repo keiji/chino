@@ -1,6 +1,8 @@
 ﻿using Chino;
+using Foundation;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
@@ -34,6 +36,32 @@ namespace Sample.iOS
             {
                 await ShowTeksAsync();
             };
+            buttonDetectExposure.TouchUpInside += async (sender, e) =>
+            {
+                await DetectExposure();
+            };
+        }
+
+        private async Task DetectExposure()
+        {
+            string tmpDir = Path.GetTempPath();
+            Logger.D(tmpDir);
+
+            List<string> diagnosisKeyPaths = Directory.GetFiles(tmpDir).ToList()
+                .FindAll(path => !Directory.Exists(path))
+                .FindAll(path => path.EndsWith(".zip"));
+
+            foreach (string path in diagnosisKeyPaths)
+            {
+                Logger.D($"path {path}");
+            }
+
+            ExposureConfiguration exposureConfiguration = new ExposureConfiguration()
+            {
+                AppleExposureConfig = new ExposureConfiguration.AppleExposureConfiguration()
+            };
+
+            await ExposureNotificationClient.Shared.ProvideDiagnosisKeys(diagnosisKeyPaths, exposureConfiguration);
         }
 
         private async Task ShowTeksAsync()

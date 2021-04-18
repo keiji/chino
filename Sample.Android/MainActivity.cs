@@ -11,19 +11,23 @@ using Android.Runtime;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using Chino;
+using Java.IO;
 
 namespace Sample.Android
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", Icon = "@mipmap/ic_launcher", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
         private const int REQUEST_EN_START = 0x10;
         private const int REQUEST_GET_TEK_HISTORY = 0x11;
 
+        private const string DIAGNOSIS_KEYS_DIR = "diagnosis_keys";
+
         private AbsExposureNotificationClient? EnClient = null;
 
         private Button? buttonEn = null;
         private Button? buttonGetTekHistory = null;
+        private Button? buttonProvideDiagnosisKeys = null;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -50,19 +54,52 @@ namespace Sample.Android
                 await ShowTekHistory();
             };
 
+            buttonProvideDiagnosisKeys = FindViewById<Button>(Resource.Id.btn_provide_diagnosis_keys);
+            buttonProvideDiagnosisKeys.Click += async delegate
+            {
+                Logger.D("buttonProvideDiagnosisKeys clicked");
+
+                await ProvideDiagnosisKeys();
+            };
+
+        }
+
+        private async Task ProvideDiagnosisKeys()
+        {
+            File diagnosisKeyDir = new File(FilesDir, DIAGNOSIS_KEYS_DIR);
+            if (!diagnosisKeyDir.Exists())
+            {
+                diagnosisKeyDir.Mkdirs();
+            }
+
+            File[] diagnosisKeyFiles = await diagnosisKeyDir.ListFilesAsync();
+            List<string> diagnosisKeyPaths = diagnosisKeyFiles.ToList()
+                .FindAll(file => file.IsFile)
+                .Select(file => file.AbsolutePath).ToList()
+                .FindAll(file => file.EndsWith(".zip"));
+
+            try
+            {
+                await EnClient.ProvideDiagnosisKeys(diagnosisKeyPaths);
+            }
+            catch (ApiException apiException)
+            {
+                Logger.D($"ProvideDiagnosisKeys ApiException {apiException.StatusCode}");
+            }
         }
 
         private async Task ShowTekHistory()
         {
-            if(buttonGetTekHistory == null)
+            if (buttonGetTekHistory == null)
             {
                 return;
             }
 
-            var teks = await GetTekHistory();
+            List<ITemporaryExposureKey> teks = await GetTekHistory();
+            Logger.D(teks);
 
-            List<string> tekKeyData = teks.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
-            var str = string.Join("\n", tekKeyData);
+            List<string> tekKeyData = teks.Select(tek => Convert.ToBase64String(tek.KeyData)).ToList();
+            string str = string.Join("\n", tekKeyData);
 
             buttonGetTekHistory.Text = str;
         }

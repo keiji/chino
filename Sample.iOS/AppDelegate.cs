@@ -1,4 +1,5 @@
-﻿using Chino;
+﻿using System.Collections.Generic;
+using Chino;
 using Foundation;
 using UIKit;
 
@@ -7,7 +8,7 @@ namespace Sample.iOS
     // The UIApplicationDelegate for the application. This class is responsible for launching the
     // User Interface of the application, as well as listening (and optionally responding) to application events from iOS.
     [Register("AppDelegate")]
-    public class AppDelegate : UIResponder, IUIApplicationDelegate
+    public class AppDelegate : UIResponder, IUIApplicationDelegate, IExposureNotificationHandler
     {
         [Export("window")]
         public UIWindow Window { get; set; }
@@ -16,6 +17,8 @@ namespace Sample.iOS
         public bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
             Logger.D("FinishedLaunching");
+
+            AbsExposureNotificationClient.Handler = this;
 
             return true;
         }
@@ -36,6 +39,21 @@ namespace Sample.iOS
             // Called when the user discards a scene session.
             // If any sessions were discarded while the application was not running, this will be called shortly after `FinishedLaunching`.
             // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
+        }
+
+        public void ExposureDetected(List<IExposureWindow> exposureWindows)
+        {
+            Logger.D("ExposureDetected ExposureWindows");
+        }
+
+        public void ExposureDetected(IExposureSummary exposureSummary, List<IExposureInformation> exposureInformations)
+        {
+            Logger.D("ExposureDetected ExposureInformations");
+        }
+
+        public void ExposureNotDetected()
+        {
+            Logger.D("ExposureNotDetected");
         }
     }
 }
