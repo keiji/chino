@@ -23,7 +23,7 @@ namespace Sample.Android
         public override void OnCreate()
         {
         }
-        public ExposureNotificationClient GetEnClient()
+        public AbsExposureNotificationClient GetEnClient()
         {
             if (EnClient == null)
             {
@@ -48,6 +48,5 @@ namespace Sample.Android
         {
             Logger.D("ExposureNotDetected");
         }
-
     }
 }
