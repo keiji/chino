@@ -48,7 +48,6 @@
     <Reference Include="Xamarin.iOS.ExposureNotification">
       <HintPath>..\packages\Xamarin.iOS.ExposureNotification.1.2.2-preview1\lib\xamarinios10\Xamarin.iOS.ExposureNotification.dll</HintPath>
     </Reference>
-    <Reference Include="System.Drawing.Common.dll" />
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
   <ItemGroup>

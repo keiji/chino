@@ -162,7 +162,7 @@ namespace Chino
             ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
 
             // Delete decompressed files
-            Logger.D($" {decompressedFiles.Count()} files will be deleted.");
+            Logger.D($"{decompressedFiles.Count()} files will be deleted.");
 
             foreach (string file in decompressedFiles)
             {
