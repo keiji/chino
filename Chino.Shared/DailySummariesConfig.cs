@@ -5,9 +5,9 @@ namespace Chino
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummariesConfig
     public class DailySummariesConfig
     {
-        public List<int> AttenuationBucketThresholdDb { get; set; }
+        public IList<int> AttenuationBucketThresholdDb { get; set; }
 
-        public List<double> AttenuationBucketWeights { get; set; }
+        public IList<double> AttenuationBucketWeights { get; set; }
 
         public int DaysSinceExposureThreshold { get; set; }
 

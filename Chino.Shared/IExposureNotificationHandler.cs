@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Chino
 {
@@ -6,10 +7,16 @@ namespace Chino
     {
         AbsExposureNotificationClient GetEnClient();
 
-        void ExposureDetected(List<IExposureWindow> exposureWindows);
+        public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
+        {
+            throw new NotImplementedException();
+        }
 
-        void ExposureDetected(IExposureSummary exposureSummary, List<IExposureInformation> exposureInformations);
+        public void ExposureDetected(IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
+        {
+            throw new NotImplementedException();
+        }
 
-        void ExposureNotDetected();
+        public void ExposureNotDetected();
     }
 }

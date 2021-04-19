@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Chino
 {
@@ -53,6 +54,28 @@ namespace Chino
 
             content += "]}\n";
             D(content);
+        }
+
+        public static void D(IList<IExposureWindow> exposureWindows)
+        {
+            D($"exposureWindows - {exposureWindows.Count()}");
+
+            foreach (var ew in exposureWindows)
+            {
+                D($"Infectiousness: {ew.Infectiousness}");
+                D($"CalibrationConfidence: {ew.CalibrationConfidence}");
+                D($"DateMillisSinceEpoch: {ew.DateMillisSinceEpoch}");
+                D($"ReportType: {ew.ReportType}");
+
+                D($"scanInstances - {ew.ScanInstances.Count()}");
+
+                foreach (var si in ew.ScanInstances)
+                {
+                    D($"MinAttenuationDb: {si.MinAttenuationDb}");
+                    D($"SecondsSinceLastScan: {si.SecondsSinceLastScan}");
+                    D($"TypicalAttenuationDb: {si.TypicalAttenuationDb}");
+                }
+            }
         }
     }
 }

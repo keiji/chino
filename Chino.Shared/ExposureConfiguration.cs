@@ -5,6 +5,7 @@ namespace Chino
     public class ExposureConfiguration
     {
         public GoogleExposureConfiguration GoogleExposureConfig { get; set; }
+        public DailySummariesConfig GoogleDailySummariesConfig { get; set; } // for ExposureWindow Mode
 
         public AppleExposureConfiguration AppleExposureConfig { get; set; }
 

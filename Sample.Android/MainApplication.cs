@@ -22,7 +22,9 @@ namespace Sample.Android
 
         public override void OnCreate()
         {
+            AbsExposureNotificationClient.Handler = this;
         }
+
         public AbsExposureNotificationClient GetEnClient()
         {
             if (EnClient == null)
@@ -34,19 +36,20 @@ namespace Sample.Android
             return EnClient;
         }
 
-        public void ExposureDetected(List<IExposureWindow> exposureWindows)
+        public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
         {
-            Logger.D("ExposureDetected V2");
+            Logger.D("ExposureDetected ExposureWindows");
         }
 
-        public void ExposureDetected(IExposureSummary exposureSummary, List<IExposureInformation> exposureInformations)
+        public void ExposureDetected(IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
         {
-            Logger.D("ExposureDetected V1");
+            Logger.D("ExposureDetected ExposureInformations");
         }
 
         public void ExposureNotDetected()
         {
             Logger.D("ExposureNotDetected");
         }
+
     }
 }

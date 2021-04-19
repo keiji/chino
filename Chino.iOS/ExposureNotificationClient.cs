@@ -118,6 +118,8 @@ namespace Chino
 
         public async override Task ProvideDiagnosisKeys(List<string> zippedKeyFiles, ExposureConfiguration configuration)
         {
+            ExposureConfiguration = configuration;
+
             List<string> decompressedFiles = new List<string>();
 
             foreach (string filePath in zippedKeyFiles)
@@ -145,7 +147,7 @@ namespace Chino
                 Logger.D(url.AbsoluteString);
             }
 
-            ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(configuration);
+            ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(ExposureConfiguration);
 
             ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
 
@@ -188,10 +190,12 @@ namespace Chino
 
             if (summary.MatchedKeyCount > 1)
             {
+                List<IDailySummary> dailySummaries = summary.DaySummaries.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
+
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
                 List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
 
-                Handler.ExposureDetected(exposureWindows);
+                Handler.ExposureDetected(dailySummaries, exposureWindows);
             }
             else
             {

@@ -44,12 +44,12 @@ namespace Sample.iOS
 
         public AbsExposureNotificationClient GetEnClient() => ExposureNotificationClient.Shared;
 
-        public void ExposureDetected(List<IExposureWindow> exposureWindows)
+        public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
         {
             Logger.D("ExposureDetected ExposureWindows");
         }
 
-        public void ExposureDetected(IExposureSummary exposureSummary, List<IExposureInformation> exposureInformations)
+        public void ExposureDetected(IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
         {
             Logger.D("ExposureDetected ExposureInformations");
         }

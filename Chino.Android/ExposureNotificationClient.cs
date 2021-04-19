@@ -25,6 +25,7 @@ namespace Chino
         public const string SERVICE_STATE_UPDATED = "com.google.android.gms.exposurenotification.SERVICE_STATE_UPDATED";
 
         public const string EXTRA_TOKEN = "com.google.android.gms.exposurenotification.EXTRA_TOKEN";
+        public const string EXTRA_EXPOSURE_SUMMARY = "com.google.android.gms.exposurenotification.EXTRA_EXPOSURE_SUMMARY";
 
         [BroadcastReceiver(
             Exported = true,
@@ -54,24 +55,24 @@ namespace Chino
                     return;
                 }
 
-                bool v1 = intent.HasExtra(EXTRA_TOKEN);
-
-                string varsionStr = v1 ? "1" : "2";
-                Logger.D($"EN version {varsionStr}");
-
                 var action = intent.Action;
                 switch (action)
                 {
                     case ACTION_EXPOSURE_STATE_UPDATE:
                         Logger.D($"ACTION_EXPOSURE_STATE_UPDATE");
+                        bool v1 = intent.HasExtra(EXTRA_EXPOSURE_SUMMARY);
+
+                        string varsionStr = v1 ? "1" : "2";
+                        Logger.D($"EN version {varsionStr}");
+
                         if (v1)
                         {
                             string token = intent.GetStringExtra(EXTRA_TOKEN);
-                            await GetExposureV1Async(enClient.EnClient, token);
+                            await GetExposureV1Async(enClient, token);
                         }
                         else
                         {
-                            await GetExposureV2Async(enClient.EnClient);
+                            await GetExposureV2Async(enClient);
                         }
                         break;
                     case ACTION_EXPOSURE_NOT_FOUND:
@@ -81,24 +82,48 @@ namespace Chino
                 }
             }
 
-            private async Task GetExposureV1Async(IExposureNotificationClient enClient, string token)
+            private async Task GetExposureV1Async(ExposureNotificationClient enClient, string token)
             {
                 Logger.D($"GetExposureV1Async");
 
-                IList<Android.Gms.Nearby.ExposureNotification.ExposureInformation> eis = await enClient.GetExposureInformationAsync(token);
-                List<IExposureWindow> exposureInformations = eis.Select(ei => (IExposureWindow)new ExposureInformation(ei)).ToList();
-                Handler.ExposureDetected(exposureInformations);
+                Android.Gms.Nearby.ExposureNotification.ExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
+
+                IList<Android.Gms.Nearby.ExposureNotification.ExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
+                List<IExposureInformation> exposureInformations = eis.Select(ei => (IExposureInformation)new ExposureInformation(ei)).ToList();
+
+                Handler.ExposureDetected(new ExposureSummary(exposureSummary), exposureInformations);
             }
 
-            private async Task GetExposureV2Async(IExposureNotificationClient enClient)
+            private async Task GetExposureV2Async(ExposureNotificationClient enClient)
             {
                 Logger.D($"GetExposureV2Async");
 
-                IList<Android.Gms.Nearby.ExposureNotification.ExposureWindow> ews = await enClient.GetExposureWindowsAsync();
+                Android.Gms.Nearby.ExposureNotification.DailySummariesConfig config = Convert(enClient.ExposureConfiguration.GoogleDailySummariesConfig);
+                IList<Android.Gms.Nearby.ExposureNotification.DailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(config);
+                List<IDailySummary> dailySummaries = dss.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
+
+                Print(dailySummaries);
+
+                IList<Android.Gms.Nearby.ExposureNotification.ExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
                 List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
-                Handler.ExposureDetected(exposureWindows);
+
+                Logger.D(exposureWindows);
+
+                Handler.ExposureDetected(dailySummaries, exposureWindows);
             }
 
+        }
+
+        private static void Print(IList<IDailySummary> dailySummaries)
+        {
+            Logger.D($"dailySummaries - {dailySummaries.Count()}");
+
+            foreach (var d in dailySummaries)
+            {
+                Logger.D($"MaximumScore: {d.DaySummary.MaximumScore}");
+                Logger.D($"ScoreSum: {d.DaySummary.ScoreSum}");
+                Logger.D($"WeightedDurationSum: {d.DaySummary.WeightedDurationSum}");
+            }
         }
 
 #nullable enable
@@ -137,6 +162,14 @@ namespace Chino
 
         public override async Task ProvideDiagnosisKeys(List<string> keyFiles)
         {
+            await ProvideDiagnosisKeys(keyFiles, new ExposureConfiguration()
+            {
+                GoogleDailySummariesConfig = new DailySummariesConfig()
+            });
+        }
+
+        public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration)
+        {
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
             if (keyFiles.Count == 0)
@@ -145,17 +178,11 @@ namespace Chino
                 return;
             }
 
-            foreach (string path in keyFiles)
-            {
-                Logger.D($"{path}");
-            }
-            var files = keyFiles.Select(f => new File(f)).ToList();
-            await EnClient.ProvideDiagnosisKeysAsync(new DiagnosisKeyFileProvider(files));
-        }
+            ExposureConfiguration = configuration;
 
-        public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration)
-        {
-            await ProvideDiagnosisKeys(keyFiles, configuration, Guid.NewGuid().ToString());
+            var files = keyFiles.Select(f => new File(f)).ToList();
+            DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);
+            await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
         }
 
         public override async Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistory()
@@ -173,6 +200,30 @@ namespace Chino
             await EnClient.ProvideDiagnosisKeysAsync(files, Convert(configuration), token);
         }
 #pragma warning restore CS0618 // Type or member is obsolete
+
+        private static Android.Gms.Nearby.ExposureNotification.DailySummariesConfig Convert(DailySummariesConfig dailySummariesConfig)
+        {
+            Android.Gms.Nearby.ExposureNotification.DailySummariesConfig.DailySummariesConfigBuilder builder
+                = new Android.Gms.Nearby.ExposureNotification.DailySummariesConfig.DailySummariesConfigBuilder()
+                .SetAttenuationBuckets(
+                (IList<Java.Lang.Integer>)dailySummariesConfig.AttenuationBucketThresholdDb,
+                (IList<Java.Lang.Double>)dailySummariesConfig.AttenuationBucketWeights
+                )
+                .SetDaysSinceExposureThreshold(dailySummariesConfig.DaysSinceExposureThreshold)
+                .SetMinimumWindowScore(dailySummariesConfig.MinimumWindowScore);
+
+            dailySummariesConfig.InfectiousnessWeights.Keys.Zip(
+                dailySummariesConfig.InfectiousnessWeights.Values,
+                (key, value) => builder.SetInfectiousnessWeight((int)key, value)
+                );
+
+            dailySummariesConfig.ReportTypeWeights.Keys.Zip(
+                dailySummariesConfig.ReportTypeWeights.Values,
+                (key, value) => builder.SetReportTypeWeight((int)key, value)
+                );
+
+            return builder.Build();
+        }
 
 #pragma warning disable CS0618 // Type or member is obsolete
         private Android.Gms.Nearby.ExposureNotification.ExposureConfiguration Convert(ExposureConfiguration exposureConfiguration)
