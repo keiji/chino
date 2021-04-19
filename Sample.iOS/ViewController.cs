@@ -60,8 +60,7 @@ namespace Sample.iOS
 
             ExposureConfiguration exposureConfiguration = new ExposureConfiguration()
             {
-                AppleExposureV2Config = new ExposureConfiguration.AppleExposureConfigurationV2(),
-                AppleExposureV1Config = new ExposureConfiguration.AppleExposureConfigurationV1()
+                AppleExposureConfig = new ExposureConfiguration.AppleExposureConfiguration()
             };
 
             await ExposureNotificationClient.Shared.ProvideDiagnosisKeys(diagnosisKeyPaths, exposureConfiguration);

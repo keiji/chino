@@ -6,9 +6,7 @@ namespace Chino
     {
         public GoogleExposureConfiguration GoogleExposureConfig { get; set; }
 
-        public AppleExposureConfigurationV2 AppleExposureV2Config { get; set; }
-
-        public AppleExposureConfigurationV1 AppleExposureV1Config { get; set; }
+        public AppleExposureConfiguration AppleExposureConfig { get; set; }
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureConfiguration
         public class GoogleExposureConfiguration
@@ -35,12 +33,10 @@ namespace Chino
         }
 
         // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
-        public class AppleExposureConfigurationV2
+        // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration/exposure_risk_value_calculation_in_exposurenotification_version_1
+        public class AppleExposureConfiguration
         {
             // Configuring Duration
-
-            // This property is available in iOS 12.5, and in iOS 13.6 and later.
-            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70, 90 };
 
             #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
 
@@ -68,9 +64,41 @@ namespace Chino
             public double ReportTypeSelfReportedWeight { get; set; } = 100.0;
             public ReportType ReportTypeNoneMap { get; set; } = ReportType.Unknown;
 
+            public int[] AttenuationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public int[] DaysSinceLastExposureLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public int[] DurationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public int[] TransmissionRiskLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public IDictionary<object, object> Metadata { get; set; } = new Dictionary<object, object>();
+
+            public byte MinimumRiskScore { get; set; } = 0;
+
+            // This weight parameter is not used.
+            // public double AttenuationWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double DaysSinceLastExposureWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double DurationWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double TransmissionRiskWeight { get; set; }
+
             #endregion
 
-            public AppleExposureConfigurationV2()
+            #region These properties are available in iOS 12.5, and in iOS 13.6 and later.
+
+            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70, 90 };
+
+            public double MinimumRiskScoreFullRange { get; set; } = 0.0;
+
+            #endregion
+
+            public AppleExposureConfiguration()
             {
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-14, 1);
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-13, 1);
@@ -102,52 +130,6 @@ namespace Chino
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(13, 1);
                 InfectiousnessForDaysSinceOnsetOfSymptoms.Add(14, 1);
             }
-        }
-
-        // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration/exposure_risk_value_calculation_in_exposurenotification_version_1
-        public class AppleExposureConfigurationV1
-        {
-            // Exposure Information
-
-            // Level Configuration
-
-            #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
-
-            public int[] AttenuationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            public int[] DaysSinceLastExposureLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            public int[] DurationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            public int[] TransmissionRiskLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            public IDictionary<object, object> Metadata { get; set; } = new Dictionary<object, object>();
-
-            public byte MinimumRiskScore { get; set; } = 0;
-
-            // This weight parameter is not used.
-            // public double AttenuationWeight { get; set; }
-
-            // This weight parameter is not used.
-            // public double DaysSinceLastExposureWeight { get; set; }
-
-            // This weight parameter is not used.
-            // public double DurationWeight { get; set; }
-
-            // This weight parameter is not used.
-            // public double TransmissionRiskWeight { get; set; }
-
-            #endregion
-
-            #region These properties are available in iOS 12.5, and in iOS 13.6 and later.
-
-            // This property is available in iOS 12.5, and in iOS 13.6 and later.
-            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70, 90 };
-
-            // This property is available in iOS 12.5, and in iOS 13.6 and later.
-            public double MinimumRiskScoreFullRange { get; set; } = 0.0;
-
-            #endregion
         }
     }
 }
