@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.Runtime;
@@ -188,6 +187,24 @@ namespace Chino
             }
 
             ExposureConfiguration = configuration;
+            ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration GoogleDiagnosisKeysDataMappingConfig = ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfig;
+            IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms
+                = GoogleDiagnosisKeysDataMappingConfig.InfectiousnessForDaysSinceOnsetOfSymptoms;
+
+            IDictionary<Java.Lang.Integer, Java.Lang.Integer> daysSinceOnsetToInfectiousness = new Dictionary<Java.Lang.Integer, Java.Lang.Integer>();
+            foreach (var key in InfectiousnessForDaysSinceOnsetOfSymptoms.Keys)
+            {
+                var value = InfectiousnessForDaysSinceOnsetOfSymptoms[key];
+                daysSinceOnsetToInfectiousness.Add(new Java.Lang.Integer(key), new Java.Lang.Integer((int)value));
+            }
+
+            DiagnosisKeysDataMapping diagnosisKeysDataMapping = new DiagnosisKeysDataMapping.DiagnosisKeysDataMappingBuilder()
+                .SetReportTypeWhenMissing((int)ReportType.ConfirmedTest)
+                .SetDaysSinceOnsetToInfectiousness(daysSinceOnsetToInfectiousness)
+                .SetInfectiousnessWhenDaysSinceOnsetMissing((int)GoogleDiagnosisKeysDataMappingConfig.InfectiousnessWhenDaysSinceOnsetMissing)
+                .Build();
+
+            await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
 
             var files = keyFiles.Select(f => new File(f)).ToList();
             DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);

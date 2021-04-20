@@ -5,38 +5,8 @@ namespace Chino
     public class ExposureConfiguration
     {
         public GoogleExposureConfiguration GoogleExposureConfig { get; set; }
+        public GoogleDiagnosisKeysDataMappingConfiguration GoogleDiagnosisKeysDataMappingConfig { get; set; }
         public DailySummariesConfig GoogleDailySummariesConfig { get; set; } // for ExposureWindow Mode
-        public IDictionary<int, Infectiousness> GoogleInfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
-            { -14, Infectiousness.High },
-            { -13, Infectiousness.High },
-            { -12, Infectiousness.High },
-            { -11, Infectiousness.High },
-            { -10, Infectiousness.High },
-            { -9, Infectiousness.High },
-            { -8, Infectiousness.High },
-            { -7, Infectiousness.High },
-            { -6, Infectiousness.High },
-            { -5, Infectiousness.High },
-            { -4, Infectiousness.High },
-            { -3, Infectiousness.High },
-            { -2, Infectiousness.High },
-            { -1, Infectiousness.High },
-            { 0, Infectiousness.High },
-            { 1, Infectiousness.High },
-            { 2, Infectiousness.High },
-            { 3, Infectiousness.High },
-            { 4, Infectiousness.High },
-            { 5, Infectiousness.High },
-            { 6, Infectiousness.High },
-            { 7, Infectiousness.High },
-            { 8, Infectiousness.High },
-            { 9, Infectiousness.High },
-            { 10, Infectiousness.High },
-            { 11, Infectiousness.High },
-            { 12, Infectiousness.High },
-            { 13, Infectiousness.High },
-            { 14, Infectiousness.High },
-        };
 
         public AppleExposureConfiguration AppleExposureConfig { get; set; }
 
@@ -62,6 +32,44 @@ namespace Chino
             public int[] TransmissionRiskScores { get; set; } = { 7, 7, 7, 7, 7, 7, 7, 7 };
 
             public int TransmissionRiskWeight { get; set; } = 50;
+        }
+
+        // https://developers.google.com/android/exposure-notifications/meaningful-exposures
+        public class GoogleDiagnosisKeysDataMappingConfiguration
+        {
+            public IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
+                { -14, Infectiousness.High },
+                { -13, Infectiousness.High },
+                { -12, Infectiousness.High },
+                { -11, Infectiousness.High },
+                { -10, Infectiousness.High },
+                { -9, Infectiousness.High },
+                { -8, Infectiousness.High },
+                { -7, Infectiousness.High },
+                { -6, Infectiousness.High },
+                { -5, Infectiousness.High },
+                { -4, Infectiousness.High },
+                { -3, Infectiousness.High },
+                { -2, Infectiousness.High },
+                { -1, Infectiousness.High },
+                { 0, Infectiousness.High },
+                { 1, Infectiousness.High },
+                { 2, Infectiousness.High },
+                { 3, Infectiousness.High },
+                { 4, Infectiousness.High },
+                { 5, Infectiousness.High },
+                { 6, Infectiousness.High },
+                { 7, Infectiousness.High },
+                { 8, Infectiousness.High },
+                { 9, Infectiousness.High },
+                { 10, Infectiousness.High },
+                { 11, Infectiousness.High },
+                { 12, Infectiousness.High },
+                { 13, Infectiousness.High },
+                { 14, Infectiousness.High },
+            };
+
+            public Infectiousness InfectiousnessWhenDaysSinceOnsetMissing = Infectiousness.Standard;
         }
 
         // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
