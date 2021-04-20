@@ -20,7 +20,7 @@ namespace Chino
     public class ExposureNotificationClient : AbsExposureNotificationClient
     {
         public const string PERMISSION_EXPOSURE_CALLBACK = "com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK";
-        public const string ACTION_EXPOSURE_STATE_UPDATE = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATE";
+        public const string ACTION_EXPOSURE_STATE_UPDATED = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATED";
         public const string ACTION_EXPOSURE_NOT_FOUND = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_NOT_FOUND";
         public const string SERVICE_STATE_UPDATED = "com.google.android.gms.exposurenotification.SERVICE_STATE_UPDATED";
 
@@ -31,7 +31,7 @@ namespace Chino
             Exported = true,
             Permission = PERMISSION_EXPOSURE_CALLBACK
             )]
-        [IntentFilter(new[] { ACTION_EXPOSURE_STATE_UPDATE, ACTION_EXPOSURE_NOT_FOUND })]
+        [IntentFilter(new[] { ACTION_EXPOSURE_STATE_UPDATED, ACTION_EXPOSURE_NOT_FOUND })]
         [Preserve]
         public class ExposureStateBroadcastReceiver : BroadcastReceiver
         {
@@ -56,10 +56,12 @@ namespace Chino
                 }
 
                 var action = intent.Action;
+                Logger.D($"Intent Action {action}");
+
                 switch (action)
                 {
-                    case ACTION_EXPOSURE_STATE_UPDATE:
-                        Logger.D($"ACTION_EXPOSURE_STATE_UPDATE");
+                    case ACTION_EXPOSURE_STATE_UPDATED:
+                        Logger.D($"ACTION_EXPOSURE_STATE_UPDATED");
                         bool v1 = intent.HasExtra(EXTRA_EXPOSURE_SUMMARY);
 
                         string varsionStr = v1 ? "1" : "2";
