@@ -148,8 +148,8 @@ namespace Chino
             }
 
             ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(ExposureConfiguration);
-
             ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
+            Print(summary);
 
             // Delete decompressed files
             Logger.D($"{decompressedFiles.Count()} files will be deleted.");
@@ -180,6 +180,41 @@ namespace Chino
             }
         }
 
+        private void Print(ENExposureDetectionSummary summary)
+        {
+            Logger.D("ExposureDetectionSummary");
+            Logger.D($"AttenuationDurations: {summary.AttenuationDurations}");
+            Logger.D($"DaysSinceLastExposure: {summary.DaysSinceLastExposure}");
+            Logger.D($"MatchedKeyCount: {summary.MatchedKeyCount}");
+            Logger.D($"MaximumRiskScore: {summary.MaximumRiskScore}");
+            Logger.D($"MaximumRiskScoreFullRange: {summary.MaximumRiskScoreFullRange}");
+            Logger.D($"RiskScoreSumFullRange: {summary.RiskScoreSumFullRange}");
+            Logger.D($"Metadata: {summary.Metadata}");
+
+            foreach (var daySummary in summary.DaySummaries)
+            {
+                Logger.D($"Date: {daySummary.Date}");
+                Print(daySummary.ConfirmedClinicalDiagnosisSummary);
+                Print(daySummary.ConfirmedTestSummary);
+                Print(daySummary.RecursiveSummary);
+                Print(daySummary.SelfReportedSummary);
+                Print(daySummary.DaySummary);
+            }
+        }
+
+        private void Print(ENExposureSummaryItem daySummary)
+        {
+            if (daySummary == null)
+            {
+                return;
+            }
+
+            Logger.D($"ENExposureSummaryItem");
+            Logger.D($"MaximumScore: {daySummary.MaximumScore}");
+            Logger.D($"ScoreSum: {daySummary.ScoreSum}");
+            Logger.D($"WeightedDurationSum: {daySummary.WeightedDurationSum}");
+        }
+
         [Obsolete]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
         public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration, string token)
@@ -195,7 +230,11 @@ namespace Chino
                 List<IDailySummary> dailySummaries = summary.DaySummaries.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
 
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
+                Print(summary);
+
                 List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
+
+                Logger.D(exposureWindows);
 
                 Handler.ExposureDetected(dailySummaries, exposureWindows);
             }
