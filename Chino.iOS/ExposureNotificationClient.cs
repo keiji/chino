@@ -298,9 +298,9 @@ namespace Chino
             return configuration;
         }
 
-        private NSDictionary<NSNumber, NSNumber> GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(IDictionary<int, int> infectiousnessForDaysSinceOnsetOfSymptoms)
+        private NSDictionary<NSNumber, NSNumber> GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(IDictionary<int, Infectiousness> infectiousnessForDaysSinceOnsetOfSymptoms)
         {
-            var pairs = infectiousnessForDaysSinceOnsetOfSymptoms.Keys.Zip(infectiousnessForDaysSinceOnsetOfSymptoms.Values, (k, v) => new NSNumber[] { k, v });
+            var pairs = infectiousnessForDaysSinceOnsetOfSymptoms.Keys.Zip(infectiousnessForDaysSinceOnsetOfSymptoms.Values, (k, v) => new NSNumber[] { k, (int)v });
             NSMutableDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsMutableDict = new NSMutableDictionary<NSNumber, NSNumber>();
             foreach (NSNumber[] pair in pairs)
             {
