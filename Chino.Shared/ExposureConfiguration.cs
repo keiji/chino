@@ -6,6 +6,37 @@ namespace Chino
     {
         public GoogleExposureConfiguration GoogleExposureConfig { get; set; }
         public DailySummariesConfig GoogleDailySummariesConfig { get; set; } // for ExposureWindow Mode
+        public IDictionary<int, Infectiousness> GoogleInfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
+            { -14, Infectiousness.High },
+            { -13, Infectiousness.High },
+            { -12, Infectiousness.High },
+            { -11, Infectiousness.High },
+            { -10, Infectiousness.High },
+            { -9, Infectiousness.High },
+            { -8, Infectiousness.High },
+            { -7, Infectiousness.High },
+            { -6, Infectiousness.High },
+            { -5, Infectiousness.High },
+            { -4, Infectiousness.High },
+            { -3, Infectiousness.High },
+            { -2, Infectiousness.High },
+            { -1, Infectiousness.High },
+            { 0, Infectiousness.High },
+            { 1, Infectiousness.High },
+            { 2, Infectiousness.High },
+            { 3, Infectiousness.High },
+            { 4, Infectiousness.High },
+            { 5, Infectiousness.High },
+            { 6, Infectiousness.High },
+            { 7, Infectiousness.High },
+            { 8, Infectiousness.High },
+            { 9, Infectiousness.High },
+            { 10, Infectiousness.High },
+            { 11, Infectiousness.High },
+            { 12, Infectiousness.High },
+            { 13, Infectiousness.High },
+            { 14, Infectiousness.High },
+        };
 
         public AppleExposureConfiguration AppleExposureConfig { get; set; }
 
@@ -51,7 +82,37 @@ namespace Chino
             // Configuring Infectiousness
 
             // Must Specify v2
-            public IDictionary<int, int> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, int>();
+            public IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
+                { -14, Infectiousness.High },
+                { -13, Infectiousness.High },
+                { -12, Infectiousness.High },
+                { -11, Infectiousness.High },
+                { -10, Infectiousness.High },
+                { -9, Infectiousness.High },
+                { -8, Infectiousness.High },
+                { -7, Infectiousness.High },
+                { -6, Infectiousness.High },
+                { -5, Infectiousness.High },
+                { -4, Infectiousness.High },
+                { -3, Infectiousness.High },
+                { -2, Infectiousness.High },
+                { -1, Infectiousness.High },
+                { 0, Infectiousness.High },
+                { 1, Infectiousness.High },
+                { 2, Infectiousness.High },
+                { 3, Infectiousness.High },
+                { 4, Infectiousness.High },
+                { 5, Infectiousness.High },
+                { 6, Infectiousness.High },
+                { 7, Infectiousness.High },
+                { 8, Infectiousness.High },
+                { 9, Infectiousness.High },
+                { 10, Infectiousness.High },
+                { 11, Infectiousness.High },
+                { 12, Infectiousness.High },
+                { 13, Infectiousness.High },
+                { 14, Infectiousness.High },
+            };
 
             public double InfectiousnessHighWeight { get; set; } = 100.0; // The range of this value is 0-250%
             public double InfectiousnessStandardWeight { get; set; } = 100.0; // The range of this value is 0-250%
@@ -99,38 +160,6 @@ namespace Chino
 
             #endregion
 
-            public AppleExposureConfiguration()
-            {
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-14, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-13, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-12, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-11, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-10, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-9, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-8, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-7, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-6, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-5, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-4, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-3, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-2, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(-1, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(0, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(1, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(2, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(3, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(4, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(5, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(6, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(7, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(8, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(9, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(10, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(11, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(12, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(13, 1);
-                InfectiousnessForDaysSinceOnsetOfSymptoms.Add(14, 1);
-            }
         }
     }
 }
