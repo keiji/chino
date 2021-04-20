@@ -225,7 +225,7 @@ namespace Chino
         {
             Logger.D($"GetExposureV2");
 
-            if (summary.MatchedKeyCount > 1)
+            if (summary.DaySummaries.Length > 0)
             {
                 List<IDailySummary> dailySummaries = summary.DaySummaries.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
 
@@ -248,7 +248,7 @@ namespace Chino
         {
             Logger.D($"GetExposureV1");
 
-            if (summary.MatchedKeyCount > 1)
+            if (summary.MatchedKeyCount > 0)
             {
                 ENExposureInfo[] eis = await EnManager.GetExposureInfoAsync(summary, UserExplanation);
                 List<IExposureInformation> exposureInformations = eis.Select(ei => (IExposureInformation)new ExposureInformation(ei)).ToList();
