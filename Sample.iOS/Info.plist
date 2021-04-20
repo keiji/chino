@@ -64,7 +64,7 @@
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>ENAPIVersion</key>
-	<integer>2</integer>
+	<integer>1</integer>
 	<key>ENDeveloperRegion</key>
 	<string>JP</string>
 </dict>
