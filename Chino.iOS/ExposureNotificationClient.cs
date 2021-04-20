@@ -191,6 +191,11 @@ namespace Chino
             Logger.D($"RiskScoreSumFullRange: {summary.RiskScoreSumFullRange}");
             Logger.D($"Metadata: {summary.Metadata}");
 
+            if (summary.DaySummaries == null)
+            {
+                return;
+            }
+
             foreach (var daySummary in summary.DaySummaries)
             {
                 Logger.D($"Date: {daySummary.Date}");
