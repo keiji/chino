@@ -1,15 +1,17 @@
 ﻿namespace Chino
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/RiskLevel
+    // https://developer.apple.com/documentation/exposurenotification/enexposureinfo/3583716-transmissionrisklevel
     public enum RiskLevel
     {
-        Invalid = 1,
-        Lowest = 2,
-        Low = 3,
-        MeduimLow = 4,
-        Medium = 5,
-        High = 6,
-        VeryHigh = 7,
-        Highest = 8
+        Invalid,
+        Lowest,
+        Low,
+        LowMedium,
+        Medium,
+        MediumHigh,
+        High,
+        VeryHigh,
+        Highest
     }
 }

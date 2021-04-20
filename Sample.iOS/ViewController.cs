@@ -69,7 +69,7 @@ namespace Sample.iOS
         private async Task ShowTeksAsync()
         {
             List<ITemporaryExposureKey> teks = await ExposureNotificationClient.Shared.GetTemporaryExposureKeyHistory();
-            Logger.D(teks);
+            Logger.D(teks, (int)RiskLevel.High.ToByte(), ReportType.ConfirmedTest);
 
             List<string> tekKeyData = teks.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
             var str = string.Join("\n", tekKeyData);

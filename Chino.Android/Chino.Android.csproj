@@ -125,6 +125,7 @@
     <Compile Include="ExposureInformation.cs" />
     <Compile Include="DailySummary.cs" />
     <Compile Include="ExposureSummary.cs" />
+    <Compile Include="Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

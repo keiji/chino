@@ -22,6 +22,6 @@ namespace Chino
 
         public int RollingStartIntervalNumber => Source.RollingStartIntervalNumber;
 
-        public RiskLevel RiskLevel => (RiskLevel)Enum.ToObject(typeof(RiskLevel), Source.TransmissionRiskLevel);
+        public RiskLevel RiskLevel => Source.TransmissionRiskLevel.ToRiskLevel();
     }
 }

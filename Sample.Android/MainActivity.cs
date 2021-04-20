@@ -96,7 +96,7 @@ namespace Sample.Android
             }
 
             List<ITemporaryExposureKey> teks = await GetTekHistory();
-            Logger.D(teks);
+            Logger.D(teks, RiskLevel.Highest.ToInt(), ReportType.ConfirmedTest);
 
             List<string> tekKeyData = teks.Select(tek => Convert.ToBase64String(tek.KeyData)).ToList();
             string str = string.Join("\n", tekKeyData);

@@ -21,7 +21,7 @@ namespace Chino
 
         public int RollingStartIntervalNumber => (int)Source.RollingStartNumber;
 
-        public RiskLevel RiskLevel => (RiskLevel)Enum.ToObject(typeof(RiskLevel), Source.TransmissionRiskLevel);
+        public RiskLevel RiskLevel => Source.TransmissionRiskLevel.ToRiskLevel();
 
         private static byte[] GetKeyData(Foundation.NSData keyData)
         {

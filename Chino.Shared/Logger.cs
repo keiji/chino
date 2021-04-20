@@ -31,7 +31,7 @@ namespace Chino
             Debug.Print(message);
         }
 
-        public static void D(List<ITemporaryExposureKey> teks, RiskLevel transmissonRisk, ReportType reportType)
+        public static void D(List<ITemporaryExposureKey> teks, int transmissonRisk, ReportType reportType)
         {
             string content = "{\"temporaryExposureKeys\":[\n";
 
@@ -47,7 +47,7 @@ namespace Chino
                 content += $"    \"rollingStartNumber\":{rollingStartNumber},\n";
                 content += $"    \"rollingPeriod\":{rollingPeriod},\n";
                 content += $"    \"reportType\":{(int)reportType},\n";
-                content += $"    \"transmissionRisk\":{(int)transmissonRisk}\n";
+                content += $"    \"transmissionRisk\":{transmissonRisk}\n";
 
                 content += isLast ? "}\n" : "},\n";
             }
