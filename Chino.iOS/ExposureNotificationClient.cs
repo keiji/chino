@@ -276,11 +276,23 @@ namespace Chino
 
             ENExposureConfiguration configuration = new ENExposureConfiguration();
 
+            NSMutableDictionary metadata = new NSMutableDictionary();
+
             if (UIDevice.CurrentDevice.CheckSystemVersion(13, 6))
             {
                 Logger.D("Set configuration values for iOS 13.6 later.");
                 configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThreshold;
                 configuration.MinimumRiskScoreFullRange = appleExposureConfiguration.MinimumRiskScoreFullRange;
+
+                // MetaData
+                metadata.SetValueForKey(
+                    new NSNumber(appleExposureConfiguration.MinimumRiskScoreFullRange),
+                    new NSString("minimumRiskScoreFullRange")
+                    );
+
+                var attKey = new NSString("attenuationDurationThresholds");
+                var attValue = NSArray.FromObjects(2, 50, 70);
+                metadata.SetValueForKey(attValue, attKey);
             }
             if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
             {
@@ -302,7 +314,6 @@ namespace Chino
                 configuration.DaysSinceLastExposureLevelValues = appleExposureConfiguration.DaysSinceLastExposureLevelValues;
                 configuration.DurationLevelValues = appleExposureConfiguration.DurationLevelValues;
                 configuration.TransmissionRiskLevelValues = appleExposureConfiguration.TransmissionRiskLevelValues;
-                // Metadata = appleExposureConfigurationV1.Metadata;
                 configuration.MinimumRiskScore = appleExposureConfiguration.MinimumRiskScore;
             }
 
@@ -332,9 +343,10 @@ namespace Chino
                 configuration.DaysSinceLastExposureLevelValues = appleExposureConfiguration.DaysSinceLastExposureLevelValues;
                 configuration.DurationLevelValues = appleExposureConfiguration.DurationLevelValues;
                 configuration.TransmissionRiskLevelValues = appleExposureConfiguration.TransmissionRiskLevelValues;
-                // Metadata = appleExposureConfigurationV1.Metadata;
                 configuration.MinimumRiskScore = appleExposureConfiguration.MinimumRiskScore;
             }
+
+            configuration.Metadata = metadata;
 
             return configuration;
         }
