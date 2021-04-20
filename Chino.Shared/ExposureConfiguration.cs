@@ -20,7 +20,7 @@ namespace Chino
 
             public int DaysSinceLastExposureWeight { get; set; } = 50;
 
-            public int[] DurationAtAttenuationThresholds { get; set; }
+            public int[] DurationAtAttenuationThresholds { get; set; } = { 50, 70 };
 
             public int[] DurationScores { get; set; } = { 1, 1, 1, 1, 1, 1, 1, 1 };
 
@@ -93,7 +93,7 @@ namespace Chino
 
             #region These properties are available in iOS 12.5, and in iOS 13.6 and later.
 
-            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70, 90 };
+            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70 };
 
             public double MinimumRiskScoreFullRange { get; set; } = 0.0;
 

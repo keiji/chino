@@ -166,6 +166,7 @@ namespace Chino
         {
             await ProvideDiagnosisKeys(keyFiles, new ExposureConfiguration()
             {
+                GoogleExposureConfig = new ExposureConfiguration.GoogleExposureConfiguration(),
                 GoogleDailySummariesConfig = new DailySummariesConfig()
             });
         }

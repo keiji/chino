@@ -8,8 +8,6 @@
 
         public byte[] KeyData { get; }
 
-        public ReportType ReportType { get; }
-
         public int RollingPeriod { get; }
 
         public int RollingStartIntervalNumber { get; }

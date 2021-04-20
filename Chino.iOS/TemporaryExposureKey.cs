@@ -17,8 +17,6 @@ namespace Chino
 
         public byte[] KeyData => GetKeyData(Source.KeyData);
 
-        public ReportType ReportType => throw new NotImplementedException();
-
         public int RollingPeriod => (int)Source.RollingPeriod;
 
         public int RollingStartIntervalNumber => (int)Source.RollingStartNumber;

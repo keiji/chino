@@ -43,10 +43,12 @@ namespace Chino
                 int rollingStartNumber = tek.RollingStartIntervalNumber;
                 int rollingPeriod = tek.RollingPeriod;
                 int transmissionRisk = (int)tek.RiskLevel;
+                int reportType = (int)ReportType.ConfirmedTest;
                 content += "{\n";
                 content += $"    \"key\":\"{keyString}\",\n";
                 content += $"    \"rollingStartNumber\":{rollingStartNumber},\n";
                 content += $"    \"rollingPeriod\":{rollingPeriod},\n";
+                content += $"    \"reportType\":{reportType},\n";
                 content += $"    \"transmissionRisk\":{transmissionRisk}\n";
 
                 content += isLast ? "}\n" : "},\n";
