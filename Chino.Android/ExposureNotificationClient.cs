@@ -9,6 +9,13 @@ using Android.Gms.Nearby.ExposureNotification;
 using System.Threading.Tasks;
 using System.Linq;
 
+using AndroidExposureConfiguration = Android.Gms.Nearby.ExposureNotification.ExposureConfiguration;
+using AndroidExposureSummary = Android.Gms.Nearby.ExposureNotification.ExposureSummary;
+using AndroidDailySummariesConfig = Android.Gms.Nearby.ExposureNotification.DailySummariesConfig;
+using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary;
+using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.ExposureInformation;
+using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
+
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
 [assembly: UsesPermission(Android.Manifest.Permission.Bluetooth)]
@@ -87,9 +94,9 @@ namespace Chino
             {
                 Logger.D($"GetExposureV1Async");
 
-                Android.Gms.Nearby.ExposureNotification.ExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
+                AndroidExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
 
-                IList<Android.Gms.Nearby.ExposureNotification.ExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
+                IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
                 List<IExposureInformation> exposureInformations = eis.Select(ei => (IExposureInformation)new ExposureInformation(ei)).ToList();
 
                 Handler.ExposureDetected(new ExposureSummary(exposureSummary), exposureInformations);
@@ -99,13 +106,13 @@ namespace Chino
             {
                 Logger.D($"GetExposureV2Async");
 
-                Android.Gms.Nearby.ExposureNotification.DailySummariesConfig config = Convert(enClient.ExposureConfiguration.GoogleDailySummariesConfig);
-                IList<Android.Gms.Nearby.ExposureNotification.DailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(config);
+                AndroidDailySummariesConfig config = Convert(enClient.ExposureConfiguration.GoogleDailySummariesConfig);
+                IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(config);
                 List<IDailySummary> dailySummaries = dss.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
 
                 Print(dailySummaries);
 
-                IList<Android.Gms.Nearby.ExposureNotification.ExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
+                IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
                 List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
 
                 Logger.D(exposureWindows);
@@ -241,10 +248,10 @@ namespace Chino
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        private static Android.Gms.Nearby.ExposureNotification.DailySummariesConfig Convert(DailySummariesConfig dailySummariesConfig)
+        private static AndroidDailySummariesConfig Convert(DailySummariesConfig dailySummariesConfig)
         {
-            Android.Gms.Nearby.ExposureNotification.DailySummariesConfig.DailySummariesConfigBuilder builder
-                = new Android.Gms.Nearby.ExposureNotification.DailySummariesConfig.DailySummariesConfigBuilder()
+            AndroidDailySummariesConfig.DailySummariesConfigBuilder builder
+                = new AndroidDailySummariesConfig.DailySummariesConfigBuilder()
                 .SetAttenuationBuckets(
                 (IList<Java.Lang.Integer>)dailySummariesConfig.AttenuationBucketThresholdDb,
                 (IList<Java.Lang.Double>)dailySummariesConfig.AttenuationBucketWeights
@@ -266,11 +273,11 @@ namespace Chino
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        private Android.Gms.Nearby.ExposureNotification.ExposureConfiguration Convert(ExposureConfiguration exposureConfiguration)
+        private AndroidExposureConfiguration Convert(ExposureConfiguration exposureConfiguration)
         {
             ExposureConfiguration.GoogleExposureConfiguration googleExposureConfiguration = exposureConfiguration.GoogleExposureConfig;
 
-            return new Android.Gms.Nearby.ExposureNotification.ExposureConfiguration.ExposureConfigurationBuilder()
+            return new AndroidExposureConfiguration.ExposureConfigurationBuilder()
                 .SetAttenuationScores(googleExposureConfiguration.AttenuationScores)
                 .SetAttenuationWeight(googleExposureConfiguration.AttenuationWeight)
                 .SetDaysSinceLastExposureScores(googleExposureConfiguration.DaysSinceLastExposureScores)

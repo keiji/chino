@@ -31,7 +31,7 @@ namespace Chino
             Debug.Print(message);
         }
 
-        public static void D(List<ITemporaryExposureKey> teks)
+        public static void D(List<ITemporaryExposureKey> teks, RiskLevel transmissonRisk, ReportType reportType)
         {
             string content = "{\"temporaryExposureKeys\":[\n";
 
@@ -42,14 +42,12 @@ namespace Chino
                 string keyString = Convert.ToBase64String(tek.KeyData);
                 int rollingStartNumber = tek.RollingStartIntervalNumber;
                 int rollingPeriod = tek.RollingPeriod;
-                int transmissionRisk = (int)tek.RiskLevel;
-                int reportType = (int)ReportType.ConfirmedTest;
                 content += "{\n";
                 content += $"    \"key\":\"{keyString}\",\n";
                 content += $"    \"rollingStartNumber\":{rollingStartNumber},\n";
                 content += $"    \"rollingPeriod\":{rollingPeriod},\n";
-                content += $"    \"reportType\":{reportType},\n";
-                content += $"    \"transmissionRisk\":{transmissionRisk}\n";
+                content += $"    \"reportType\":{(int)reportType},\n";
+                content += $"    \"transmissionRisk\":{(int)transmissonRisk}\n";
 
                 content += isLast ? "}\n" : "},\n";
             }
