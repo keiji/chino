@@ -160,7 +160,9 @@ namespace Chino
                 Logger.D($"File {file} is deleted.");
             }
 
-            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
+            long enAPiVersion = await GetVersion();
+
+            if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
             {
                 await GetExposureV2(summary);
             }
