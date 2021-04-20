@@ -173,6 +173,12 @@ namespace Chino
 
         public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration)
         {
+            if (Handler == null)
+            {
+                Logger.E("ExposureNotificationClient: Handler is not set.");
+                return;
+            }
+
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
             if (keyFiles.Count == 0)
@@ -199,6 +205,20 @@ namespace Chino
 #pragma warning disable CS0618 // Type or member is obsolete
         public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration, string token)
         {
+            if (Handler == null)
+            {
+                Logger.E("ExposureNotificationClient: Handler is not set.");
+                return;
+            }
+
+            Logger.D($"DiagnosisKey {keyFiles.Count}");
+
+            if (keyFiles.Count == 0)
+            {
+                Logger.D($"No DiagnosisKey found.");
+                return;
+            }
+
             var files = keyFiles.Select(f => new File(f)).ToList();
             await EnClient.ProvideDiagnosisKeysAsync(files, Convert(configuration), token);
         }
