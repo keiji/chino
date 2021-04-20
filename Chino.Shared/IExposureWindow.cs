@@ -37,7 +37,7 @@ namespace Chino
     {
         None = 0,
         Standard = 1,
-        Hight = 2
+        High = 2
     }
 
 }
