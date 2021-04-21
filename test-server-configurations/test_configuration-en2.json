@@ -1,0 +1,61 @@
+{
+    "appConfigs": [
+        {
+            "appBundleId": "dev.keiji.chino.sample.SampleiOS",
+            "config": {
+                "V1Enable": false,
+                "agencyColor": [
+                    0.88,
+                    0.87,
+                    0.96
+                ],
+                "agencyDisplayName_EN_US": "Test Agency ENv2 Only",
+                "agencyHeaderStyle": 0,
+                "agencyHeaderSubtitle_EN_US": "The agency subtitle for Agency goes here",
+                "agencyHeaderTextColor": [
+                    0.5,
+                    1,
+                    0.5
+                ],
+                "agencyImage": "agencyImage",
+                "agencyMessage_EN_US": "Agency PHA has an agency Message for you",
+                "agencyRegionName_EN_US": "Test Agency ENv2 Only",
+                "applicationBackgroundRuntimeIntervalinHours": 2,
+                "callbackIntervalInMin": 240,
+                "detectExposureDailyLimit": 20,
+                "detectExposureNKDLimit": 6,
+                "dynamicAlgorithmEnabled": true,
+                "dynamicThrottleDownAdvDensity": 6,
+                "dynamicThrottleDownDurationInSeconds": 216,
+                "dynamicThrottleDownRSSI": -55,
+                "dynamicThrottleUpAdvDensity": 20,
+                "dynamicThrottleUpDurationInMinutes": 900,
+                "enEnabled": true,
+                "enVersion": 2,
+                "enableRecursiveType": false,
+                "exposureMatching": true,
+                "forceAPWakeIntervalInMinutesThreshold": 5,
+                "hasStateRegions": false,
+                "isMatchingRestrictedRegion": false,
+                "maxMatchingAttempts": 7,
+                "maxTtkMatchAttempt": 8,
+                "maxTtkMatchAttemptPerDay": 9,
+                "numberOfAdvSamplesForRPIThreshold": 1,
+                "osTriggeredAppRunTimeInSeconds": 300,
+                "privacyParameterInputCandence": 7,
+                "regionDisabledTransitionGracePeriodMinutes": 1440,
+                "regionTransitionGracePeriodInMinutes": 180,
+                "reportTypeRecursiveWeight": 100,
+                "rpiAdvertisementToleranceInMinutes": 120,
+                "rpiDuplicateAdvertisementToleranceInMinutes": 20,
+                "serverConfigVersion": 1,
+                "status": "approved"
+            },
+            "countryCode": "JP",
+            "publicKey": "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEHpmroDAq4oQH5qe3iFzdGYQ2O5Q/FuvgDIYrE38cdSXLhHMuCXBR7YSiu6Sbeu6y3JlxFOs9KHF6Pp9Xhf/ibA==",
+            "publicKeyVersion": "v2",
+            "signAuthorityName": "Test Agency ENv2 Only",
+            "state": ""
+        }
+    ]
+}
