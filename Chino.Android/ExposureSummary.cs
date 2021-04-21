@@ -1,13 +1,16 @@
 ﻿using System;
+
+using AndroidExposureSummary = Android.Gms.Nearby.ExposureNotification.ExposureSummary;
+
 namespace Chino
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureSummary
     [Obsolete]
     public class ExposureSummary: IExposureSummary
     {
-        public readonly Android.Gms.Nearby.ExposureNotification.ExposureSummary Source;
+        public readonly AndroidExposureSummary Source;
 
-        public ExposureSummary(Android.Gms.Nearby.ExposureNotification.ExposureSummary source)
+        public ExposureSummary(AndroidExposureSummary source)
         {
             Source = source;
         }

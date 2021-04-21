@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
+using AndroidScanInstance = Android.Gms.Nearby.ExposureNotification.ScanInstance;
+
 namespace Chino
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureWindow
     public class ExposureWindow : IExposureWindow
     {
-        public readonly Android.Gms.Nearby.ExposureNotification.ExposureWindow Source;
+        public readonly AndroidExposureWindow Source;
 
-        public ExposureWindow(Android.Gms.Nearby.ExposureNotification.ExposureWindow source)
+        public ExposureWindow(AndroidExposureWindow source)
         {
             Source = source;
         }
@@ -28,9 +31,9 @@ namespace Chino
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ScanInstance
     public class ScanInstance : IScanInstance
     {
-        public readonly Android.Gms.Nearby.ExposureNotification.ScanInstance Source;
+        public readonly AndroidScanInstance Source;
 
-        public ScanInstance(Android.Gms.Nearby.ExposureNotification.ScanInstance source)
+        public ScanInstance(AndroidScanInstance source)
         {
             Source = source;
         }

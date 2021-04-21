@@ -1,35 +1,37 @@
-﻿namespace Chino
+﻿using AndroidExposureNotificationStatus = Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus;
+
+namespace Chino
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationStatus
     public class ExposureNotificationStatus : IExposureNotificationStatus
     {
 
-        public readonly Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus EnStatus;
+        public readonly AndroidExposureNotificationStatus EnStatus;
 
-        public ExposureNotificationStatus(Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus exposureNotificationStatus)
+        public ExposureNotificationStatus(AndroidExposureNotificationStatus exposureNotificationStatus)
         {
             EnStatus = exposureNotificationStatus;
         }
 
         public Status Status()
         {
-            if (EnStatus == Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus.Activated)
+            if (EnStatus == AndroidExposureNotificationStatus.Activated)
             {
                 return Chino.Status.Active;
             }
-            else if (EnStatus == Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus.Inactivated)
+            else if (EnStatus == AndroidExposureNotificationStatus.Inactivated)
             {
                 return Chino.Status.NotActive;
             }
-            else if (EnStatus == Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus.BluetoothDisabled)
+            else if (EnStatus == AndroidExposureNotificationStatus.BluetoothDisabled)
             {
                 return Chino.Status.BluetoothOff;
             }
-            else if (EnStatus == Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus.NoConsent)
+            else if (EnStatus == AndroidExposureNotificationStatus.NoConsent)
             {
                 return Chino.Status.Unauthorized;
             }
-            else if (EnStatus == Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus.Unknown)
+            else if (EnStatus == AndroidExposureNotificationStatus.Unknown)
             {
                 return Chino.Status.Unknown;
             }

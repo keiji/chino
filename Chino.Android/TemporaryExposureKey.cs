@@ -1,18 +1,21 @@
 ﻿using System;
+
+using AndroidTemporaryExposureKey = Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey;
+
 namespace Chino
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/TemporaryExposureKey
     public class TemporaryExposureKey : ITemporaryExposureKey
     {
 
-        public readonly Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey Source;
+        public readonly AndroidTemporaryExposureKey Source;
 
-        public TemporaryExposureKey(Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey source)
+        public TemporaryExposureKey(AndroidTemporaryExposureKey source)
         {
             Source = source;
         }
 
-        public int DaysSinceOnsetOfSymptoms => throw new NotImplementedException();
+        public int DaysSinceOnsetOfSymptoms => Source.DaysSinceOnsetOfSymptoms;
 
         public byte[] KeyData => Source.GetKeyData();
 

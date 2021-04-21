@@ -1,12 +1,14 @@
-﻿using System;
+﻿using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary;
+using AndroidReportType = Android.Gms.Nearby.ExposureNotification.ReportType;
+
 namespace Chino
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummary
     public class DailySummary: IDailySummary
     {
-        public Android.Gms.Nearby.ExposureNotification.DailySummary Source;
+        public AndroidDailySummary Source;
 
-        public DailySummary(Android.Gms.Nearby.ExposureNotification.DailySummary source)
+        public DailySummary(AndroidDailySummary source)
         {
             Source = source;
         }
@@ -17,30 +19,30 @@ namespace Chino
 
         public IDailySummary.IExposureSummaryData ConfirmedClinicalDiagnosisSummary =>
             new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(Android.Gms.Nearby.ExposureNotification.ReportType.ConfirmedClinicalDiagnosis)
+                Source.GetSummaryDataForReportType(AndroidReportType.ConfirmedClinicalDiagnosis)
                 );
 
         public IDailySummary.IExposureSummaryData ConfirmedTestSummary =>
             new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(Android.Gms.Nearby.ExposureNotification.ReportType.ConfirmedTest)
+                Source.GetSummaryDataForReportType(AndroidReportType.ConfirmedTest)
                 );
 
         public IDailySummary.IExposureSummaryData RecursiveSummary =>
             new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(Android.Gms.Nearby.ExposureNotification.ReportType.Recursive)
+                Source.GetSummaryDataForReportType(AndroidReportType.Recursive)
                 );
 
         public IDailySummary.IExposureSummaryData SelfReportedSummary =>
             new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(Android.Gms.Nearby.ExposureNotification.ReportType.SelfReport)
+                Source.GetSummaryDataForReportType(AndroidReportType.SelfReport)
                 );
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummary.ExposureSummaryData
         public class ExposureSummaryData : IDailySummary.IExposureSummaryData
         {
-            public Android.Gms.Nearby.ExposureNotification.DailySummary.ExposureSummaryData Source;
+            public AndroidDailySummary.ExposureSummaryData Source;
 
-            public ExposureSummaryData(Android.Gms.Nearby.ExposureNotification.DailySummary.ExposureSummaryData source)
+            public ExposureSummaryData(AndroidDailySummary.ExposureSummaryData source)
             {
                 Source = source;
             }
