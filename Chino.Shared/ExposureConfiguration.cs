@@ -158,7 +158,6 @@ namespace Chino
 
             public double InfectiousnessHighWeight { get; set; } = 100.0; // The range of this value is 0-250%
             public double InfectiousnessStandardWeight { get; set; } = 100.0; // The range of this value is 0-250%
-            // public int DaysSinceOnsetOfSymptomsUnknown { get; set; }
 
             // Configuring Report Types
 
