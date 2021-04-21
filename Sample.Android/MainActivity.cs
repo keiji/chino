@@ -130,6 +130,9 @@ namespace Sample.Android
             try
             {
                 await EnClient.Start();
+
+                long version = await EnClient.GetVersion();
+                Logger.D($"Version: {version}");
             }
             catch (ApiException apiException)
             {
