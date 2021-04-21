@@ -1,7 +1,13 @@
-﻿namespace Chino
+﻿using Foundation;
+
+namespace Chino
 {
     public static class Extensions
     {
+        public static void LogD(this NSErrorException nsErrorException)
+        {
+            Logger.D($"Error occurred {nsErrorException.Code} - {nsErrorException.Message}");
+        }
 
         public static byte ToByte(this RiskLevel riskLevel)
         {

@@ -1,4 +1,5 @@
 ﻿using Chino;
+using Foundation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,19 +29,41 @@ namespace Sample.iOS
             buttonEnableEn.TouchUpInside += async (sender, e) =>
             {
                 Logger.D("buttonEnableEn");
-                await ExposureNotificationClient.Shared.Start();
-                await ShowStatusAsync();
+
+                try
+                {
+                    await ExposureNotificationClient.Shared.Start();
+                    await ShowStatusAsync();
+                }
+                catch (NSErrorException exception)
+                {
+                    exception.LogD();
+                }
 
                 long version = await ExposureNotificationClient.Shared.GetVersion();
                 Logger.D($"ENAPIVersion: {version}");
             };
             buttonShowTeksHistory.TouchUpInside += async (sender, e) =>
             {
-                await ShowTeksAsync();
+                try
+                {
+                    await ShowTeksAsync();
+                }
+                catch (NSErrorException exception)
+                {
+                    exception.LogD();
+                }
             };
             buttonDetectExposure.TouchUpInside += async (sender, e) =>
             {
-                await DetectExposure();
+                try
+                {
+                    await DetectExposure();
+                }
+                catch (NSErrorException exception)
+                {
+                    exception.LogD();
+                }
             };
         }
 
