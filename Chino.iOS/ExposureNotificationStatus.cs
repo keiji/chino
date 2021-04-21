@@ -15,25 +15,19 @@ namespace Chino
 
         public Status Status()
         {
-            switch (EnStatus)
+            Logger.D($"EnStatus: {EnStatus}");
+
+            return EnStatus switch
             {
-                case ENStatus.Active:
-                    return Chino.Status.Active;
-                case ENStatus.BluetoothOff:
-                    return Chino.Status.BluetoothOff;
-                case ENStatus.Disabled:
-                    return Chino.Status.NotActive;
-                case ENStatus.Unauthorized:
-                    return Chino.Status.Unauthorized;
-                case ENStatus.Unknown:
-                    return Chino.Status.Unknown;
-                //case ENStatus.Restricted:
-                //    break;
-                //case ENStatus.Paused:
-                //    break;
-                default:
-                    return Chino.Status.Misc;
-            }
+                ENStatus.Active => Chino.Status.Active,
+                ENStatus.BluetoothOff => Chino.Status.BluetoothOff,
+                ENStatus.Disabled => Chino.Status.NotActive,
+                ENStatus.Unauthorized => Chino.Status.Unauthorized,
+                ENStatus.Unknown => Chino.Status.Unknown,
+                // ENStatus.Restricted =>
+                // ENStatus.Paused =>
+                _ => Chino.Status.Misc,
+            };
         }
     }
 }
