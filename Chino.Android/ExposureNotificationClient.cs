@@ -253,8 +253,8 @@ namespace Chino
             AndroidDailySummariesConfig.DailySummariesConfigBuilder builder
                 = new AndroidDailySummariesConfig.DailySummariesConfigBuilder()
                 .SetAttenuationBuckets(
-                (IList<Java.Lang.Integer>)dailySummariesConfig.AttenuationBucketThresholdDb,
-                (IList<Java.Lang.Double>)dailySummariesConfig.AttenuationBucketWeights
+                dailySummariesConfig.AttenuationBucketThresholdDb.Select(value => new Java.Lang.Integer(value)).ToList(),
+                dailySummariesConfig.AttenuationBucketWeights.Select(value => new Java.Lang.Double(value)).ToList()
                 )
                 .SetDaysSinceExposureThreshold(dailySummariesConfig.DaysSinceExposureThreshold)
                 .SetMinimumWindowScore(dailySummariesConfig.MinimumWindowScore);
