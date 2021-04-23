@@ -22,6 +22,4 @@ COPYRIGHT HOLDERは Cappuccino Authors とする予定です。
 
 ## License
 
-TBD
-
-[Issue 1](https://github.com/keiji/cappuccino/issues/1)で決定する。
+Cappuccino is distributed under the terms of the MIT License.
