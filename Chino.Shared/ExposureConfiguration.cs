@@ -4,11 +4,13 @@ namespace Chino
 {
     public class ExposureConfiguration
     {
-        public GoogleExposureConfiguration GoogleExposureConfig { get; set; }
-        public GoogleDiagnosisKeysDataMappingConfiguration GoogleDiagnosisKeysDataMappingConfig { get; set; }
-        public DailySummariesConfig GoogleDailySummariesConfig { get; set; } // for ExposureWindow Mode
+        public GoogleExposureConfiguration GoogleExposureConfig { get; set; } = new GoogleExposureConfiguration();
 
-        public AppleExposureConfiguration AppleExposureConfig { get; set; }
+        // for ExposureWindow Mode
+        public GoogleDiagnosisKeysDataMappingConfiguration GoogleDiagnosisKeysDataMappingConfig { get; set; } = new GoogleDiagnosisKeysDataMappingConfiguration();
+        public DailySummariesConfig GoogleDailySummariesConfig { get; set; } = new DailySummariesConfig();
+
+        public AppleExposureConfiguration AppleExposureConfig { get; set; } = new AppleExposureConfiguration();
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureConfiguration
         public class GoogleExposureConfiguration
