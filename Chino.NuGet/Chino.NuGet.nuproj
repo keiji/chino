@@ -7,8 +7,8 @@
     <ProjectGuid>{B99C6107-F1EE-4577-81F7-036A07E0840E}</ProjectGuid>
     <Description>Cappuccino is an yet another Exposure Notification Library for COCOA</Description>
     <PackageId>Chino</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
-    <Authors>keiji_ariyama</Authors>
+    <PackageVersion>1.0.0-alpha01</PackageVersion>
+    <Authors>Cappuccino Authors</Authors>
     <DevelopmentDependency>false</DevelopmentDependency>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <OutputType>Exe</OutputType>

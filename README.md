@@ -9,7 +9,7 @@ Cappuccinoは、バックグラウンド処理は行わず、Android/iOSの薄�
 
 ## 誰が作っているの？
 ここまでは @keiji が開発してきました。
-COPYRIGHT HOLDERは Cappuccino Authors とする予定です。
+COPYRIGHT HOLDERは Cappuccino Authors としています。
 
 必要に応じてリポジトリを移管する可能性があります。
 
