@@ -148,8 +148,9 @@ namespace Chino
             }
 
             ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(ExposureConfiguration);
+            Logger.D(exposureConfiguration.ToString());
+
             ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
-            Print(summary);
 
             // Delete decompressed files
             Logger.D($"{decompressedFiles.Count()} files will be deleted.");
@@ -199,6 +200,7 @@ namespace Chino
 
             if (summary.DaySummaries == null)
             {
+                Logger.D($"DaySummaries are null.");
                 return;
             }
 
