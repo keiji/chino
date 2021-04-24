@@ -284,7 +284,9 @@ namespace Chino
             }
 
             NSDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsNSDict
-                = GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(appleExposureConfiguration.InfectiousnessForDaysSinceOnsetOfSymptoms);
+                = GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(
+                    appleExposureConfiguration.InfectiousnessForDaysSinceOnsetOfSymptoms,
+                    appleExposureConfiguration.InfectiousnessWhenDaysSinceOnsetMissing);
 
             ENExposureConfiguration configuration = new ENExposureConfiguration();
 
@@ -367,7 +369,9 @@ namespace Chino
             return configuration;
         }
 
-        private NSDictionary<NSNumber, NSNumber> GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(IDictionary<int, Infectiousness> infectiousnessForDaysSinceOnsetOfSymptoms)
+        private NSDictionary<NSNumber, NSNumber> GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(
+            IDictionary<long, Infectiousness> infectiousnessForDaysSinceOnsetOfSymptoms,
+            Infectiousness infectiousnessWhenDaysSinceOnsetMissing)
         {
             var pairs = infectiousnessForDaysSinceOnsetOfSymptoms.Keys.Zip(infectiousnessForDaysSinceOnsetOfSymptoms.Values, (k, v) => new NSNumber[] { k, (int)v });
             NSMutableDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsMutableDict = new NSMutableDictionary<NSNumber, NSNumber>();
@@ -375,6 +379,15 @@ namespace Chino
             {
                 infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Add(pair[0], pair[1]);
             }
+
+            /*
+             * The parameter `infectiousnessWhenDaysSinceOnsetMissing` must be set in infectiousnessForDaysSinceOnsetOfSymptoms
+             * If this parameter not set, ENv2 does not work correctly(DailySummaries and ExposureWindows count always 0).
+             */
+            infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Add(
+                new NSNumber(long.MaxValue),
+                new NSNumber((int)infectiousnessWhenDaysSinceOnsetMissing)
+                );
 
             return NSDictionary<NSNumber, NSNumber>.FromObjectsAndKeys(
                             infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Values,
