@@ -156,8 +156,14 @@ namespace Chino
 
             foreach (string file in decompressedFiles)
             {
-                File.Delete(file);
-                Logger.D($"File {file} is deleted.");
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception exception)
+                {
+                    Logger.E(exception);
+                }
             }
 
             long enAPiVersion = await GetVersion();

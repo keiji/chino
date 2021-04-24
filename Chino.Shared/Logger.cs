@@ -77,5 +77,15 @@ namespace Chino
                 }
             }
         }
+
+        public static void D(Exception exception)
+        {
+            D($"{exception.GetType().Name} occurred - {exception.Message}");
+        }
+
+        public static void E(Exception exception)
+        {
+            E($"{exception.GetType().Name} occurred - {exception.Message}");
+        }
     }
 }
