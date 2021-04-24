@@ -4,14 +4,14 @@
     // https://developer.apple.com/documentation/exposurenotification/enexposureinfo/3583716-transmissionrisklevel
     public enum RiskLevel
     {
-        Invalid,
-        Lowest,
-        Low,
-        LowMedium,
-        Medium,
-        MediumHigh,
-        High,
-        VeryHigh,
-        Highest
+        Invalid = 0,
+        Lowest = 1,
+        Low = 2,
+        LowMedium = 3,
+        Medium = 4,
+        MediumHigh = 5,
+        High = 6,
+        VeryHigh = 7,
+        Highest = 8
     }
 }

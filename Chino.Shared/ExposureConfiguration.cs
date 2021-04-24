@@ -116,9 +116,16 @@ namespace Chino
 
             #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
 
+            /*
+             * [0] The immediate duration threshold.
+             * [1] The near attenuation threshold.
+             * [2] The medium attenuation threshold.
+             */
+            public int[] AttenuationDurationThresholds { get; set; } = { 15, 33, 73 };
+
             public double ImmediateDurationWeight { get; set; } = 100;
-            public double MediumDurationWeight { get; set; } = 100;
             public double NearDurationWeight { get; set; } = 100;
+            public double MediumDurationWeight { get; set; } = 100;
             public double OtherDurationWeight { get; set; } = 100;
 
             public int DaysSinceLastExposureThreshold { get; set; } = 0;
@@ -126,36 +133,36 @@ namespace Chino
             // Configuring Infectiousness
 
             // Must Specify v2
-            public IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
-                { -14, Infectiousness.High },
-                { -13, Infectiousness.High },
-                { -12, Infectiousness.High },
-                { -11, Infectiousness.High },
-                { -10, Infectiousness.High },
-                { -9, Infectiousness.High },
-                { -8, Infectiousness.High },
-                { -7, Infectiousness.High },
-                { -6, Infectiousness.High },
-                { -5, Infectiousness.High },
-                { -4, Infectiousness.High },
-                { -3, Infectiousness.High },
-                { -2, Infectiousness.High },
-                { -1, Infectiousness.High },
-                { 0, Infectiousness.High },
-                { 1, Infectiousness.High },
-                { 2, Infectiousness.High },
-                { 3, Infectiousness.High },
-                { 4, Infectiousness.High },
-                { 5, Infectiousness.High },
-                { 6, Infectiousness.High },
-                { 7, Infectiousness.High },
-                { 8, Infectiousness.High },
-                { 9, Infectiousness.High },
-                { 10, Infectiousness.High },
-                { 11, Infectiousness.High },
-                { 12, Infectiousness.High },
-                { 13, Infectiousness.High },
-                { 14, Infectiousness.High },
+            public IDictionary<long, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<long, Infectiousness>() {
+                { -14, Infectiousness.Standard },
+                { -13, Infectiousness.Standard },
+                { -12, Infectiousness.Standard },
+                { -11, Infectiousness.Standard },
+                { -10, Infectiousness.Standard },
+                { -9, Infectiousness.Standard },
+                { -8, Infectiousness.Standard },
+                { -7, Infectiousness.Standard },
+                { -6, Infectiousness.Standard },
+                { -5, Infectiousness.Standard },
+                { -4, Infectiousness.Standard },
+                { -3, Infectiousness.Standard },
+                { -2, Infectiousness.Standard },
+                { -1, Infectiousness.Standard },
+                { 0, Infectiousness.Standard },
+                { 1, Infectiousness.Standard },
+                { 2, Infectiousness.Standard },
+                { 3, Infectiousness.Standard },
+                { 4, Infectiousness.Standard },
+                { 5, Infectiousness.Standard },
+                { 6, Infectiousness.Standard },
+                { 7, Infectiousness.Standard },
+                { 8, Infectiousness.Standard },
+                { 9, Infectiousness.Standard },
+                { 10, Infectiousness.Standard },
+                { 11, Infectiousness.Standard },
+                { 12, Infectiousness.Standard },
+                { 13, Infectiousness.Standard },
+                { 14, Infectiousness.Standard },
             };
 
             public double InfectiousnessHighWeight { get; set; } = 100.0; // The range of this value is 0-250%
@@ -167,7 +174,7 @@ namespace Chino
             public double ReportTypeConfirmedTestWeight { get; set; } = 100.0;
             public double ReportTypeRecursiveWeight { get; set; } = 100.0;
             public double ReportTypeSelfReportedWeight { get; set; } = 100.0;
-            public ReportType ReportTypeNoneMap { get; set; } = ReportType.Unknown;
+            public ReportType ReportTypeNoneMap { get; set; } = ReportType.ConfirmedTest;
 
             /*
              * [0] when Attenuation > 73 dB
@@ -229,8 +236,6 @@ namespace Chino
             #endregion
 
             #region These properties are available in iOS 12.5, and in iOS 13.6 and later.
-
-            public int[] AttenuationDurationThreshold { get; set; } = { 50, 70 };
 
             public double MinimumRiskScoreFullRange { get; set; } = 0.0;
 

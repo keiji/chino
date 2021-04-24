@@ -236,10 +236,10 @@ namespace Chino
         {
             Logger.D($"GetExposureV2");
 
-            if (summary.DaySummaries.Length > 0)
-            {
-                List<IDailySummary> dailySummaries = summary.DaySummaries.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
+            List<IDailySummary> dailySummaries = summary.DaySummaries.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
 
+            if(dailySummaries.Count > 0)
+            {
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
                 Print(summary);
 
@@ -248,8 +248,7 @@ namespace Chino
                 Logger.D(exposureWindows);
 
                 Handler.ExposureDetected(dailySummaries, exposureWindows);
-            }
-            else
+            } else
             {
                 Handler.ExposureNotDetected();
             }
@@ -289,10 +288,27 @@ namespace Chino
 
             NSMutableDictionary metadata = new NSMutableDictionary();
 
+            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
+            {
+                Logger.D("Set configuration values for iOS 13.7 later.");
+                configuration.ImmediateDurationWeight = appleExposureConfiguration.ImmediateDurationWeight;
+                configuration.MediumDurationWeight = appleExposureConfiguration.MediumDurationWeight;
+                configuration.NearDurationWeight = appleExposureConfiguration.NearDurationWeight;
+                configuration.OtherDurationWeight = appleExposureConfiguration.OtherDurationWeight;
+                configuration.DaysSinceLastExposureThreshold = appleExposureConfiguration.DaysSinceLastExposureThreshold;
+                configuration.InfectiousnessForDaysSinceOnsetOfSymptoms = infectiousnessForDaysSinceOnsetOfSymptomsNSDict;
+                configuration.InfectiousnessHighWeight = appleExposureConfiguration.InfectiousnessHighWeight;
+                configuration.InfectiousnessStandardWeight = appleExposureConfiguration.InfectiousnessStandardWeight;
+                configuration.ReportTypeConfirmedClinicalDiagnosisWeight = appleExposureConfiguration.ReportTypeConfirmedClinicalDiagnosisWeight;
+                configuration.ReportTypeConfirmedTestWeight = appleExposureConfiguration.ReportTypeConfirmedTestWeight;
+                configuration.ReportTypeRecursiveWeight = appleExposureConfiguration.ReportTypeRecursiveWeight;
+                configuration.ReportTypeSelfReportedWeight = appleExposureConfiguration.ReportTypeSelfReportedWeight;
+                configuration.ReportTypeNoneMap = (ENDiagnosisReportType)Enum.ToObject(typeof(ENDiagnosisReportType), appleExposureConfiguration.ReportTypeNoneMap);
+            }
             if (UIDevice.CurrentDevice.CheckSystemVersion(13, 6))
             {
                 Logger.D("Set configuration values for iOS 13.6 later.");
-                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThreshold;
+                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThresholds;
                 configuration.MinimumRiskScoreFullRange = appleExposureConfiguration.MinimumRiskScoreFullRange;
 
                 // MetaData
@@ -308,19 +324,6 @@ namespace Chino
             if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
             {
                 Logger.D("Set configuration values for iOS 13.5 later.");
-                configuration.ImmediateDurationWeight = appleExposureConfiguration.ImmediateDurationWeight;
-                configuration.MediumDurationWeight = appleExposureConfiguration.MediumDurationWeight;
-                configuration.NearDurationWeight = appleExposureConfiguration.NearDurationWeight;
-                configuration.OtherDurationWeight = appleExposureConfiguration.OtherDurationWeight;
-                configuration.DaysSinceLastExposureThreshold = appleExposureConfiguration.DaysSinceLastExposureThreshold;
-                configuration.InfectiousnessForDaysSinceOnsetOfSymptoms = infectiousnessForDaysSinceOnsetOfSymptomsNSDict;
-                configuration.InfectiousnessHighWeight = appleExposureConfiguration.InfectiousnessHighWeight;
-                configuration.InfectiousnessStandardWeight = appleExposureConfiguration.InfectiousnessStandardWeight;
-                configuration.ReportTypeConfirmedClinicalDiagnosisWeight = appleExposureConfiguration.ReportTypeConfirmedClinicalDiagnosisWeight;
-                configuration.ReportTypeConfirmedTestWeight = appleExposureConfiguration.ReportTypeConfirmedTestWeight;
-                configuration.ReportTypeRecursiveWeight = appleExposureConfiguration.ReportTypeRecursiveWeight;
-                configuration.ReportTypeSelfReportedWeight = appleExposureConfiguration.ReportTypeSelfReportedWeight;
-                configuration.ReportTypeNoneMap = (ENDiagnosisReportType)Enum.ToObject(typeof(ENDiagnosisReportType), appleExposureConfiguration.ReportTypeNoneMap);
                 configuration.AttenuationLevelValues = appleExposureConfiguration.AttenuationLevelValues;
                 configuration.DaysSinceLastExposureLevelValues = appleExposureConfiguration.DaysSinceLastExposureLevelValues;
                 configuration.DurationLevelValues = appleExposureConfiguration.DurationLevelValues;
@@ -334,7 +337,7 @@ namespace Chino
                 && ObjCRuntime.Class.GetHandle("ENManager") != null)
             {
                 Logger.D("Set configuration values for iOS 12.5.");
-                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThreshold;
+                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThresholds;
                 configuration.MinimumRiskScoreFullRange = appleExposureConfiguration.MinimumRiskScoreFullRange;
 
                 configuration.ImmediateDurationWeight = appleExposureConfiguration.ImmediateDurationWeight;
