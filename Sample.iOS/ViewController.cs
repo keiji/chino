@@ -81,10 +81,7 @@ namespace Sample.iOS
                 Logger.D($"path {path}");
             }
 
-            ExposureConfiguration exposureConfiguration = new ExposureConfiguration()
-            {
-                AppleExposureConfig = new ExposureConfiguration.AppleExposureConfiguration()
-            };
+            ExposureConfiguration exposureConfiguration = new ExposureConfiguration();
 
             await ExposureNotificationClient.Shared.ProvideDiagnosisKeys(diagnosisKeyPaths, exposureConfiguration);
         }

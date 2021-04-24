@@ -10,7 +10,9 @@ namespace Chino
         public GoogleDiagnosisKeysDataMappingConfiguration GoogleDiagnosisKeysDataMappingConfig { get; set; } = new GoogleDiagnosisKeysDataMappingConfiguration();
         public DailySummariesConfig GoogleDailySummariesConfig { get; set; } = new DailySummariesConfig();
 
-        public AppleExposureConfiguration AppleExposureConfig { get; set; } = new AppleExposureConfiguration();
+        public AppleExposureV1Configuration AppleExposureV1Config { get; set; } = new AppleExposureV1Configuration();
+
+        public AppleExposureV2Configuration AppleExposureV2Config { get; set; } = new AppleExposureV2Configuration();
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureConfiguration
         public class GoogleExposureConfiguration
@@ -108,9 +110,82 @@ namespace Chino
             public Infectiousness InfectiousnessWhenDaysSinceOnsetMissing = Infectiousness.Standard;
         }
 
-        // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
         // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration/exposure_risk_value_calculation_in_exposurenotification_version_1
-        public class AppleExposureConfiguration
+        public class AppleExposureV1Configuration
+        {
+            // Configuring Duration
+
+            #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
+
+            /*
+             * [0] when Attenuation > 73 dB
+             * [1] when 73 >= Attenuation > 63
+             * [2] when 63 >= Attenuation > 51
+             * [3] when 51 >= Attenuation > 33
+             * [4] when 33 >= Attenuation > 27
+             * [5] when 27 >= Attenuation > 15
+             * [6] when 15 >= Attenuation > 10
+             * [7] when 10 >= Attenuation
+             */
+            public int[] AttenuationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            /*
+             * [0] when Days >= 14
+             * [1] when Days >= 12
+             * [2] when Days >= 10
+             * [3] when Days >= 8
+             * [4] when Days >= 6
+             * [5] when Days >= 4
+             * [6] when Days >= 2
+             * [7] when Days >= 0
+             */
+            public int[] DaysSinceLastExposureLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            /*
+             * [0] when Duration == 0 min
+             * [1] when Duration <= 5
+             * [2] when Duration <= 10
+             * [3] when Duration <= 15
+             * [4] when Duration <= 20
+             * [5] when Duration <= 25
+             * [6] when Duration <= 30
+             * [7] when Duration > 30
+             */
+            public int[] DurationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            /*
+             * [0]-[7] App Defined
+             */
+            public int[] TransmissionRiskLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+
+            public IDictionary<object, object> Metadata { get; set; } = new Dictionary<object, object>();
+
+            public byte MinimumRiskScore { get; set; } = 0;
+
+            // This weight parameter is not used.
+            // public double AttenuationWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double DaysSinceLastExposureWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double DurationWeight { get; set; }
+
+            // This weight parameter is not used.
+            // public double TransmissionRiskWeight { get; set; }
+
+            #endregion
+
+            #region These properties are available in iOS 12.5, and in iOS 13.6 and later.
+
+            public double MinimumRiskScoreFullRange { get; set; } = 0.0;
+
+            #endregion
+
+        }
+
+        // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
+        public class AppleExposureV2Configuration
         {
             // Configuring Duration
 
@@ -177,69 +252,6 @@ namespace Chino
             public double ReportTypeRecursiveWeight { get; set; } = 100.0;
             public double ReportTypeSelfReportedWeight { get; set; } = 100.0;
             public ReportType ReportTypeNoneMap { get; set; } = ReportType.ConfirmedTest;
-
-            /*
-             * [0] when Attenuation > 73 dB
-             * [1] when 73 >= Attenuation > 63
-             * [2] when 63 >= Attenuation > 51
-             * [3] when 51 >= Attenuation > 33
-             * [4] when 33 >= Attenuation > 27
-             * [5] when 27 >= Attenuation > 15
-             * [6] when 15 >= Attenuation > 10
-             * [7] when 10 >= Attenuation
-             */
-            public int[] AttenuationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            /*
-             * [0] when Days >= 14
-             * [1] when Days >= 12
-             * [2] when Days >= 10
-             * [3] when Days >= 8
-             * [4] when Days >= 6
-             * [5] when Days >= 4
-             * [6] when Days >= 2
-             * [7] when Days >= 0
-             */
-            public int[] DaysSinceLastExposureLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            /*
-             * [0] when Duration == 0 min
-             * [1] when Duration <= 5
-             * [2] when Duration <= 10
-             * [3] when Duration <= 15
-             * [4] when Duration <= 20
-             * [5] when Duration <= 25
-             * [6] when Duration <= 30
-             * [7] when Duration > 30
-             */
-            public int[] DurationLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            /*
-             * [0]-[7] App Defined
-             */
-            public int[] TransmissionRiskLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
-
-            public IDictionary<object, object> Metadata { get; set; } = new Dictionary<object, object>();
-
-            public byte MinimumRiskScore { get; set; } = 0;
-
-            // This weight parameter is not used.
-            // public double AttenuationWeight { get; set; }
-
-            // This weight parameter is not used.
-            // public double DaysSinceLastExposureWeight { get; set; }
-
-            // This weight parameter is not used.
-            // public double DurationWeight { get; set; }
-
-            // This weight parameter is not used.
-            // public double TransmissionRiskWeight { get; set; }
-
-            #endregion
-
-            #region These properties are available in iOS 12.5, and in iOS 13.6 and later.
-
-            public double MinimumRiskScoreFullRange { get; set; } = 0.0;
 
             #endregion
 

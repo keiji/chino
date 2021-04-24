@@ -118,6 +118,8 @@ namespace Chino
 
         public async override Task ProvideDiagnosisKeys(List<string> zippedKeyFiles, ExposureConfiguration configuration)
         {
+            long enAPiVersion = await GetVersion();
+
             ExposureConfiguration = configuration;
 
             List<string> decompressedFiles = new List<string>();
@@ -147,7 +149,14 @@ namespace Chino
                 Logger.D(url.AbsoluteString);
             }
 
-            ENExposureConfiguration exposureConfiguration = GetExposureConfiguration(ExposureConfiguration);
+            ENExposureConfiguration exposureConfiguration = new ENExposureConfiguration();
+
+            exposureConfiguration = enAPiVersion switch
+            {
+                2 => GetExposureConfiguration(ExposureConfiguration.AppleExposureV2Config, exposureConfiguration),
+                _ => GetExposureConfiguration(ExposureConfiguration.AppleExposureV1Config, exposureConfiguration),
+
+            };
             Logger.D(exposureConfiguration.ToString());
 
             ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
@@ -166,8 +175,6 @@ namespace Chino
                     Logger.E(exception);
                 }
             }
-
-            long enAPiVersion = await GetVersion();
 
             if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
             {
@@ -273,46 +280,22 @@ namespace Chino
             }
         }
 
-        private ENExposureConfiguration GetExposureConfiguration(ExposureConfiguration exposureConfiguration)
+        private ENExposureConfiguration GetExposureConfiguration(
+            ExposureConfiguration.AppleExposureV1Configuration appleExposureConfiguration,
+            ENExposureConfiguration configuration
+        )
         {
-            var appleExposureConfiguration = exposureConfiguration.AppleExposureConfig;
-
             if (appleExposureConfiguration == null)
             {
-                Logger.E("appleExposureConfiguration is not set.");
+                Logger.E("appleExposureV1Configuration is not set.");
                 return new ENExposureConfiguration();
             }
 
-            NSDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsNSDict
-                = GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(
-                    appleExposureConfiguration.InfectiousnessForDaysSinceOnsetOfSymptoms,
-                    appleExposureConfiguration.InfectiousnessWhenDaysSinceOnsetMissing);
-
-            ENExposureConfiguration configuration = new ENExposureConfiguration();
-
             NSMutableDictionary metadata = new NSMutableDictionary();
 
-            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
-            {
-                Logger.D("Set configuration values for iOS 13.7 later.");
-                configuration.ImmediateDurationWeight = appleExposureConfiguration.ImmediateDurationWeight;
-                configuration.MediumDurationWeight = appleExposureConfiguration.MediumDurationWeight;
-                configuration.NearDurationWeight = appleExposureConfiguration.NearDurationWeight;
-                configuration.OtherDurationWeight = appleExposureConfiguration.OtherDurationWeight;
-                configuration.DaysSinceLastExposureThreshold = appleExposureConfiguration.DaysSinceLastExposureThreshold;
-                configuration.InfectiousnessForDaysSinceOnsetOfSymptoms = infectiousnessForDaysSinceOnsetOfSymptomsNSDict;
-                configuration.InfectiousnessHighWeight = appleExposureConfiguration.InfectiousnessHighWeight;
-                configuration.InfectiousnessStandardWeight = appleExposureConfiguration.InfectiousnessStandardWeight;
-                configuration.ReportTypeConfirmedClinicalDiagnosisWeight = appleExposureConfiguration.ReportTypeConfirmedClinicalDiagnosisWeight;
-                configuration.ReportTypeConfirmedTestWeight = appleExposureConfiguration.ReportTypeConfirmedTestWeight;
-                configuration.ReportTypeRecursiveWeight = appleExposureConfiguration.ReportTypeRecursiveWeight;
-                configuration.ReportTypeSelfReportedWeight = appleExposureConfiguration.ReportTypeSelfReportedWeight;
-                configuration.ReportTypeNoneMap = (ENDiagnosisReportType)Enum.ToObject(typeof(ENDiagnosisReportType), appleExposureConfiguration.ReportTypeNoneMap);
-            }
             if (UIDevice.CurrentDevice.CheckSystemVersion(13, 6))
             {
                 Logger.D("Set configuration values for iOS 13.6 later.");
-                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThresholds;
                 configuration.MinimumRiskScoreFullRange = appleExposureConfiguration.MinimumRiskScoreFullRange;
 
                 // MetaData
@@ -341,8 +324,66 @@ namespace Chino
                 && ObjCRuntime.Class.GetHandle("ENManager") != null)
             {
                 Logger.D("Set configuration values for iOS 12.5.");
-                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThresholds;
                 configuration.MinimumRiskScoreFullRange = appleExposureConfiguration.MinimumRiskScoreFullRange;
+
+                configuration.AttenuationLevelValues = appleExposureConfiguration.AttenuationLevelValues;
+                configuration.DaysSinceLastExposureLevelValues = appleExposureConfiguration.DaysSinceLastExposureLevelValues;
+                configuration.DurationLevelValues = appleExposureConfiguration.DurationLevelValues;
+                configuration.TransmissionRiskLevelValues = appleExposureConfiguration.TransmissionRiskLevelValues;
+                configuration.MinimumRiskScore = appleExposureConfiguration.MinimumRiskScore;
+            }
+
+            configuration.Metadata = metadata;
+
+            return configuration;
+        }
+
+        private ENExposureConfiguration GetExposureConfiguration(
+            ExposureConfiguration.AppleExposureV2Configuration appleExposureConfiguration,
+            ENExposureConfiguration configuration
+        )
+        {
+            if (appleExposureConfiguration == null)
+            {
+                Logger.E("appleExposureConfiguration is not set.");
+                return new ENExposureConfiguration();
+            }
+
+            NSDictionary<NSNumber, NSNumber> infectiousnessForDaysSinceOnsetOfSymptomsNSDict
+                = GetInfectiousnessForDaysSinceOnsetOfSymptomsNSDict(
+                    appleExposureConfiguration.InfectiousnessForDaysSinceOnsetOfSymptoms,
+                    appleExposureConfiguration.InfectiousnessWhenDaysSinceOnsetMissing);
+
+            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
+            {
+                Logger.D("Set configuration values for iOS 13.7 later.");
+                configuration.ImmediateDurationWeight = appleExposureConfiguration.ImmediateDurationWeight;
+                configuration.MediumDurationWeight = appleExposureConfiguration.MediumDurationWeight;
+                configuration.NearDurationWeight = appleExposureConfiguration.NearDurationWeight;
+                configuration.OtherDurationWeight = appleExposureConfiguration.OtherDurationWeight;
+                configuration.DaysSinceLastExposureThreshold = appleExposureConfiguration.DaysSinceLastExposureThreshold;
+                configuration.InfectiousnessForDaysSinceOnsetOfSymptoms = infectiousnessForDaysSinceOnsetOfSymptomsNSDict;
+                configuration.InfectiousnessHighWeight = appleExposureConfiguration.InfectiousnessHighWeight;
+                configuration.InfectiousnessStandardWeight = appleExposureConfiguration.InfectiousnessStandardWeight;
+                configuration.ReportTypeConfirmedClinicalDiagnosisWeight = appleExposureConfiguration.ReportTypeConfirmedClinicalDiagnosisWeight;
+                configuration.ReportTypeConfirmedTestWeight = appleExposureConfiguration.ReportTypeConfirmedTestWeight;
+                configuration.ReportTypeRecursiveWeight = appleExposureConfiguration.ReportTypeRecursiveWeight;
+                configuration.ReportTypeSelfReportedWeight = appleExposureConfiguration.ReportTypeSelfReportedWeight;
+                configuration.ReportTypeNoneMap = (ENDiagnosisReportType)Enum.ToObject(typeof(ENDiagnosisReportType), appleExposureConfiguration.ReportTypeNoneMap);
+            }
+            if (UIDevice.CurrentDevice.CheckSystemVersion(13, 6))
+            {
+                Logger.D("Set configuration values for iOS 13.6 later.");
+                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThresholds;
+            }
+
+            // iOS 12.5
+            if (!UIDevice.CurrentDevice.CheckSystemVersion(13, 6)
+                && !UIDevice.CurrentDevice.CheckSystemVersion(13, 5)
+                && ObjCRuntime.Class.GetHandle("ENManager") != null)
+            {
+                Logger.D("Set configuration values for iOS 12.5.");
+                configuration.AttenuationDurationThresholds = appleExposureConfiguration.AttenuationDurationThresholds;
 
                 configuration.ImmediateDurationWeight = appleExposureConfiguration.ImmediateDurationWeight;
                 configuration.MediumDurationWeight = appleExposureConfiguration.MediumDurationWeight;
@@ -357,14 +398,7 @@ namespace Chino
                 configuration.ReportTypeRecursiveWeight = appleExposureConfiguration.ReportTypeRecursiveWeight;
                 configuration.ReportTypeSelfReportedWeight = appleExposureConfiguration.ReportTypeSelfReportedWeight;
                 configuration.ReportTypeNoneMap = (ENDiagnosisReportType)Enum.ToObject(typeof(ENDiagnosisReportType), appleExposureConfiguration.ReportTypeNoneMap);
-                configuration.AttenuationLevelValues = appleExposureConfiguration.AttenuationLevelValues;
-                configuration.DaysSinceLastExposureLevelValues = appleExposureConfiguration.DaysSinceLastExposureLevelValues;
-                configuration.DurationLevelValues = appleExposureConfiguration.DurationLevelValues;
-                configuration.TransmissionRiskLevelValues = appleExposureConfiguration.TransmissionRiskLevelValues;
-                configuration.MinimumRiskScore = appleExposureConfiguration.MinimumRiskScore;
             }
-
-            configuration.Metadata = metadata;
 
             return configuration;
         }
