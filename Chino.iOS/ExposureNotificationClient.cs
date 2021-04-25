@@ -260,7 +260,7 @@ namespace Chino
 
             List<IDailySummary> dailySummaries = summary.DaySummaries.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
 
-            if(dailySummaries.Count > 0)
+            if (dailySummaries.Count > 0)
             {
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
                 Print(summary);
@@ -270,7 +270,8 @@ namespace Chino
                 Logger.D(exposureWindows);
 
                 Handler.ExposureDetected(dailySummaries, exposureWindows);
-            } else
+            }
+            else
             {
                 Handler.ExposureNotDetected();
             }
