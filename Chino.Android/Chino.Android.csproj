@@ -61,7 +61,7 @@
       <HintPath>..\packages\Xamarin.AndroidX.Lifecycle.LiveData.Core.2.3.1\lib\monoandroid90\Xamarin.AndroidX.Lifecycle.LiveData.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Lifecycle.Runtime">
-      <HintPath>..\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.3.1\lib\monoandroid90\Xamarin.AndroidX.Lifecycle.Runtime.dll</HintPath>
+      <HintPath>..\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.3.1.1\lib\monoandroid90\Xamarin.AndroidX.Lifecycle.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Lifecycle.ViewModel">
       <HintPath>..\packages\Xamarin.AndroidX.Lifecycle.ViewModel.2.3.1\lib\monoandroid90\Xamarin.AndroidX.Lifecycle.ViewModel.dll</HintPath>
@@ -100,7 +100,7 @@
       <HintPath>..\packages\Xamarin.GooglePlayServices.Base.117.6.0\lib\monoandroid90\Xamarin.GooglePlayServices.Base.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Nearby.ExposureNotification">
-      <HintPath>..\packages\Xamarin.GooglePlayServices.Nearby.ExposureNotification.19.7.2-eap-alpha01\lib\monoandroid10.0\Xamarin.GooglePlayServices.Nearby.ExposureNotification.dll</HintPath>
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Nearby.ExposureNotification.19.7.2-eap-alpha02\lib\monoandroid10.0\Xamarin.GooglePlayServices.Nearby.ExposureNotification.dll</HintPath>
     </Reference>
     <Reference Include="Java.Interop" />
     <Reference Include="Xamarin.Google.Guava.ListenableFuture">
@@ -143,7 +143,6 @@
   <Import Project="..\packages\Xamarin.AndroidX.Collection.1.1.0.7\build\monoandroid9.0\Xamarin.AndroidX.Collection.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Collection.1.1.0.7\build\monoandroid9.0\Xamarin.AndroidX.Collection.targets')" />
   <Import Project="..\packages\Xamarin.AndroidX.Lifecycle.Common.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.Common.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Lifecycle.Common.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.Common.targets')" />
   <Import Project="..\packages\Xamarin.AndroidX.Lifecycle.LiveData.Core.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.LiveData.Core.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Lifecycle.LiveData.Core.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.LiveData.Core.targets')" />
-  <Import Project="..\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.Runtime.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.Runtime.targets')" />
   <Import Project="..\packages\Xamarin.AndroidX.Lifecycle.ViewModel.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.ViewModel.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Lifecycle.ViewModel.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.ViewModel.targets')" />
   <Import Project="..\packages\Xamarin.AndroidX.SavedState.1.1.0.1\build\monoandroid9.0\Xamarin.AndroidX.SavedState.targets" Condition="Exists('..\packages\Xamarin.AndroidX.SavedState.1.1.0.1\build\monoandroid9.0\Xamarin.AndroidX.SavedState.targets')" />
   <Import Project="..\packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.3.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets')" />
@@ -159,4 +158,5 @@
   <Import Project="..\packages\Xamarin.GooglePlayServices.Tasks.117.2.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Tasks.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Tasks.117.2.1\build\MonoAndroid90\Xamarin.GooglePlayServices.Tasks.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Base.117.6.0\build\MonoAndroid90\Xamarin.GooglePlayServices.Base.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Base.117.6.0\build\MonoAndroid90\Xamarin.GooglePlayServices.Base.targets')" />
   <Import Project="..\packages\Xamarin.AndroidX.Annotation.Experimental.1.1.0\build\monoandroid9.0\Xamarin.AndroidX.Annotation.Experimental.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Annotation.Experimental.1.1.0\build\monoandroid9.0\Xamarin.AndroidX.Annotation.Experimental.targets')" />
+  <Import Project="..\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.3.1.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.Runtime.targets" Condition="Exists('..\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.3.1.1\build\monoandroid9.0\Xamarin.AndroidX.Lifecycle.Runtime.targets')" />
 </Project>
