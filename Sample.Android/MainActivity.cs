@@ -20,6 +20,7 @@ namespace Sample.Android
     {
         private const int REQUEST_EN_START = 0x10;
         private const int REQUEST_GET_TEK_HISTORY = 0x11;
+        private const int REQUEST_PREAUTHORIZE_KEYS = 0x12;
 
         private const string DIAGNOSIS_KEYS_DIR = "diagnosis_keys";
 
@@ -28,6 +29,8 @@ namespace Sample.Android
         private Button? buttonEn = null;
         private Button? buttonGetTekHistory = null;
         private Button? buttonProvideDiagnosisKeys = null;
+        private Button? buttonRequestPreauthorizedKeys = null;
+        private Button? buttonRequestReleaseKeys = null;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -62,6 +65,54 @@ namespace Sample.Android
                 await ProvideDiagnosisKeys();
             };
 
+            buttonRequestPreauthorizedKeys = FindViewById<Button>(Resource.Id.btn_request_preauthorize_keys);
+            buttonRequestPreauthorizedKeys.Click += async delegate
+            {
+                Logger.D("buttonRequestPreauthorizedKeys clicked");
+
+                await RequestPreAuthorizeKeys();
+            };
+
+            buttonRequestReleaseKeys = FindViewById<Button>(Resource.Id.btn_request_release_keys);
+            buttonRequestReleaseKeys.Click += async delegate
+            {
+                Logger.D("buttonRequestReleaseKeys clicked");
+
+                await RequestReleaseKeys();
+            };
+        }
+
+        private async Task RequestReleaseKeys()
+        {
+            Logger.D("RequestReleaseKeys");
+            try
+            {
+                await EnClient.RequestPreAuthorizedTemporaryExposureKeyRelease();
+            }
+            catch (ApiException apiException)
+            {
+                Logger.D($"RequestReleaseKeys ApiException {apiException.StatusCode}");
+            }
+
+        }
+
+        private async Task RequestPreAuthorizeKeys()
+        {
+            Logger.D("RequestPreAuthorizeKeys");
+            try
+            {
+                await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistory();
+                Logger.D("RequestPreAuthorizeKeys Success");
+            }
+            catch (ApiException apiException)
+            {
+                Logger.D($"RequestPreAuthorizeKeys ApiException {apiException.StatusCode}");
+
+                if (apiException.StatusCode == CommonStatusCodes.ResolutionRequired)
+                {
+                    apiException.Status.StartResolutionForResult(this, REQUEST_PREAUTHORIZE_KEYS);
+                }
+            }
         }
 
         private async Task ProvideDiagnosisKeys()
@@ -166,6 +217,9 @@ namespace Sample.Android
                     break;
                 case REQUEST_GET_TEK_HISTORY:
                     await ShowTekHistory();
+                    break;
+                case REQUEST_PREAUTHORIZE_KEYS:
+                    await RequestPreAuthorizeKeys();
                     break;
             }
         }

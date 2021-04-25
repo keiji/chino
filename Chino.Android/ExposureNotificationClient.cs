@@ -9,6 +9,7 @@ using Android.Gms.Nearby.ExposureNotification;
 using System.Threading.Tasks;
 using System.Linq;
 
+using AndroidTemporaryExposureKey = Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey;
 using AndroidExposureConfiguration = Android.Gms.Nearby.ExposureNotification.ExposureConfiguration;
 using AndroidExposureSummary = Android.Gms.Nearby.ExposureNotification.ExposureSummary;
 using AndroidDailySummariesConfig = Android.Gms.Nearby.ExposureNotification.DailySummariesConfig;
@@ -28,16 +29,18 @@ namespace Chino
         public const string PERMISSION_EXPOSURE_CALLBACK = "com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK";
         public const string ACTION_EXPOSURE_STATE_UPDATED = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATED";
         public const string ACTION_EXPOSURE_NOT_FOUND = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_NOT_FOUND";
+        public const string ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED = "com.google.android.gms.exposurenotification.ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED";
         public const string SERVICE_STATE_UPDATED = "com.google.android.gms.exposurenotification.SERVICE_STATE_UPDATED";
 
         public const string EXTRA_TOKEN = "com.google.android.gms.exposurenotification.EXTRA_TOKEN";
         public const string EXTRA_EXPOSURE_SUMMARY = "com.google.android.gms.exposurenotification.EXTRA_EXPOSURE_SUMMARY";
+        public const string EXTRA_TEMPORARY_EXPOSURE_KEY_LIST = "com.google.android.gms.exposurenotification.EXTRA_TEMPORARY_EXPOSURE_KEY_LIST";
 
         [BroadcastReceiver(
             Exported = true,
             Permission = PERMISSION_EXPOSURE_CALLBACK
             )]
-        [IntentFilter(new[] { ACTION_EXPOSURE_STATE_UPDATED, ACTION_EXPOSURE_NOT_FOUND })]
+        [IntentFilter(new[] { ACTION_EXPOSURE_STATE_UPDATED, ACTION_EXPOSURE_NOT_FOUND, ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED })]
         [Preserve]
         public class ExposureStateBroadcastReceiver : BroadcastReceiver
         {
@@ -86,6 +89,14 @@ namespace Chino
                     case ACTION_EXPOSURE_NOT_FOUND:
                         Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
                         Handler.ExposureNotDetected();
+                        break;
+                    case ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED:
+                        Logger.D($"ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED");
+                        IList<AndroidTemporaryExposureKey> tekList = intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
+                            .Cast<AndroidTemporaryExposureKey>()
+                            .ToList();
+                        IList<ITemporaryExposureKey> temporaryExposureKeys = tekList.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                        Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
                         break;
                 }
             }
@@ -247,6 +258,12 @@ namespace Chino
             await EnClient.ProvideDiagnosisKeysAsync(files, Convert(configuration), token);
         }
 #pragma warning restore CS0618 // Type or member is obsolete
+
+        public override async Task RequestPreAuthorizedTemporaryExposureKeyHistory()
+            => await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+
+        public override async Task RequestPreAuthorizedTemporaryExposureKeyRelease()
+            => await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
 
         private static AndroidDailySummariesConfig Convert(DailySummariesConfig dailySummariesConfig)
         {

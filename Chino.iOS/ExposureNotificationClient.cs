@@ -17,7 +17,20 @@ namespace Chino
 
         public static readonly ExposureNotificationClient Shared = new ExposureNotificationClient();
 
-        private readonly ENManager EnManager = new ENManager();
+        private readonly ENManager EnManager = new ENManager()
+        {
+            DiagnosisKeysAvailableHandler = new ENDiagnosisKeysAvailableHandler(teks =>
+            {
+                if (Handler == null)
+                {
+                    Logger.E("ENDiagnosisKeysAvailableHandler is called but ENDiagnosisKeysAvailableHandler is not set.");
+                    return;
+                }
+
+                IList<ITemporaryExposureKey> temporaryExposureKeys = (IList<ITemporaryExposureKey>)teks.Select(tek => new TemporaryExposureKey(tek));
+                Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
+            })
+        };
 
         public bool IsTest = false;
 
@@ -429,14 +442,10 @@ namespace Chino
                             (nint)infectiousnessForDaysSinceOnsetOfSymptomsMutableDict.Count);
         }
 
-        //public override Task RequestPreAuthorizedTemporaryExposureKeyHistory()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public override async Task RequestPreAuthorizedTemporaryExposureKeyHistory()
+            => await EnManager.PreAuthorizeDiagnosisKeysAsync();
 
-        //public override Task RequestPreAuthorizedTemporaryExposureKeyRelease()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public override async Task RequestPreAuthorizedTemporaryExposureKeyRelease()
+            => await EnManager.RequestPreAuthorizedDiagnosisKeysAsync();
     }
 }

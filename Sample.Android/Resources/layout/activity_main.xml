@@ -26,4 +26,16 @@
     android:layout_height="wrap_content"
     android:text="Provide Diagnosis Keys" />
 
+  <Button
+    android:id="@+id/btn_request_preauthorize_keys"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Request Preauthorized Keys" />
+
+  <Button
+    android:id="@+id/btn_request_release_keys"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Request Release Keys" />
+
 </LinearLayout>

@@ -31,8 +31,8 @@ namespace Chino
 
         public abstract Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration, string token);
 
-        //public abstract Task RequestPreAuthorizedTemporaryExposureKeyHistory();
+        public abstract Task RequestPreAuthorizedTemporaryExposureKeyHistory();
 
-        //public abstract Task RequestPreAuthorizedTemporaryExposureKeyRelease();
+        public abstract Task RequestPreAuthorizedTemporaryExposureKeyRelease();
     }
 }

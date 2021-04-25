@@ -19,10 +19,21 @@ namespace Sample.iOS
 		UIKit.UIButton buttonEnableEn { get; set; }
 
 		[Outlet]
+		UIKit.UIButton buttonRequestPreauthorizedKeys { get; set; }
+
+		[Outlet]
+		UIKit.UIButton buttonRequestReleaseKeys { get; set; }
+
+		[Outlet]
 		UIKit.UIButton buttonShowTeksHistory { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
+			if (buttonDetectExposure != null) {
+				buttonDetectExposure.Dispose ();
+				buttonDetectExposure = null;
+			}
+
 			if (buttonEnableEn != null) {
 				buttonEnableEn.Dispose ();
 				buttonEnableEn = null;
@@ -33,9 +44,14 @@ namespace Sample.iOS
 				buttonShowTeksHistory = null;
 			}
 
-			if (buttonDetectExposure != null) {
-				buttonDetectExposure.Dispose ();
-				buttonDetectExposure = null;
+			if (buttonRequestPreauthorizedKeys != null) {
+				buttonRequestPreauthorizedKeys.Dispose ();
+				buttonRequestPreauthorizedKeys = null;
+			}
+
+			if (buttonRequestReleaseKeys != null) {
+				buttonRequestReleaseKeys.Dispose ();
+				buttonRequestReleaseKeys = null;
 			}
 		}
 	}

@@ -73,7 +73,7 @@
     <ItemGroup>
       <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
       <PackageReference Include="Xamarin.iOS.ExposureNotification">
-        <Version>1.2.2-preview1</Version>
+        <Version>1.2.3-alpha01</Version>
       </PackageReference>
     </ItemGroup>
     <ItemGroup>

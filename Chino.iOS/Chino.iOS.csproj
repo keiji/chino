@@ -46,7 +46,7 @@
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
     <Reference Include="Xamarin.iOS.ExposureNotification">
-      <HintPath>..\packages\Xamarin.iOS.ExposureNotification.1.2.2-preview1\lib\xamarinios10\Xamarin.iOS.ExposureNotification.dll</HintPath>
+      <HintPath>..\packages\Xamarin.iOS.ExposureNotification.1.2.3-alpha01\lib\xamarinios10\Xamarin.iOS.ExposureNotification.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
@@ -68,5 +68,5 @@
   <Import Project="..\Chino.Shared\Chino.Shared.projitems" Label="Shared" Condition="Exists('..\Chino.Shared\Chino.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets" Condition="Exists('..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets')" />
-  <Import Project="..\packages\Xamarin.iOS.ExposureNotification.1.2.2-preview1\build\Xamarin.iOS.ExposureNotification.targets" Condition="Exists('..\packages\Xamarin.iOS.ExposureNotification.1.2.2-preview1\build\Xamarin.iOS.ExposureNotification.targets')" />
+  <Import Project="..\packages\Xamarin.iOS.ExposureNotification.1.2.3-alpha01\build\Xamarin.iOS.ExposureNotification.targets" Condition="Exists('..\packages\Xamarin.iOS.ExposureNotification.1.2.3-alpha01\build\Xamarin.iOS.ExposureNotification.targets')" />
 </Project>

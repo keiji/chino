@@ -65,7 +65,35 @@ namespace Sample.iOS
                     exception.LogD();
                 }
             };
+            buttonRequestPreauthorizedKeys.TouchUpInside += async (sender, e) =>
+            {
+                try
+                {
+                    await RequestPreauthorizedKeys();
+                }
+                catch (NSErrorException exception)
+                {
+                    exception.LogD();
+                }
+            };
+            buttonRequestReleaseKeys.TouchUpInside += async (sender, e) =>
+            {
+                try
+                {
+                    await RequestReleaseKeys();
+                }
+                catch (NSErrorException exception)
+                {
+                    exception.LogD();
+                }
+            };
         }
+
+        private async Task RequestPreauthorizedKeys()
+            => await ExposureNotificationClient.Shared.RequestPreAuthorizedTemporaryExposureKeyHistory();
+
+        private async Task RequestReleaseKeys()
+            => await ExposureNotificationClient.Shared.RequestPreAuthorizedTemporaryExposureKeyRelease();
 
         private async Task DetectExposure()
         {

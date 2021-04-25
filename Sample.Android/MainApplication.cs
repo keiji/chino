@@ -36,6 +36,16 @@ namespace Sample.Android
             return EnClient;
         }
 
+        public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        {
+            Logger.D("TemporaryExposureKeyReleased");
+
+            foreach (ITemporaryExposureKey tek in temporaryExposureKeys)
+            {
+                Logger.D(Convert.ToBase64String(tek.KeyData));
+            }
+        }
+
         public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
         {
             Logger.D("ExposureDetected ExposureWindows");

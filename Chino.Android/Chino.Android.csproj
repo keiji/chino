@@ -100,7 +100,7 @@
       <HintPath>..\packages\Xamarin.GooglePlayServices.Base.117.6.0\lib\monoandroid90\Xamarin.GooglePlayServices.Base.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Nearby.ExposureNotification">
-      <HintPath>..\packages\Xamarin.GooglePlayServices.Nearby.ExposureNotification.19.7.1-eap.1\lib\monoandroid10.0\Xamarin.GooglePlayServices.Nearby.ExposureNotification.dll</HintPath>
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Nearby.ExposureNotification.19.7.2-eap-alpha01\lib\monoandroid10.0\Xamarin.GooglePlayServices.Nearby.ExposureNotification.dll</HintPath>
     </Reference>
     <Reference Include="Java.Interop" />
     <Reference Include="Xamarin.Google.Guava.ListenableFuture">

@@ -7,6 +7,11 @@ namespace Chino
     {
         AbsExposureNotificationClient GetEnClient();
 
+        public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        {
+            throw new NotImplementedException();
+        }
+
         public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
         {
             throw new NotImplementedException();

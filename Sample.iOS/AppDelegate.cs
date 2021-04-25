@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Chino;
 using Foundation;
 using UIKit;
@@ -43,6 +44,16 @@ namespace Sample.iOS
         }
 
         public AbsExposureNotificationClient GetEnClient() => ExposureNotificationClient.Shared;
+
+        public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        {
+            Logger.D("TemporaryExposureKeyReleased");
+
+            foreach (ITemporaryExposureKey tek in temporaryExposureKeys)
+            {
+                Logger.D(Convert.ToBase64String(tek.KeyData));
+            }
+        }
 
         public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
         {
