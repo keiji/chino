@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="System.Drawing.Common.dll" />
     <Reference Include="Xamarin.iOS.ExposureNotification">
       <HintPath>..\packages\Xamarin.iOS.ExposureNotification.1.2.3-alpha01\lib\xamarinios10\Xamarin.iOS.ExposureNotification.dll</HintPath>
     </Reference>
