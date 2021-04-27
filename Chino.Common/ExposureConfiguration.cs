@@ -185,9 +185,6 @@ namespace Chino
             [JsonProperty("transmission_risk_level_values")]
             public int[] TransmissionRiskLevelValues { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
-            [JsonIgnore]
-            public IDictionary<object, object> Metadata { get; set; } = new Dictionary<object, object>();
-
             [JsonProperty("minimum_risk_score")]
             public byte MinimumRiskScore { get; set; } = 0;
 
