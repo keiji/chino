@@ -101,6 +101,7 @@ namespace Chino
                 }
             }
 
+#pragma warning disable CS0612,CS0618 // Type or member is obsolete
             private async Task GetExposureV1Async(ExposureNotificationClient enClient, string token)
             {
                 Logger.D($"GetExposureV1Async");
@@ -112,6 +113,7 @@ namespace Chino
 
                 Handler.ExposureDetected(new ExposureSummary(exposureSummary), exposureInformations);
             }
+#pragma warning restore CS06122,CS0618 // Type or member is obsolete
 
             private async Task GetExposureV2Async(ExposureNotificationClient enClient)
             {
