@@ -145,6 +145,10 @@
         <Project>{52CD6C7F-7D27-459C-8A59-CD66385E6F95}</Project>
         <Name>Chino.iOS</Name>
       </ProjectReference>
+      <ProjectReference Include="..\Chino.Common\Chino.Common.csproj">
+        <Project>{0F213D20-17A9-4862-89F5-1BE076B206F3}</Project>
+        <Name>Chino.Common</Name>
+      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
