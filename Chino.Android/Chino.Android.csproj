@@ -130,9 +130,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Chino.Shared\Chino.Shared.csproj">
-      <Project>{03603361-03D8-4B68-8F01-DF03475A9EC0}</Project>
-      <Name>Chino.Shared</Name>
+    <ProjectReference Include="..\Chino.Common\Chino.Common.csproj">
+      <Project>{0F213D20-17A9-4862-89F5-1BE076B206F3}</Project>
+      <Name>Chino.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
