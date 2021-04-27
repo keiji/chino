@@ -129,7 +129,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="..\Chino.Shared\Chino.Shared.projitems" Label="Shared" Condition="Exists('..\Chino.Shared\Chino.Shared.projitems')" />
+  <ItemGroup>
+    <ProjectReference Include="..\Chino.Shared\Chino.Shared.csproj">
+      <Project>{03603361-03D8-4B68-8F01-DF03475A9EC0}</Project>
+      <Name>Chino.Shared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets" Condition="Exists('..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets')" />
   <Import Project="..\packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.10.0\build\Xamarin.Build.Download.targets')" />
