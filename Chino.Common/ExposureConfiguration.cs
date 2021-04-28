@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Chino
@@ -89,6 +91,37 @@ namespace Chino
 
             [JsonProperty("transmission_risk_weight")]
             public int TransmissionRiskWeight { get; set; } = 50;
+
+            public override bool Equals(object obj)
+            {
+                return obj is GoogleExposureConfiguration configuration &&
+                       AttenuationScores.SequenceEqual(configuration.AttenuationScores) &&
+                       AttenuationWeight == configuration.AttenuationWeight &&
+                       DaysSinceLastExposureScores.SequenceEqual(configuration.DaysSinceLastExposureScores) &&
+                       DaysSinceLastExposureWeight == configuration.DaysSinceLastExposureWeight &&
+                       DurationAtAttenuationThresholds.SequenceEqual(configuration.DurationAtAttenuationThresholds) &&
+                       DurationScores.SequenceEqual(configuration.DurationScores) &&
+                       DurationWeight == configuration.DurationWeight &&
+                       MinimumRiskScore == configuration.MinimumRiskScore &&
+                       TransmissionRiskScores.SequenceEqual(configuration.TransmissionRiskScores) &&
+                       TransmissionRiskWeight == configuration.TransmissionRiskWeight;
+            }
+
+            public override int GetHashCode()
+            {
+                HashCode hash = new HashCode();
+                hash.Add(AttenuationScores);
+                hash.Add(AttenuationWeight);
+                hash.Add(DaysSinceLastExposureScores);
+                hash.Add(DaysSinceLastExposureWeight);
+                hash.Add(DurationAtAttenuationThresholds);
+                hash.Add(DurationScores);
+                hash.Add(DurationWeight);
+                hash.Add(MinimumRiskScore);
+                hash.Add(TransmissionRiskScores);
+                hash.Add(TransmissionRiskWeight);
+                return hash.ToHashCode();
+            }
         }
 
         // https://developers.google.com/android/exposure-notifications/meaningful-exposures
@@ -130,6 +163,18 @@ namespace Chino
 
             [JsonProperty("infectiousness_when_days_since_onset_missing")]
             public Infectiousness InfectiousnessWhenDaysSinceOnsetMissing = Infectiousness.Standard;
+
+            public override bool Equals(object obj)
+            {
+                return obj is GoogleDiagnosisKeysDataMappingConfiguration configuration &&
+                       InfectiousnessForDaysSinceOnsetOfSymptoms.SequenceEqual(InfectiousnessForDaysSinceOnsetOfSymptoms) &&
+                       InfectiousnessWhenDaysSinceOnsetMissing == configuration.InfectiousnessWhenDaysSinceOnsetMissing;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(InfectiousnessForDaysSinceOnsetOfSymptoms, InfectiousnessWhenDaysSinceOnsetMissing);
+            }
         }
 
         // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration/exposure_risk_value_calculation_in_exposurenotification_version_1
@@ -209,6 +254,21 @@ namespace Chino
 
             #endregion
 
+            public override bool Equals(object obj)
+            {
+                return obj is AppleExposureV1Configuration configuration &&
+                       AttenuationLevelValues.SequenceEqual(configuration.AttenuationLevelValues) &&
+                       DaysSinceLastExposureLevelValues.SequenceEqual(configuration.DaysSinceLastExposureLevelValues) &&
+                       DurationLevelValues.SequenceEqual(configuration.DurationLevelValues) &&
+                       TransmissionRiskLevelValues.SequenceEqual(configuration.TransmissionRiskLevelValues) &&
+                       MinimumRiskScore == configuration.MinimumRiskScore &&
+                       MinimumRiskScoreFullRange == configuration.MinimumRiskScoreFullRange;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(AttenuationLevelValues, DaysSinceLastExposureLevelValues, DurationLevelValues, TransmissionRiskLevelValues, MinimumRiskScore, MinimumRiskScoreFullRange);
+            }
         }
 
         // https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
@@ -303,8 +363,65 @@ namespace Chino
             [JsonProperty("report_type_none_map")]
             public ReportType ReportTypeNoneMap { get; set; } = ReportType.ConfirmedTest;
 
+            public override bool Equals(object obj)
+            {
+                return obj is AppleExposureV2Configuration configuration &&
+                       AttenuationDurationThresholds.SequenceEqual(configuration.AttenuationDurationThresholds) &&
+                       ImmediateDurationWeight == configuration.ImmediateDurationWeight &&
+                       NearDurationWeight == configuration.NearDurationWeight &&
+                       MediumDurationWeight == configuration.MediumDurationWeight &&
+                       OtherDurationWeight == configuration.OtherDurationWeight &&
+                       DaysSinceLastExposureThreshold == configuration.DaysSinceLastExposureThreshold &&
+                       InfectiousnessForDaysSinceOnsetOfSymptoms.SequenceEqual(configuration.InfectiousnessForDaysSinceOnsetOfSymptoms) &&
+                       InfectiousnessWhenDaysSinceOnsetMissing == configuration.InfectiousnessWhenDaysSinceOnsetMissing &&
+                       InfectiousnessHighWeight == configuration.InfectiousnessHighWeight &&
+                       InfectiousnessStandardWeight == configuration.InfectiousnessStandardWeight &&
+                       ReportTypeConfirmedClinicalDiagnosisWeight == configuration.ReportTypeConfirmedClinicalDiagnosisWeight &&
+                       ReportTypeConfirmedTestWeight == configuration.ReportTypeConfirmedTestWeight &&
+                       ReportTypeRecursiveWeight == configuration.ReportTypeRecursiveWeight &&
+                       ReportTypeSelfReportedWeight == configuration.ReportTypeSelfReportedWeight &&
+                       ReportTypeNoneMap == configuration.ReportTypeNoneMap;
+            }
+
+            public override int GetHashCode()
+            {
+                HashCode hash = new HashCode();
+                hash.Add(AttenuationDurationThresholds);
+                hash.Add(ImmediateDurationWeight);
+                hash.Add(NearDurationWeight);
+                hash.Add(MediumDurationWeight);
+                hash.Add(OtherDurationWeight);
+                hash.Add(DaysSinceLastExposureThreshold);
+                hash.Add(InfectiousnessForDaysSinceOnsetOfSymptoms);
+                hash.Add(InfectiousnessWhenDaysSinceOnsetMissing);
+                hash.Add(InfectiousnessHighWeight);
+                hash.Add(InfectiousnessStandardWeight);
+                hash.Add(ReportTypeConfirmedClinicalDiagnosisWeight);
+                hash.Add(ReportTypeConfirmedTestWeight);
+                hash.Add(ReportTypeRecursiveWeight);
+                hash.Add(ReportTypeSelfReportedWeight);
+                hash.Add(ReportTypeNoneMap);
+                return hash.ToHashCode();
+            }
+
             #endregion
 
+
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ExposureConfiguration configuration &&
+                   EqualityComparer<GoogleExposureConfiguration>.Default.Equals(GoogleExposureConfig, configuration.GoogleExposureConfig) &&
+                   EqualityComparer<GoogleDiagnosisKeysDataMappingConfiguration>.Default.Equals(GoogleDiagnosisKeysDataMappingConfig, configuration.GoogleDiagnosisKeysDataMappingConfig) &&
+                   EqualityComparer<DailySummariesConfig>.Default.Equals(GoogleDailySummariesConfig, configuration.GoogleDailySummariesConfig) &&
+                   EqualityComparer<AppleExposureV1Configuration>.Default.Equals(AppleExposureV1Config, configuration.AppleExposureV1Config) &&
+                   EqualityComparer<AppleExposureV2Configuration>.Default.Equals(AppleExposureV2Config, configuration.AppleExposureV2Config);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(GoogleExposureConfig, GoogleDiagnosisKeysDataMappingConfig, GoogleDailySummariesConfig, AppleExposureV1Config, AppleExposureV2Config);
         }
     }
 }

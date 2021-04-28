@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Chino
@@ -40,5 +41,21 @@ namespace Chino
             { ReportType.Revoked, 1.0 },
             { ReportType.Unknown, 1.0 }
         };
+
+        public override bool Equals(object obj)
+        {
+            return obj is DailySummariesConfig config &&
+                   AttenuationBucketThresholdDb.SequenceEqual(config.AttenuationBucketThresholdDb) &&
+                   AttenuationBucketWeights.SequenceEqual(config.AttenuationBucketWeights) &&
+                   DaysSinceExposureThreshold == config.DaysSinceExposureThreshold &&
+                   InfectiousnessWeights.SequenceEqual(config.InfectiousnessWeights) &&
+                   MinimumWindowScore == config.MinimumWindowScore &&
+                   ReportTypeWeights.SequenceEqual(config.ReportTypeWeights);
+        }
+
+        public override int GetHashCode()
+        {
+            return System.HashCode.Combine(AttenuationBucketThresholdDb, AttenuationBucketWeights, DaysSinceExposureThreshold, InfectiousnessWeights, MinimumWindowScore, ReportTypeWeights);
+        }
     }
 }

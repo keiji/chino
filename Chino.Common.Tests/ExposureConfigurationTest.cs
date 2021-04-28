@@ -7,10 +7,12 @@ namespace Chino.Common.Tests
 
     public class ExposureConfigurationTest
     {
+        private readonly string PATH_JSON_SERIALIZED1 = Path.Combine(Utils.GetCurrentProjectPath(), "./files/serialized1.json");
+
         [Fact]
         public void TestSerializeToJson()
         {
-            using (var sr = new StreamReader(File.OpenRead(Path.Combine(Utils.GetCurrentProjectPath(), "./files/serialized1.json"))))
+            using (var sr = new StreamReader(File.OpenRead(PATH_JSON_SERIALIZED1)))
             {
                 var expected = sr.ReadToEnd();
 
@@ -19,6 +21,20 @@ namespace Chino.Common.Tests
                 Logger.D(jsonStr);
 
                 Assert.Equal(expected, jsonStr);
+            }
+        }
+
+        [Fact]
+        public void TestDeserializeFromJson()
+        {
+            using (var sr = new StreamReader(File.OpenRead(PATH_JSON_SERIALIZED1)))
+            {
+                var expected = new ExposureConfiguration();
+
+                var jsonStr = sr.ReadToEnd();
+                var exposureConfiguration = JsonConvert.DeserializeObject<ExposureConfiguration>(jsonStr);
+
+                Assert.True(expected.Equals(exposureConfiguration));
             }
         }
     }
