@@ -1,0 +1,51 @@
+{
+  "attenuation_scores": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "attenuation_weight": 50,
+  "days_since_last_exposure_scores": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "days_since_last_exposure_weight": 50,
+  "duration_at_attenuation_thresholds": [
+    50,
+    70
+  ],
+  "duration_scores": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "duration_weight": 50,
+  "minimum_risk_score": 21,
+  "transmission_risk_scores": [
+    7,
+    7,
+    7,
+    7,
+    7,
+    7,
+    7,
+    7
+  ],
+  "transmission_risk_weight": 50
+}

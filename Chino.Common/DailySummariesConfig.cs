@@ -34,8 +34,8 @@ namespace Chino
         [JsonProperty("report_type_weights")]
         public IDictionary<ReportType, double> ReportTypeWeights { get; set; } = new Dictionary<ReportType, double>()
         {
-            { ReportType.ConfirmedTest, 1.0 },
             { ReportType.ConfirmedClinicalDiagnosis, 1.0 },
+            { ReportType.ConfirmedTest, 1.0 },
             { ReportType.SelfReport, 1.0 },
             { ReportType.Recursive, 1.0 },
             { ReportType.Revoked, 1.0 },

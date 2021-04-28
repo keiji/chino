@@ -7,18 +7,27 @@ namespace Chino.Common.Tests
 
     public class ExposureConfigurationTest
     {
-        private readonly string PATH_JSON_SERIALIZED1 = Path.Combine(Utils.GetCurrentProjectPath(), "./files/serialized1.json");
+        private readonly string PATH_JSON_SERIALIZED1 = Path.Combine(Utils.GetCurrentProjectPath(), "./files/exposure_configuration.json");
+
+        private static ExposureConfiguration ReadExposureConfiguration(string path)
+        {
+            using (var sr = new StreamReader(path))
+            {
+                var jsonStr = sr.ReadToEnd();
+                return JsonConvert.DeserializeObject<ExposureConfiguration>(jsonStr);
+            }
+        }
 
         [Fact]
         public void TestSerializeToJson()
         {
+            var exposureConfiguration = new ExposureConfiguration();
+            var jsonStr = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
+            //Logger.D(jsonStr);
+
             using (var sr = new StreamReader(File.OpenRead(PATH_JSON_SERIALIZED1)))
             {
                 var expected = sr.ReadToEnd();
-
-                var exposureConfiguration = new ExposureConfiguration();
-                var jsonStr = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
-                Logger.D(jsonStr);
 
                 Assert.Equal(expected, jsonStr);
             }
@@ -27,15 +36,21 @@ namespace Chino.Common.Tests
         [Fact]
         public void TestDeserializeFromJson()
         {
-            using (var sr = new StreamReader(File.OpenRead(PATH_JSON_SERIALIZED1)))
-            {
-                var expected = new ExposureConfiguration();
+            var expected = new ExposureConfiguration();
+            var exposureConfiguration = ReadExposureConfiguration(PATH_JSON_SERIALIZED1);
 
-                var jsonStr = sr.ReadToEnd();
-                var exposureConfiguration = JsonConvert.DeserializeObject<ExposureConfiguration>(jsonStr);
+            Assert.True(expected.Equals(exposureConfiguration));
+        }
 
-                Assert.True(expected.Equals(exposureConfiguration));
-            }
+        [Fact]
+        public void TestNotEquals()
+        {
+            var expected = new ExposureConfiguration();
+            expected.GoogleExposureConfig.MinimumRiskScore = 1;
+
+            var exposureConfiguration = ReadExposureConfiguration(PATH_JSON_SERIALIZED1);
+
+            Assert.False(expected.Equals(exposureConfiguration));
         }
     }
 }

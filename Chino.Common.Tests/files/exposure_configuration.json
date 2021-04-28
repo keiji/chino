@@ -104,8 +104,8 @@
     },
     "minimum_risk_score": 0.0,
     "report_type_weights": {
-      "ConfirmedTest": 1.0,
       "ConfirmedClinicalDiagnosis": 1.0,
+      "ConfirmedTest": 1.0,
       "SelfReport": 1.0,
       "Recursive": 1.0,
       "Revoked": 1.0,
