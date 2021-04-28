@@ -7,16 +7,7 @@ namespace Chino.Common.Tests
 
     public class ExposureConfigurationTest
     {
-        private readonly string PATH_JSON_SERIALIZED1 = Path.Combine(Utils.GetCurrentProjectPath(), "./files/exposure_configuration.json");
-
-        private static ExposureConfiguration ReadExposureConfiguration(string path)
-        {
-            using (var sr = new StreamReader(path))
-            {
-                var jsonStr = sr.ReadToEnd();
-                return JsonConvert.DeserializeObject<ExposureConfiguration>(jsonStr);
-            }
-        }
+        private readonly string PATH_JSON = "./files/exposure_configuration.json";
 
         [Fact]
         public void TestSerializeToJson()
@@ -25,7 +16,7 @@ namespace Chino.Common.Tests
             var jsonStr = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
             //Logger.D(jsonStr);
 
-            using (var sr = new StreamReader(File.OpenRead(PATH_JSON_SERIALIZED1)))
+            using (var sr = new StreamReader(File.OpenRead(Utils.GetFullPath(PATH_JSON))))
             {
                 var expected = sr.ReadToEnd();
 
@@ -37,7 +28,7 @@ namespace Chino.Common.Tests
         public void TestDeserializeFromJson()
         {
             var expected = new ExposureConfiguration();
-            var exposureConfiguration = ReadExposureConfiguration(PATH_JSON_SERIALIZED1);
+            var exposureConfiguration = Utils.ReadObjectFromJsonPath<ExposureConfiguration>(PATH_JSON);
 
             Assert.True(expected.Equals(exposureConfiguration));
         }
@@ -48,7 +39,7 @@ namespace Chino.Common.Tests
             var expected = new ExposureConfiguration();
             expected.GoogleExposureConfig.MinimumRiskScore = 1;
 
-            var exposureConfiguration = ReadExposureConfiguration(PATH_JSON_SERIALIZED1);
+            var exposureConfiguration = Utils.ReadObjectFromJsonPath<ExposureConfiguration>(PATH_JSON);
 
             Assert.False(expected.Equals(exposureConfiguration));
         }

@@ -7,16 +7,7 @@ namespace Chino.Common.Tests
 
     public class DailySummariesConfigTest
     {
-        private readonly string PATH_JSON_SERIALIZED1 = Path.Combine(Utils.GetCurrentProjectPath(), "./files/daily_summaries_config.json");
-
-        private static DailySummariesConfig ReadDailySummariesConfig(string path)
-        {
-            using (var sr = new StreamReader(path))
-            {
-                var jsonStr = sr.ReadToEnd();
-                return JsonConvert.DeserializeObject<DailySummariesConfig>(jsonStr);
-            }
-        }
+        private readonly string PATH_JSON = "./files/daily_summaries_config.json";
 
         [Fact]
         public void TestSerializeToJson()
@@ -25,7 +16,7 @@ namespace Chino.Common.Tests
             var jsonStr = JsonConvert.SerializeObject(dailySummariesConfig, Formatting.Indented);
             //Logger.D(jsonStr);
 
-            using (var sr = new StreamReader(File.OpenRead(PATH_JSON_SERIALIZED1)))
+            using (var sr = new StreamReader(File.OpenRead(Utils.GetFullPath(PATH_JSON))))
             {
                 var expected = sr.ReadToEnd();
 
@@ -37,7 +28,7 @@ namespace Chino.Common.Tests
         public void TestDeserializeFromJson()
         {
             var expected = new DailySummariesConfig();
-            var dailySummariesConfig = ReadDailySummariesConfig(PATH_JSON_SERIALIZED1);
+            var dailySummariesConfig = Utils.ReadObjectFromJsonPath<DailySummariesConfig>(PATH_JSON);
 
             Assert.True(expected.Equals(dailySummariesConfig));
         }
@@ -48,7 +39,7 @@ namespace Chino.Common.Tests
             var expected = new DailySummariesConfig();
             expected.DaysSinceExposureThreshold = 1;
 
-            var dailySummariesConfig = ReadDailySummariesConfig(PATH_JSON_SERIALIZED1);
+            var dailySummariesConfig = Utils.ReadObjectFromJsonPath<DailySummariesConfig>(PATH_JSON);
 
             Assert.False(expected.Equals(dailySummariesConfig));
         }
