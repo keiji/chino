@@ -10,9 +10,7 @@ using System.Threading.Tasks;
 using System.Linq;
 
 using AndroidTemporaryExposureKey = Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey;
-using AndroidExposureConfiguration = Android.Gms.Nearby.ExposureNotification.ExposureConfiguration;
 using AndroidExposureSummary = Android.Gms.Nearby.ExposureNotification.ExposureSummary;
-using AndroidDailySummariesConfig = Android.Gms.Nearby.ExposureNotification.DailySummariesConfig;
 using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary;
 using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.ExposureInformation;
 using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
@@ -119,8 +117,9 @@ namespace Chino
             {
                 Logger.D($"GetExposureV2Async");
 
-                AndroidDailySummariesConfig config = Convert(enClient.ExposureConfiguration.GoogleDailySummariesConfig);
-                IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(config);
+                IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
+                    enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
+                    );
                 List<IDailySummary> dailySummaries = dss.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
 
                 Print(dailySummaries);
@@ -257,7 +256,7 @@ namespace Chino
             }
 
             var files = keyFiles.Select(f => new File(f)).ToList();
-            await EnClient.ProvideDiagnosisKeysAsync(files, Convert(configuration), token);
+            await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
@@ -266,50 +265,6 @@ namespace Chino
 
         public override async Task RequestPreAuthorizedTemporaryExposureKeyRelease()
             => await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
-
-        private static AndroidDailySummariesConfig Convert(DailySummariesConfig dailySummariesConfig)
-        {
-            AndroidDailySummariesConfig.DailySummariesConfigBuilder builder
-                = new AndroidDailySummariesConfig.DailySummariesConfigBuilder()
-                .SetAttenuationBuckets(
-                dailySummariesConfig.AttenuationBucketThresholdDb.Select(value => new Java.Lang.Integer(value)).ToList(),
-                dailySummariesConfig.AttenuationBucketWeights.Select(value => new Java.Lang.Double(value)).ToList()
-                )
-                .SetDaysSinceExposureThreshold(dailySummariesConfig.DaysSinceExposureThreshold)
-                .SetMinimumWindowScore(dailySummariesConfig.MinimumWindowScore);
-
-            dailySummariesConfig.InfectiousnessWeights.Keys.Zip(
-                dailySummariesConfig.InfectiousnessWeights.Values,
-                (key, value) => builder.SetInfectiousnessWeight((int)key, value)
-                );
-
-            dailySummariesConfig.ReportTypeWeights.Keys.Zip(
-                dailySummariesConfig.ReportTypeWeights.Values,
-                (key, value) => builder.SetReportTypeWeight((int)key, value)
-                );
-
-            return builder.Build();
-        }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        private AndroidExposureConfiguration Convert(ExposureConfiguration exposureConfiguration)
-        {
-            ExposureConfiguration.GoogleExposureConfiguration googleExposureConfiguration = exposureConfiguration.GoogleExposureConfig;
-
-            return new AndroidExposureConfiguration.ExposureConfigurationBuilder()
-                .SetAttenuationScores(googleExposureConfiguration.AttenuationScores)
-                .SetAttenuationWeight(googleExposureConfiguration.AttenuationWeight)
-                .SetDaysSinceLastExposureScores(googleExposureConfiguration.DaysSinceLastExposureScores)
-                .SetDaysSinceLastExposureWeight(googleExposureConfiguration.DaysSinceLastExposureWeight)
-                .SetDurationAtAttenuationThresholds(googleExposureConfiguration.DurationAtAttenuationThresholds)
-                .SetDurationScores(googleExposureConfiguration.DurationScores)
-                .SetDurationWeight(googleExposureConfiguration.DurationWeight)
-                .SetMinimumRiskScore(googleExposureConfiguration.MinimumRiskScore)
-                .SetTransmissionRiskScores(googleExposureConfiguration.TransmissionRiskScores)
-                .SetTransmissionRiskWeight(googleExposureConfiguration.TransmissionRiskWeight)
-                .Build();
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
 
     }
 }

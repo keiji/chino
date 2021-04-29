@@ -1,4 +1,7 @@
 ﻿using AndroidRiskLevel = Android.Gms.Nearby.ExposureNotification.RiskLevel;
+using AndroidExposureConfiguration = Android.Gms.Nearby.ExposureNotification.ExposureConfiguration;
+using AndroidDailySummariesConfig = Android.Gms.Nearby.ExposureNotification.DailySummariesConfig;
+using System.Linq;
 
 namespace Chino
 {
@@ -36,5 +39,49 @@ namespace Chino
                 _ => RiskLevel.Invalid,
             };
         }
+
+        public static AndroidDailySummariesConfig ToAndroidDailySummariesConfig(this DailySummariesConfig dailySummariesConfig)
+        {
+            AndroidDailySummariesConfig.DailySummariesConfigBuilder builder
+                = new AndroidDailySummariesConfig.DailySummariesConfigBuilder()
+                .SetAttenuationBuckets(
+                dailySummariesConfig.AttenuationBucketThresholdDb.Select(value => new Java.Lang.Integer(value)).ToList(),
+                dailySummariesConfig.AttenuationBucketWeights.Select(value => new Java.Lang.Double(value)).ToList()
+                )
+                .SetDaysSinceExposureThreshold(dailySummariesConfig.DaysSinceExposureThreshold)
+                .SetMinimumWindowScore(dailySummariesConfig.MinimumWindowScore);
+
+            dailySummariesConfig.InfectiousnessWeights.Keys.Zip(
+                dailySummariesConfig.InfectiousnessWeights.Values,
+                (key, value) => builder.SetInfectiousnessWeight((int)key, value)
+                );
+
+            dailySummariesConfig.ReportTypeWeights.Keys.Zip(
+                dailySummariesConfig.ReportTypeWeights.Values,
+                (key, value) => builder.SetReportTypeWeight((int)key, value)
+                );
+
+            return builder.Build();
+        }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        public static AndroidExposureConfiguration ToAndroidExposureConfiguration(this ExposureConfiguration exposureConfiguration)
+        {
+            ExposureConfiguration.GoogleExposureConfiguration googleExposureConfiguration = exposureConfiguration.GoogleExposureConfig;
+
+            return new AndroidExposureConfiguration.ExposureConfigurationBuilder()
+                .SetAttenuationScores(googleExposureConfiguration.AttenuationScores)
+                .SetAttenuationWeight(googleExposureConfiguration.AttenuationWeight)
+                .SetDaysSinceLastExposureScores(googleExposureConfiguration.DaysSinceLastExposureScores)
+                .SetDaysSinceLastExposureWeight(googleExposureConfiguration.DaysSinceLastExposureWeight)
+                .SetDurationAtAttenuationThresholds(googleExposureConfiguration.DurationAtAttenuationThresholds)
+                .SetDurationScores(googleExposureConfiguration.DurationScores)
+                .SetDurationWeight(googleExposureConfiguration.DurationWeight)
+                .SetMinimumRiskScore(googleExposureConfiguration.MinimumRiskScore)
+                .SetTransmissionRiskScores(googleExposureConfiguration.TransmissionRiskScores)
+                .SetTransmissionRiskWeight(googleExposureConfiguration.TransmissionRiskWeight)
+                .Build();
+        }
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }
