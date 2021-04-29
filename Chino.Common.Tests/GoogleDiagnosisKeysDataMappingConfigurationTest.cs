@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
-using Xunit;
+using NUnit.Framework;
 
 namespace Chino.Common.Tests
 {
@@ -8,7 +8,7 @@ namespace Chino.Common.Tests
     {
         private readonly string PATH_JSON = "./files/google_diagnosis_keys_data_mapping_configuration.json";
 
-        [Fact]
+        [Test]
         public void TestSerializeToJson()
         {
             var googleDiagnosisKeysDataMappingConfiguration = new ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration();
@@ -19,11 +19,11 @@ namespace Chino.Common.Tests
             {
                 var expected = sr.ReadToEnd();
 
-                Assert.Equal(expected, jsonStr);
+                Assert.AreEqual(expected, jsonStr);
             }
         }
 
-        [Fact]
+        [Test]
         public void TestDeserializeFromJson()
         {
             var expected = new ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration();
@@ -33,7 +33,7 @@ namespace Chino.Common.Tests
             Assert.True(expected.Equals(googleDiagnosisKeysDataMappingConfiguration));
         }
 
-        [Fact]
+        [Test]
         public void TestNotEquals()
         {
             var expected = new ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration();

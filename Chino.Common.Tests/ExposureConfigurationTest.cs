@@ -1,6 +1,6 @@
 using System.IO;
 using Newtonsoft.Json;
-using Xunit;
+using NUnit.Framework;
 
 namespace Chino.Common.Tests
 {
@@ -9,7 +9,7 @@ namespace Chino.Common.Tests
     {
         private readonly string PATH_JSON = "./files/exposure_configuration.json";
 
-        [Fact]
+        [Test]
         public void TestSerializeToJson()
         {
             var exposureConfiguration = new ExposureConfiguration();
@@ -20,11 +20,11 @@ namespace Chino.Common.Tests
             {
                 var expected = sr.ReadToEnd();
 
-                Assert.Equal(expected, jsonStr);
+                Assert.AreEqual(expected, jsonStr);
             }
         }
 
-        [Fact]
+        [Test]
         public void TestDeserializeFromJson()
         {
             var expected = new ExposureConfiguration();
@@ -33,7 +33,7 @@ namespace Chino.Common.Tests
             Assert.True(expected.Equals(exposureConfiguration));
         }
 
-        [Fact]
+        [Test]
         public void TestNotEquals()
         {
             var expected = new ExposureConfiguration();
