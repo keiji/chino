@@ -65,7 +65,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="..\Chino.Shared\Chino.Shared.projitems" Label="Shared" Condition="Exists('..\Chino.Shared\Chino.Shared.projitems')" />
+  <ItemGroup>
+    <ProjectReference Include="..\Chino.Common\Chino.Common.csproj">
+      <Project>{F5D65FC0-BD93-49BE-8B26-D7E7D73BC0E2}</Project>
+      <Name>Chino.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets" Condition="Exists('..\packages\NuGet.Build.Packaging.0.2.5-dev.8\build\NuGet.Build.Packaging.targets')" />
   <Import Project="..\packages\Xamarin.iOS.ExposureNotification.1.2.3-alpha01\build\Xamarin.iOS.ExposureNotification.targets" Condition="Exists('..\packages\Xamarin.iOS.ExposureNotification.1.2.3-alpha01\build\Xamarin.iOS.ExposureNotification.targets')" />
