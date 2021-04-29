@@ -35,8 +35,10 @@ namespace Chino.Common.Tests
         [Test]
         public void TestNotEquals()
         {
-            var expected = new ExposureConfiguration.AppleExposureV1Configuration();
-            expected.MinimumRiskScore = 1;
+            var expected = new ExposureConfiguration.AppleExposureV1Configuration
+            {
+                MinimumRiskScore = 1
+            };
 
             var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV1Configuration>(PATH_JSON);
 

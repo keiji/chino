@@ -36,8 +36,10 @@ namespace Chino.Common.Tests
         [Test]
         public void TestNotEquals()
         {
-            var expected = new ExposureConfiguration.GoogleExposureConfiguration();
-            expected.AttenuationWeight = 0;
+            var expected = new ExposureConfiguration.GoogleExposureConfiguration
+            {
+                AttenuationWeight = 0
+            };
 
             var googleExposureConfiguration = Utils
                 .ReadObjectFromJsonPath<ExposureConfiguration.GoogleExposureConfiguration>(PATH_JSON);

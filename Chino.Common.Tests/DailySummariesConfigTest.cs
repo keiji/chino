@@ -36,8 +36,10 @@ namespace Chino.Common.Tests
         [Test]
         public void TestNotEquals()
         {
-            var expected = new DailySummariesConfig();
-            expected.DaysSinceExposureThreshold = 1;
+            var expected = new DailySummariesConfig
+            {
+                DaysSinceExposureThreshold = 1
+            };
 
             var dailySummariesConfig = Utils.ReadObjectFromJsonPath<DailySummariesConfig>(PATH_JSON);
 

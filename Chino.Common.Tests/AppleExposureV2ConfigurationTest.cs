@@ -35,8 +35,10 @@ namespace Chino.Common.Tests
         [Test]
         public void TestNotEquals()
         {
-            var expected = new ExposureConfiguration.AppleExposureV2Configuration();
-            expected.ImmediateDurationWeight = 20;
+            var expected = new ExposureConfiguration.AppleExposureV2Configuration
+            {
+                ImmediateDurationWeight = 20
+            };
 
             var appleExposureV1Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV2Configuration>(PATH_JSON);
 

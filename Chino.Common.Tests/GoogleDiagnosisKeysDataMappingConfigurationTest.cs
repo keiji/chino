@@ -36,8 +36,10 @@ namespace Chino.Common.Tests
         [Test]
         public void TestNotEquals()
         {
-            var expected = new ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration();
-            expected.InfectiousnessWhenDaysSinceOnsetMissing = Infectiousness.None;
+            var expected = new ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration
+            {
+                InfectiousnessWhenDaysSinceOnsetMissing = Infectiousness.None
+            };
 
             var googleDiagnosisKeysDataMappingConfiguration = Utils
                 .ReadObjectFromJsonPath<ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration>(PATH_JSON);
