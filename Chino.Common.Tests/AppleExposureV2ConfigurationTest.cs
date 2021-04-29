@@ -27,9 +27,9 @@ namespace Chino.Common.Tests
         public void TestDeserializeFromJson()
         {
             var expected = new ExposureConfiguration.AppleExposureV2Configuration();
-            var appleExposureV1Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV2Configuration>(PATH_JSON);
+            var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV2Configuration>(PATH_JSON);
 
-            Assert.True(expected.Equals(appleExposureV1Configuration));
+            Assert.True(expected.Equals(appleExposureV2Configuration));
         }
 
         [Test]
@@ -40,9 +40,9 @@ namespace Chino.Common.Tests
                 ImmediateDurationWeight = 20
             };
 
-            var appleExposureV1Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV2Configuration>(PATH_JSON);
+            var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV2Configuration>(PATH_JSON);
 
-            Assert.False(expected.Equals(appleExposureV1Configuration));
+            Assert.False(expected.Equals(appleExposureV2Configuration));
         }
     }
 }
