@@ -66,17 +66,6 @@
         <LangVersion>8.0</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="System" />
-        <Reference Include="System.Core" />
-        <Reference Include="Xamarin.iOS" />
-    </ItemGroup>
-    <ItemGroup>
-      <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
-      <PackageReference Include="Xamarin.iOS.ExposureNotification">
-        <Version>1.2.3-alpha01</Version>
-      </PackageReference>
-    </ItemGroup>
-    <ItemGroup>
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
             <Visible>false</Visible>
         </ImageAsset>
@@ -149,6 +138,14 @@
         <Project>{F5D65FC0-BD93-49BE-8B26-D7E7D73BC0E2}</Project>
         <Name>Chino.Common</Name>
       </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="Xamarin.iOS" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
