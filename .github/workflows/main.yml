@@ -6,9 +6,9 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the ci branch
   push:
-    branches: [ ci ]
+    branches: [ master ]
   pull_request:
-    branches: [ ci ]
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -22,16 +22,20 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    - name: Select Xcode version
+      run: |
+        sudo xcode-select -s '/Applications/Xcode_12.4.app/Contents/Developer'
+        xcodebuild -version
     - name: Setup Xamarin
       # You may pin to the exact commit or the version.
       # uses: maxim-lobanov/setup-xamarin@00b44a3ef9e2d1953010956de2022e8d095a196c
       uses: maxim-lobanov/setup-xamarin@v1
       with:
         mono-version: 6.12 # specify version in '<major>.<minor>' format
-        xamarin-ios-version: 14 # specify version in '<major>' format
+        xamarin-ios-version: 14.0 # specify version in '<major>' format
         xamarin-mac-version: latest # specify 'latest' keyword to pick up the latest available version
         xamarin-android-version: 11.2 # specify full version; it is not recomended option because your pipeline can be broken suddenly in future
-        xcode-version: 12 # set the latest available Xcode 11
+        xcode-version: 12
     - name: Checkout
       uses: actions/checkout@v1
     - name: Prepare
@@ -40,7 +44,33 @@ jobs:
         nuget restore Chino.Common.Tests/Chino.Common.Tests.csproj
         nuget restore Chino.iOS/Chino.iOS.csproj
         nuget restore Chino.Android/Chino.Android.csproj
+        nuget restore Sample.iOS/Sample.iOS.csproj
+        nuget restore Sample.Android/Sample.Android.csproj
     - name: Common.Tests
       run: |
         cd Chino.Common.Tests
         dotnet test
+    # Build check Chino library
+    - name: AndroidDebug
+      run: |
+        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=Debug
+    - name: AndroidRelease
+      run: |
+        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=Release
+    - name: iOSDebug
+      run: |
+        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=Debug
+    - name: iOSRelease
+      run: |
+        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=Release
+    # Build check Sample app
+    - name: SampleAndroidDebug
+      run: |
+        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=Debug
+    - name: SampleAndroidRelease
+      run: |
+        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=Release
+    - name: SampleiOSDebug
+      run: |
+        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=Debug
+
