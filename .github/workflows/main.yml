@@ -42,5 +42,5 @@ jobs:
         nuget restore Chino.Android/Chino.Android.csproj
     - name: Common.Tests
       run: |
-        cd Common.Tests
-        msbuild ./Common.Tests/Common.Tests.csproj /t:Rebuild /p:Configuration=Debug
+        cd Chino.Common.Tests
+        dotnet test
