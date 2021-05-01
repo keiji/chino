@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B99C6107-F1EE-4577-81F7-036A07E0840E}</ProjectGuid>
+    <ProjectGuid>{B4117F0B-A943-400C-AA13-C140ABB93496}</ProjectGuid>
     <Description>Cappuccino is an yet another Exposure Notification Library for COCOA</Description>
     <PackageId>Chino</PackageId>
     <PackageVersion>1.0.0-alpha01</PackageVersion>
@@ -14,7 +14,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Chino</RootNamespace>
     <UsePartialTypes>false</UsePartialTypes>
-    <AssemblyName>Chino.NuGet</AssemblyName>
+    <AssemblyName>Chino</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -28,22 +28,25 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Chino.Android\Chino.Android.csproj">
-      <Project>{D5755F55-40E5-4EA3-B74F-C1FC03C39EBB}</Project>
-      <Name>Chino.Android</Name>
-      <ReferenceSourceTarget>ProjectReference</ReferenceSourceTarget>
-    </ProjectReference>
-    <ProjectReference Include="..\Chino.iOS\Chino.iOS.csproj">
-      <Project>{52CD6C7F-7D27-459C-8A59-CD66385E6F95}</Project>
-      <Name>Chino.iOS</Name>
-      <ReferenceSourceTarget>ProjectReference</ReferenceSourceTarget>
-    </ProjectReference>
+    <None Include="readme.txt">
+      <IncludeInPackage>true</IncludeInPackage>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NuGet.Build.Packaging">
       <Version>0.2.5-dev.8</Version>
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Chino.iOS\Chino.iOS.csproj">
+      <Project>{52CD6C7F-7D27-459C-8A59-CD66385E6F95}</Project>
+      <Name>Chino.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Chino.Android\Chino.Android.csproj">
+      <Project>{D5755F55-40E5-4EA3-B74F-C1FC03C39EBB}</Project>
+      <Name>Chino.Android</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
   <Import Project="$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets" Condition="Exists('$(NuGetAuthoringPath)\NuGet.Packaging.Authoring.targets')" />
