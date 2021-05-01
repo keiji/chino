@@ -1,6 +1,8 @@
 # Cappuccino
 Cappuccino is an yet another Exposure Notification Library for COCOA.
 
+[![CI](https://github.com/keiji/chino/actions/workflows/main.yml/badge.svg)](https://github.com/keiji/chino/actions/workflows/main.yml)
+
 ## これはなに？
 「接触確認（Exposure Notification: EN） API」を実際に触っていて、AndroidとiOSの差異を確認しながら作っていたXamarin用のENライブラリです。
 
