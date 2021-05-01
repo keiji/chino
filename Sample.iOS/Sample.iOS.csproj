@@ -148,7 +148,7 @@
     <ItemGroup>
       <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
       <PackageReference Include="NuGet.Build.Packaging">
-        <Version>0.2.5-dev.8</Version>
+        <Version>0.2.2</Version>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         <PrivateAssets>all</PrivateAssets>
       </PackageReference>

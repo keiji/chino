@@ -36,7 +36,10 @@ jobs:
       uses: actions/checkout@v1
     - name: Prepare
       run: |
-        nuget restore Chino.sln
+        nuget restore Chino.Common/Chino.Common.csproj
+        nuget restore Chino.Common.Tests/Chino.Common.Tests.csproj
+        nuget restore Chino.iOS/Chino.iOS.csproj
+        nuget restore Chino.Android/Chino.Android.csproj
     - name: Common.Tests
       run: |
         cd Common.Tests

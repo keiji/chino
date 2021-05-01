@@ -128,7 +128,7 @@
       <Version>117.2.1</Version>
     </PackageReference>
     <PackageReference Include="NuGet.Build.Packaging">
-      <Version>0.2.5-dev.8</Version>
+      <Version>0.2.2</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
