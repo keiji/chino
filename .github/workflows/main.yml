@@ -73,4 +73,6 @@ jobs:
     - name: SampleiOSDebug
       run: |
         msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=Debug
-
+    - name: SampleiOSRelease
+      run: |
+        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=Release
