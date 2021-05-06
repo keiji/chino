@@ -17,7 +17,7 @@ namespace Chino
 
         public int AttenuationValue => Source.AttenuationValue;
 
-        public long DateMillisSinceEpoch => Utils.GetDateMillisSinceEpoch(Source.Date);
+        public long DateMillisSinceEpoch => Source.Date.GetDateMillisSinceEpoch();
 
         public double Duration => Source.Duration;
 

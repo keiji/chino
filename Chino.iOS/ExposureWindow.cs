@@ -17,7 +17,7 @@ namespace Chino
 
         public CalibrationConfidence CalibrationConfidence => (CalibrationConfidence)Enum.ToObject(typeof(CalibrationConfidence), Source.CalibrationConfidence);
 
-        public long DateMillisSinceEpoch => Utils.GetDateMillisSinceEpoch(Source.Date);
+        public long DateMillisSinceEpoch => Source.Date.GetDateMillisSinceEpoch();
 
         public Infectiousness Infectiousness => (Infectiousness)Enum.ToObject(typeof(Infectiousness), Source.Infectiousness);
 
