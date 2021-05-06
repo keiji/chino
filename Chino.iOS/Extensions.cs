@@ -14,6 +14,16 @@ namespace Chino
             Logger.D($"Error occurred {nsErrorException.Code} - {nsErrorException.Message}");
         }
 
+        public static long GetDateMillisSinceEpoch(this NSDate date)
+        {
+            DateTime dateTime = (DateTime)date;
+
+            // TODO: Check TimeZone
+            var dto = new DateTimeOffset(dateTime.Ticks, new TimeSpan(0, 00, 00));
+
+            return dto.ToUnixTimeMilliseconds();
+        }
+
         public static byte ToByte(this RiskLevel riskLevel)
         {
             return riskLevel switch
