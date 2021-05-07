@@ -130,18 +130,18 @@ namespace Chino
         {
             [JsonProperty("infectiousness_for_days_since_onset_of_symptoms")]
             public IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
-                { -14, Infectiousness.High },
-                { -13, Infectiousness.High },
-                { -12, Infectiousness.High },
-                { -11, Infectiousness.High },
-                { -10, Infectiousness.High },
-                { -9, Infectiousness.High },
-                { -8, Infectiousness.High },
-                { -7, Infectiousness.High },
-                { -6, Infectiousness.High },
-                { -5, Infectiousness.High },
-                { -4, Infectiousness.High },
-                { -3, Infectiousness.High },
+                { -14, Infectiousness.None },
+                { -13, Infectiousness.None },
+                { -12, Infectiousness.None },
+                { -11, Infectiousness.None },
+                { -10, Infectiousness.None },
+                { -9, Infectiousness.None },
+                { -8, Infectiousness.None },
+                { -7, Infectiousness.None },
+                { -6, Infectiousness.None },
+                { -5, Infectiousness.Standard },
+                { -4, Infectiousness.Standard },
+                { -3, Infectiousness.Standard },
                 { -2, Infectiousness.High },
                 { -1, Infectiousness.High },
                 { 0, Infectiousness.High },
@@ -150,30 +150,34 @@ namespace Chino
                 { 3, Infectiousness.High },
                 { 4, Infectiousness.High },
                 { 5, Infectiousness.High },
-                { 6, Infectiousness.High },
-                { 7, Infectiousness.High },
-                { 8, Infectiousness.High },
-                { 9, Infectiousness.High },
-                { 10, Infectiousness.High },
-                { 11, Infectiousness.High },
-                { 12, Infectiousness.High },
-                { 13, Infectiousness.High },
-                { 14, Infectiousness.High },
+                { 6, Infectiousness.Standard },
+                { 7, Infectiousness.Standard },
+                { 8, Infectiousness.Standard },
+                { 9, Infectiousness.Standard },
+                { 10, Infectiousness.Standard },
+                { 11, Infectiousness.None },
+                { 12, Infectiousness.None },
+                { 13, Infectiousness.None },
+                { 14, Infectiousness.None },
             };
 
             [JsonProperty("infectiousness_when_days_since_onset_missing")]
             public Infectiousness InfectiousnessWhenDaysSinceOnsetMissing = Infectiousness.Standard;
 
+            [JsonProperty("report_type_when_missing")]
+            public ReportType ReportTypeWhenMissing = ReportType.ConfirmedTest;
+
             public override bool Equals(object obj)
             {
                 return obj is GoogleDiagnosisKeysDataMappingConfiguration configuration &&
-                       InfectiousnessForDaysSinceOnsetOfSymptoms.SequenceEqual(InfectiousnessForDaysSinceOnsetOfSymptoms) &&
-                       InfectiousnessWhenDaysSinceOnsetMissing == configuration.InfectiousnessWhenDaysSinceOnsetMissing;
+                       InfectiousnessForDaysSinceOnsetOfSymptoms.SequenceEqual(configuration.InfectiousnessForDaysSinceOnsetOfSymptoms) &&
+                       InfectiousnessWhenDaysSinceOnsetMissing == configuration.InfectiousnessWhenDaysSinceOnsetMissing &&
+                       ReportTypeWhenMissing == configuration.ReportTypeWhenMissing;
             }
 
             public override int GetHashCode()
             {
-                return HashCode.Combine(InfectiousnessForDaysSinceOnsetOfSymptoms, InfectiousnessWhenDaysSinceOnsetMissing);
+                return HashCode.Combine(InfectiousnessForDaysSinceOnsetOfSymptoms, InfectiousnessWhenDaysSinceOnsetMissing, ReportTypeWhenMissing);
             }
         }
 

@@ -206,9 +206,9 @@ namespace Chino
             }
 
             ExposureConfiguration = configuration;
-            ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration GoogleDiagnosisKeysDataMappingConfig = ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfig;
+            ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration googleDiagnosisKeysDataMappingConfig = ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfig;
             IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms
-                = GoogleDiagnosisKeysDataMappingConfig.InfectiousnessForDaysSinceOnsetOfSymptoms;
+                = googleDiagnosisKeysDataMappingConfig.InfectiousnessForDaysSinceOnsetOfSymptoms;
 
             IDictionary<Java.Lang.Integer, Java.Lang.Integer> daysSinceOnsetToInfectiousness = new Dictionary<Java.Lang.Integer, Java.Lang.Integer>();
             foreach (var key in InfectiousnessForDaysSinceOnsetOfSymptoms.Keys)
@@ -218,9 +218,9 @@ namespace Chino
             }
 
             DiagnosisKeysDataMapping diagnosisKeysDataMapping = new DiagnosisKeysDataMapping.DiagnosisKeysDataMappingBuilder()
-                .SetReportTypeWhenMissing((int)ReportType.ConfirmedTest)
                 .SetDaysSinceOnsetToInfectiousness(daysSinceOnsetToInfectiousness)
-                .SetInfectiousnessWhenDaysSinceOnsetMissing((int)GoogleDiagnosisKeysDataMappingConfig.InfectiousnessWhenDaysSinceOnsetMissing)
+                .SetInfectiousnessWhenDaysSinceOnsetMissing((int)googleDiagnosisKeysDataMappingConfig.InfectiousnessWhenDaysSinceOnsetMissing)
+                .SetReportTypeWhenMissing((int)googleDiagnosisKeysDataMappingConfig.ReportTypeWhenMissing)
                 .Build();
 
             await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
