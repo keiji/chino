@@ -27,7 +27,7 @@ namespace Chino
                     return;
                 }
 
-                IList<ITemporaryExposureKey> temporaryExposureKeys = (IList<ITemporaryExposureKey>)teks.Select(tek => new TemporaryExposureKey(tek));
+                IList<ITemporaryExposureKey> temporaryExposureKeys = teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
                 Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
             })
         };
