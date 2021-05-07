@@ -20,8 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chino.Common", "Chino.Commo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chino.Common.Tests", "Chino.Common.Tests\Chino.Common.Tests.csproj", "{AE7A7AD0-6272-4B7C-AEA9-8FB01C65E7CE}"
 EndProject
-Project("{5DD5E4FA-CB73-4610-85AB-557B54E96AA9}") = "Chino", "Chino\Chino.nuproj", "{B4117F0B-A943-400C-AA13-C140ABB93496}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,18 +102,6 @@ Global
 		{AE7A7AD0-6272-4B7C-AEA9-8FB01C65E7CE}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{AE7A7AD0-6272-4B7C-AEA9-8FB01C65E7CE}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{AE7A7AD0-6272-4B7C-AEA9-8FB01C65E7CE}.Release|iPhone.Build.0 = Release|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{B4117F0B-A943-400C-AA13-C140ABB93496}.Release|iPhone.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

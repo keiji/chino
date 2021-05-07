@@ -10,6 +10,9 @@
     <AssemblyName>Chino</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <PackageId>Chino.iOS</PackageId>
+    <PackageVersion>1.0.0-alpha01</PackageVersion>
+    <Authors>Cappuccino Authors</Authors>
+    <Description>Cappuccino is an yet another Exposure Notification Library for COCOA</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

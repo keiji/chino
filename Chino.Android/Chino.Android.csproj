@@ -14,6 +14,9 @@
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <PackageId>Chino.Android</PackageId>
+    <PackageVersion>1.0.0-alpha01</PackageVersion>
+    <Authors>Cappuccino Authors</Authors>
+    <Description>Cappuccino is an yet another Exposure Notification Library for COCOA</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

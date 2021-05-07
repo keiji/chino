@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>Chino.Common</PackageId>
+    <PackageVersion>1.0.0-alpha01</PackageVersion>
+    <Authors>Cappuccino Authors</Authors>
+    <Description>Cappuccino is an yet another Exposure Notification Library for COCOA</Description>
   </PropertyGroup>
 
   <ItemGroup>
