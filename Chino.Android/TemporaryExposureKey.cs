@@ -7,24 +7,21 @@ namespace Chino
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/TemporaryExposureKey
     public class TemporaryExposureKey : ITemporaryExposureKey
     {
-
-        public readonly AndroidTemporaryExposureKey Source;
-
         public TemporaryExposureKey(AndroidTemporaryExposureKey source)
         {
-            Source = source;
+            DaysSinceOnsetOfSymptoms = source.DaysSinceOnsetOfSymptoms;
+            KeyData = source.GetKeyData();
+            RollingPeriod = source.RollingPeriod;
+            RollingStartIntervalNumber = source.RollingStartIntervalNumber;
+            RiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), source.TransmissionRiskLevel);
+            ReportType = (ReportType)Enum.ToObject(typeof(ReportType), source.ReportType);
         }
 
-        public int DaysSinceOnsetOfSymptoms => Source.DaysSinceOnsetOfSymptoms;
-
-        public byte[] KeyData => Source.GetKeyData();
-
-        public ReportType ReportType => (ReportType)Enum.ToObject(typeof(ReportType), Source.ReportType);
-
-        public int RollingPeriod => Source.RollingPeriod;
-
-        public int RollingStartIntervalNumber => Source.RollingStartIntervalNumber;
-
-        public RiskLevel RiskLevel => Source.TransmissionRiskLevel.ToRiskLevel();
+        public int DaysSinceOnsetOfSymptoms { get; set; }
+        public byte[] KeyData { get; set; }
+        public int RollingPeriod { get; set; }
+        public int RollingStartIntervalNumber { get; set; }
+        public RiskLevel RiskLevel { get; set; }
+        public ReportType ReportType { get; set; }
     }
 }
