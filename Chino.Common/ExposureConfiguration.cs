@@ -40,7 +40,7 @@ namespace Chino
              * [7] when 10 >= Attenuation
              */
             [JsonProperty("attenuation_scores")]
-            public int[] AttenuationScores { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+            public int[] AttenuationScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("attenuation_weight")]
             public int AttenuationWeight { get; set; } = 50;
@@ -56,13 +56,13 @@ namespace Chino
              * [7] when Days >= 0
              */
             [JsonProperty("days_since_last_exposure_scores")]
-            public int[] DaysSinceLastExposureScores { get; set; } = { 1, 1, 1, 1, 1, 1, 1, 1 };
+            public int[] DaysSinceLastExposureScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("days_since_last_exposure_weight")]
             public int DaysSinceLastExposureWeight { get; set; } = 50;
 
             [JsonProperty("duration_at_attenuation_thresholds")]
-            public int[] DurationAtAttenuationThresholds { get; set; } = { 50, 70 };
+            public int[] DurationAtAttenuationThresholds { get; set; } = { 50, 74 };
 
             /*
              * [0] when Duration == 0 min
@@ -75,19 +75,19 @@ namespace Chino
              * [7] when Duration > 30
              */
             [JsonProperty("duration_scores")]
-            public int[] DurationScores { get; set; } = { 1, 1, 1, 1, 1, 1, 1, 1 };
+            public int[] DurationScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("duration_weight")]
             public int DurationWeight { get; set; } = 50;
 
             [JsonProperty("minimum_risk_score")]
-            public int MinimumRiskScore { get; set; } = 21;
+            public int MinimumRiskScore { get; set; } = 4;
 
             /*
              * [0]-[7] App Defined
              */
             [JsonProperty("transmission_risk_scores")]
-            public int[] TransmissionRiskScores { get; set; } = { 7, 7, 7, 7, 7, 7, 7, 7 };
+            public int[] TransmissionRiskScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("transmission_risk_weight")]
             public int TransmissionRiskWeight { get; set; } = 50;
