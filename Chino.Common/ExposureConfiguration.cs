@@ -143,6 +143,10 @@ namespace Chino
         [JsonObject]
         public class GoogleDiagnosisKeysDataMappingConfiguration
         {
+            // Configuring Infectiousness
+            // Must Specify
+
+            // From https://developers.google.com/android/exposure-notifications/meaningful-exposures#map-diag-keys
             [JsonProperty("infectiousness_for_days_since_onset_of_symptoms")]
             public IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
                 { -14, Infectiousness.None },
