@@ -30,6 +30,21 @@ namespace Chino
         {
 
             /*
+             * Timber.d(ExposureConfiguration.ExposureConfigurationBuilder().build().toString())
+             *
+             * ExposureConfiguration<minimumRiskScore: 4,
+             * attenuationScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * attenuationWeight: 50,
+             * daysSinceLastExposureScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * daysSinceLastExposureWeight: 50,
+             * durationScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * durationWeight: 50,
+             * transmissionRiskScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * transmissionRiskWeight: 50,
+             * durationAtAttenuationThresholds: [50, 74]>
+             */
+
+            /*
              * [0] when Attenuation > 73 dB
              * [1] when 73 >= Attenuation > 63
              * [2] when 63 >= Attenuation > 51
@@ -187,6 +202,23 @@ namespace Chino
         {
             // Configuring Duration
 
+            /*
+             * print(ENExposureConfiguration())
+             *
+             * NConfig, Flags 0x0 < >,
+             * DurW { I 100, N 100, M 100, O 100 },
+             * InfW { S 100, H 100 },
+             * RpTyW { CTest 100, CClin 100, SelfR 100, Recurs 100 },
+             * RpTyNM 1,
+             * AttnDurThres[50, 70, 90],
+             * DaysTh 0,
+             * MinScore 0(0.000),
+             * AttnLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DaysLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DurLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * TRskLV[1, 2, 3, 4, 5, 6, 7, 8]
+             */
+
             #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
 
             /*
@@ -279,7 +311,22 @@ namespace Chino
         [JsonObject]
         public class AppleExposureV2Configuration
         {
-            // Configuring Duration
+            /*
+             * print(ENExposureConfiguration())
+             *
+             * NConfig, Flags 0x0 < >,
+             * DurW { I 100, N 100, M 100, O 100 },
+             * InfW { S 100, H 100 },
+             * RpTyW { CTest 100, CClin 100, SelfR 100, Recurs 100 },
+             * RpTyNM 1,
+             * AttnDurThres[50, 70, 90],
+             * DaysTh 0,
+             * MinScore 0(0.000),
+             * AttnLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DaysLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DurLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * TRskLV[1, 2, 3, 4, 5, 6, 7, 8]
+             */
 
             #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
 
@@ -289,7 +336,7 @@ namespace Chino
              * [2] The medium attenuation threshold.
              */
             [JsonProperty("attenuation_duration_thresholds")]
-            public int[] AttenuationDurationThresholds { get; set; } = { 15, 33, 73 };
+            public int[] AttenuationDurationThresholds { get; set; } = { 50, 70, 90 };
 
             [JsonProperty("immediate_duration_weight")]
             public double ImmediateDurationWeight { get; set; } = 100;
@@ -306,8 +353,9 @@ namespace Chino
             public int DaysSinceLastExposureThreshold { get; set; } = 0;
 
             // Configuring Infectiousness
-
             // Must Specify v2
+
+            // From ExposureNotification reference app created by Apple.
             [JsonProperty("infectiousness_for_days_since_onset_of_symptoms")]
             public IDictionary<long, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<long, Infectiousness>() {
                 { -14, Infectiousness.Standard },
