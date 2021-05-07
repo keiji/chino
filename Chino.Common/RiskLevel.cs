@@ -1,7 +1,11 @@
 ﻿namespace Chino
 {
-    // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/RiskLevel
-    // https://developer.apple.com/documentation/exposurenotification/enexposureinfo/3583716-transmissionrisklevel
+    /// <summary>
+    /// Risk level defined for a TemporaryExposureKey.
+    /// </summary>
+    ///
+    /// https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/RiskLevel
+    /// https://developer.apple.com/documentation/exposurenotification/enexposureinfo/3583716-transmissionrisklevel
     public enum RiskLevel
     {
         Invalid = 0,
