@@ -1,9 +1,9 @@
 {
   "infectiousness_when_days_since_onset_missing": 1,
   "attenuation_duration_thresholds": [
-    15,
-    33,
-    73
+    50,
+    70,
+    90
   ],
   "immediate_duration_weight": 100.0,
   "near_duration_weight": 100.0,

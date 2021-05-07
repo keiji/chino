@@ -30,6 +30,21 @@ namespace Chino
         {
 
             /*
+             * Timber.d(ExposureConfiguration.ExposureConfigurationBuilder().build().toString())
+             *
+             * ExposureConfiguration<minimumRiskScore: 4,
+             * attenuationScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * attenuationWeight: 50,
+             * daysSinceLastExposureScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * daysSinceLastExposureWeight: 50,
+             * durationScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * durationWeight: 50,
+             * transmissionRiskScores: [4, 4, 4, 4, 4, 4, 4, 4],
+             * transmissionRiskWeight: 50,
+             * durationAtAttenuationThresholds: [50, 74]>
+             */
+
+            /*
              * [0] when Attenuation > 73 dB
              * [1] when 73 >= Attenuation > 63
              * [2] when 63 >= Attenuation > 51
@@ -40,7 +55,7 @@ namespace Chino
              * [7] when 10 >= Attenuation
              */
             [JsonProperty("attenuation_scores")]
-            public int[] AttenuationScores { get; set; } = { 1, 2, 3, 4, 5, 6, 7, 8 };
+            public int[] AttenuationScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("attenuation_weight")]
             public int AttenuationWeight { get; set; } = 50;
@@ -56,13 +71,13 @@ namespace Chino
              * [7] when Days >= 0
              */
             [JsonProperty("days_since_last_exposure_scores")]
-            public int[] DaysSinceLastExposureScores { get; set; } = { 1, 1, 1, 1, 1, 1, 1, 1 };
+            public int[] DaysSinceLastExposureScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("days_since_last_exposure_weight")]
             public int DaysSinceLastExposureWeight { get; set; } = 50;
 
             [JsonProperty("duration_at_attenuation_thresholds")]
-            public int[] DurationAtAttenuationThresholds { get; set; } = { 50, 70 };
+            public int[] DurationAtAttenuationThresholds { get; set; } = { 50, 74 };
 
             /*
              * [0] when Duration == 0 min
@@ -75,19 +90,19 @@ namespace Chino
              * [7] when Duration > 30
              */
             [JsonProperty("duration_scores")]
-            public int[] DurationScores { get; set; } = { 1, 1, 1, 1, 1, 1, 1, 1 };
+            public int[] DurationScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("duration_weight")]
             public int DurationWeight { get; set; } = 50;
 
             [JsonProperty("minimum_risk_score")]
-            public int MinimumRiskScore { get; set; } = 21;
+            public int MinimumRiskScore { get; set; } = 4;
 
             /*
              * [0]-[7] App Defined
              */
             [JsonProperty("transmission_risk_scores")]
-            public int[] TransmissionRiskScores { get; set; } = { 7, 7, 7, 7, 7, 7, 7, 7 };
+            public int[] TransmissionRiskScores { get; set; } = { 4, 4, 4, 4, 4, 4, 4, 4 };
 
             [JsonProperty("transmission_risk_weight")]
             public int TransmissionRiskWeight { get; set; } = 50;
@@ -128,20 +143,24 @@ namespace Chino
         [JsonObject]
         public class GoogleDiagnosisKeysDataMappingConfiguration
         {
+            // Configuring Infectiousness
+            // Must Specify
+
+            // From https://developers.google.com/android/exposure-notifications/meaningful-exposures#map-diag-keys
             [JsonProperty("infectiousness_for_days_since_onset_of_symptoms")]
             public IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<int, Infectiousness>() {
-                { -14, Infectiousness.High },
-                { -13, Infectiousness.High },
-                { -12, Infectiousness.High },
-                { -11, Infectiousness.High },
-                { -10, Infectiousness.High },
-                { -9, Infectiousness.High },
-                { -8, Infectiousness.High },
-                { -7, Infectiousness.High },
-                { -6, Infectiousness.High },
-                { -5, Infectiousness.High },
-                { -4, Infectiousness.High },
-                { -3, Infectiousness.High },
+                { -14, Infectiousness.None },
+                { -13, Infectiousness.None },
+                { -12, Infectiousness.None },
+                { -11, Infectiousness.None },
+                { -10, Infectiousness.None },
+                { -9, Infectiousness.None },
+                { -8, Infectiousness.None },
+                { -7, Infectiousness.None },
+                { -6, Infectiousness.None },
+                { -5, Infectiousness.Standard },
+                { -4, Infectiousness.Standard },
+                { -3, Infectiousness.Standard },
                 { -2, Infectiousness.High },
                 { -1, Infectiousness.High },
                 { 0, Infectiousness.High },
@@ -150,30 +169,34 @@ namespace Chino
                 { 3, Infectiousness.High },
                 { 4, Infectiousness.High },
                 { 5, Infectiousness.High },
-                { 6, Infectiousness.High },
-                { 7, Infectiousness.High },
-                { 8, Infectiousness.High },
-                { 9, Infectiousness.High },
-                { 10, Infectiousness.High },
-                { 11, Infectiousness.High },
-                { 12, Infectiousness.High },
-                { 13, Infectiousness.High },
-                { 14, Infectiousness.High },
+                { 6, Infectiousness.Standard },
+                { 7, Infectiousness.Standard },
+                { 8, Infectiousness.Standard },
+                { 9, Infectiousness.Standard },
+                { 10, Infectiousness.Standard },
+                { 11, Infectiousness.None },
+                { 12, Infectiousness.None },
+                { 13, Infectiousness.None },
+                { 14, Infectiousness.None },
             };
 
             [JsonProperty("infectiousness_when_days_since_onset_missing")]
             public Infectiousness InfectiousnessWhenDaysSinceOnsetMissing = Infectiousness.Standard;
 
+            [JsonProperty("report_type_when_missing")]
+            public ReportType ReportTypeWhenMissing = ReportType.ConfirmedTest;
+
             public override bool Equals(object obj)
             {
                 return obj is GoogleDiagnosisKeysDataMappingConfiguration configuration &&
-                       InfectiousnessForDaysSinceOnsetOfSymptoms.SequenceEqual(InfectiousnessForDaysSinceOnsetOfSymptoms) &&
-                       InfectiousnessWhenDaysSinceOnsetMissing == configuration.InfectiousnessWhenDaysSinceOnsetMissing;
+                       InfectiousnessForDaysSinceOnsetOfSymptoms.SequenceEqual(configuration.InfectiousnessForDaysSinceOnsetOfSymptoms) &&
+                       InfectiousnessWhenDaysSinceOnsetMissing == configuration.InfectiousnessWhenDaysSinceOnsetMissing &&
+                       ReportTypeWhenMissing == configuration.ReportTypeWhenMissing;
             }
 
             public override int GetHashCode()
             {
-                return HashCode.Combine(InfectiousnessForDaysSinceOnsetOfSymptoms, InfectiousnessWhenDaysSinceOnsetMissing);
+                return HashCode.Combine(InfectiousnessForDaysSinceOnsetOfSymptoms, InfectiousnessWhenDaysSinceOnsetMissing, ReportTypeWhenMissing);
             }
         }
 
@@ -182,6 +205,23 @@ namespace Chino
         public class AppleExposureV1Configuration
         {
             // Configuring Duration
+
+            /*
+             * print(ENExposureConfiguration())
+             *
+             * NConfig, Flags 0x0 < >,
+             * DurW { I 100, N 100, M 100, O 100 },
+             * InfW { S 100, H 100 },
+             * RpTyW { CTest 100, CClin 100, SelfR 100, Recurs 100 },
+             * RpTyNM 1,
+             * AttnDurThres[50, 70, 90],
+             * DaysTh 0,
+             * MinScore 0(0.000),
+             * AttnLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DaysLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DurLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * TRskLV[1, 2, 3, 4, 5, 6, 7, 8]
+             */
 
             #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
 
@@ -275,7 +315,22 @@ namespace Chino
         [JsonObject]
         public class AppleExposureV2Configuration
         {
-            // Configuring Duration
+            /*
+             * print(ENExposureConfiguration())
+             *
+             * NConfig, Flags 0x0 < >,
+             * DurW { I 100, N 100, M 100, O 100 },
+             * InfW { S 100, H 100 },
+             * RpTyW { CTest 100, CClin 100, SelfR 100, Recurs 100 },
+             * RpTyNM 1,
+             * AttnDurThres[50, 70, 90],
+             * DaysTh 0,
+             * MinScore 0(0.000),
+             * AttnLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DaysLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * DurLV[1, 2, 3, 4, 5, 6, 7, 8],
+             * TRskLV[1, 2, 3, 4, 5, 6, 7, 8]
+             */
 
             #region These properties are available in iOS 12.5, and in iOS 13.5 and later.
 
@@ -285,7 +340,7 @@ namespace Chino
              * [2] The medium attenuation threshold.
              */
             [JsonProperty("attenuation_duration_thresholds")]
-            public int[] AttenuationDurationThresholds { get; set; } = { 15, 33, 73 };
+            public int[] AttenuationDurationThresholds { get; set; } = { 50, 70, 90 };
 
             [JsonProperty("immediate_duration_weight")]
             public double ImmediateDurationWeight { get; set; } = 100;
@@ -302,8 +357,9 @@ namespace Chino
             public int DaysSinceLastExposureThreshold { get; set; } = 0;
 
             // Configuring Infectiousness
-
             // Must Specify v2
+
+            // From ExposureNotification reference app created by Apple.
             [JsonProperty("infectiousness_for_days_since_onset_of_symptoms")]
             public IDictionary<long, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms { get; set; } = new Dictionary<long, Infectiousness>() {
                 { -14, Infectiousness.Standard },
