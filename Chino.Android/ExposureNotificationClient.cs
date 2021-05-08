@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Android.App;
 using Android.Content;
 using Android.Runtime;
@@ -157,28 +158,47 @@ namespace Chino
             EnClient = Nearby.GetExposureNotificationClient(applicationContext);
         }
 
+        private void CheckInitialized()
+        {
+            if (EnClient == null)
+            {
+                Logger.E("Init method must be called first.");
+                throw new UnInitializedException("Init method must be called first.");
+            }
+        }
+
         public override async Task StartAsync()
         {
+            CheckInitialized();
+
             await EnClient.StartAsync();
         }
 
         public override async Task StopAsync()
         {
+            CheckInitialized();
+
             await EnClient.StopAsync();
         }
 
         public override async Task<bool> IsEnabledAsync()
         {
+            CheckInitialized();
+
             return await EnClient.IsEnabledAsync();
         }
 
         public override async Task<long> GetVersionAsync()
         {
+            CheckInitialized();
+
             return await EnClient.GetVersionAsync();
         }
 
         public override async Task<IExposureNotificationStatus> GetStatusAsync()
         {
+            CheckInitialized();
+
             return new ExposureNotificationStatus(await EnClient.GetStatusAsync());
         }
 
@@ -193,6 +213,8 @@ namespace Chino
 
         public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration)
         {
+            CheckInitialized();
+
             if (Handler == null)
             {
                 Logger.E("ExposureNotificationClient: Handler is not set.");
@@ -243,6 +265,8 @@ namespace Chino
 #pragma warning disable CS0618 // Type or member is obsolete
         public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token)
         {
+            CheckInitialized();
+
             if (Handler == null)
             {
                 Logger.E("ExposureNotificationClient: Handler is not set.");
@@ -263,10 +287,23 @@ namespace Chino
 #pragma warning restore CS0618 // Type or member is obsolete
 
         public override async Task RequestPreAuthorizedTemporaryExposureKeyHistoryAsync()
-            => await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+        {
+            CheckInitialized();
 
+            await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+        }
         public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
-            => await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+        {
+            CheckInitialized();
 
+            await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+        }
+    }
+
+    class UnInitializedException : Exception
+    {
+        public UnInitializedException(string message) : base(message)
+        {
+        }
     }
 }
