@@ -4,6 +4,8 @@ using Chino;
 using Foundation;
 using UIKit;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Sample.iOS
 {
     // The UIApplicationDelegate for the application. This class is responsible for launching the
@@ -20,7 +22,7 @@ namespace Sample.iOS
             Logger.D("FinishedLaunching");
 
             AbsExposureNotificationClient.Handler = this;
-            ExposureNotificationClient.Shared.IsTest = true;
+            ExposureNotificationClientManager.Shared.IsTest = true;
 
             return true;
         }
@@ -43,7 +45,7 @@ namespace Sample.iOS
             // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
         }
 
-        public AbsExposureNotificationClient GetEnClient() => ExposureNotificationClient.Shared;
+        public AbsExposureNotificationClient GetEnClient() => ExposureNotificationClientManager.Shared;
 
         public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
         {

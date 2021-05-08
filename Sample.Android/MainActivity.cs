@@ -13,6 +13,8 @@ using AndroidX.AppCompat.App;
 using Chino;
 using Java.IO;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Sample.Android
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", Icon = "@mipmap/ic_launcher", MainLauncher = true)]
@@ -87,7 +89,7 @@ namespace Sample.Android
             Logger.D("RequestReleaseKeys");
             try
             {
-                await EnClient.RequestPreAuthorizedTemporaryExposureKeyRelease();
+                await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
             }
             catch (ApiException apiException)
             {
@@ -101,7 +103,7 @@ namespace Sample.Android
             Logger.D("RequestPreAuthorizeKeys");
             try
             {
-                await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistory();
+                await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
                 Logger.D("RequestPreAuthorizeKeys Success");
             }
             catch (ApiException apiException)
@@ -131,7 +133,7 @@ namespace Sample.Android
 
             try
             {
-                await EnClient.ProvideDiagnosisKeys(diagnosisKeyPaths);
+                await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths);
             }
             catch (ApiException apiException)
             {
@@ -160,7 +162,7 @@ namespace Sample.Android
             Logger.D("GetTekHistory");
             try
             {
-                return await EnClient.GetTemporaryExposureKeyHistory();
+                return await EnClient.GetTemporaryExposureKeyHistoryAsync();
             }
             catch (ApiException apiException)
             {
@@ -180,9 +182,9 @@ namespace Sample.Android
             Logger.D("EnableEnAsync");
             try
             {
-                await EnClient.Start();
+                await EnClient.StartAsync();
 
-                long version = await EnClient.GetVersion();
+                long version = await EnClient.GetVersionAsync();
                 Logger.D($"Version: {version}");
             }
             catch (ApiException apiException)

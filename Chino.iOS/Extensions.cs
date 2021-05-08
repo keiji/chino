@@ -5,6 +5,8 @@ using ExposureNotifications;
 using Foundation;
 using UIKit;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Chino
 {
     public static class Extensions
