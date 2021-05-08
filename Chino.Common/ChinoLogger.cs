@@ -5,10 +5,8 @@ using System.Linq;
 
 namespace Chino
 {
-    public class Logger
+    public static class ChinoLogger
     {
-        private Logger() { }
-
         public static void D(string message)
         {
 #if DEBUG

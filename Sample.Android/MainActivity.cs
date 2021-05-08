@@ -13,6 +13,8 @@ using AndroidX.AppCompat.App;
 using Chino;
 using Java.IO;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Sample.Android
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", Icon = "@mipmap/ic_launcher", MainLauncher = true)]

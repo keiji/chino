@@ -15,6 +15,8 @@ using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary
 using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.ExposureInformation;
 using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
 
+using Logger = Chino.ChinoLogger;
+
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
 [assembly: UsesPermission(Android.Manifest.Permission.Bluetooth)]

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Sample.iOS
 {
     public partial class ViewController : UIViewController

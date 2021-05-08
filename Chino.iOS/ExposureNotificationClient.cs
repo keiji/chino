@@ -8,6 +8,8 @@ using ExposureNotifications;
 using Foundation;
 using UIKit;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Chino
 {
     // https://developer.apple.com/documentation/exposurenotification/enmanager

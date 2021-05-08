@@ -1,5 +1,7 @@
 ﻿using ExposureNotifications;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Chino
 {
     // https://developer.apple.com/documentation/exposurenotification/enstatus

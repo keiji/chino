@@ -4,6 +4,8 @@ using Android.App;
 using Android.Runtime;
 using Chino;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Sample.Android
 {
 

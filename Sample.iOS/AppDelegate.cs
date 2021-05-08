@@ -4,6 +4,8 @@ using Chino;
 using Foundation;
 using UIKit;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Sample.iOS
 {
     // The UIApplicationDelegate for the application. This class is responsible for launching the
