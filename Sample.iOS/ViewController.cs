@@ -34,7 +34,7 @@ namespace Sample.iOS
 
                 try
                 {
-                    await ExposureNotificationClientManager.Shared.Start();
+                    await ExposureNotificationClientManager.Shared.StartAsync();
                     await ShowStatusAsync();
                 }
                 catch (NSErrorException exception)
@@ -42,7 +42,7 @@ namespace Sample.iOS
                     exception.LogD();
                 }
 
-                long version = await ExposureNotificationClientManager.Shared.GetVersion();
+                long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
                 Logger.D($"ENAPIVersion: {version}");
             };
             buttonShowTeksHistory.TouchUpInside += async (sender, e) =>
@@ -92,10 +92,10 @@ namespace Sample.iOS
         }
 
         private async Task RequestPreauthorizedKeys()
-            => await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyHistory();
+            => await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
 
         private async Task RequestReleaseKeys()
-            => await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyRelease();
+            => await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
 
         private async Task DetectExposure()
         {
@@ -113,12 +113,12 @@ namespace Sample.iOS
 
             ExposureConfiguration exposureConfiguration = new ExposureConfiguration();
 
-            await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeys(diagnosisKeyPaths, exposureConfiguration);
+            await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, exposureConfiguration);
         }
 
         private async Task ShowTeksAsync()
         {
-            List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistory();
+            List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
             Logger.D(teks, (int)RiskLevel.High.ToByte(), ReportType.ConfirmedTest);
 
             List<string> tekKeyData = teks.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
@@ -130,7 +130,7 @@ namespace Sample.iOS
         {
             await Task.Delay(1000);
 
-            IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatus();
+            IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
 
             switch (status.Status())
             {

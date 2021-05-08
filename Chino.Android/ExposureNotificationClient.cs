@@ -157,41 +157,41 @@ namespace Chino
             EnClient = Nearby.GetExposureNotificationClient(applicationContext);
         }
 
-        public override async Task Start()
+        public override async Task StartAsync()
         {
             await EnClient.StartAsync();
         }
 
-        public override async Task Stop()
+        public override async Task StopAsync()
         {
             await EnClient.StopAsync();
         }
 
-        public override async Task<bool> IsEnabled()
+        public override async Task<bool> IsEnabledAsync()
         {
             return await EnClient.IsEnabledAsync();
         }
 
-        public override async Task<long> GetVersion()
+        public override async Task<long> GetVersionAsync()
         {
             return await EnClient.GetVersionAsync();
         }
 
-        public override async Task<IExposureNotificationStatus> GetStatus()
+        public override async Task<IExposureNotificationStatus> GetStatusAsync()
         {
             return new ExposureNotificationStatus(await EnClient.GetStatusAsync());
         }
 
-        public override async Task ProvideDiagnosisKeys(List<string> keyFiles)
+        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles)
         {
-            await ProvideDiagnosisKeys(keyFiles, new ExposureConfiguration()
+            await ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration()
             {
                 GoogleExposureConfig = new ExposureConfiguration.GoogleExposureConfiguration(),
                 GoogleDailySummariesConfig = new DailySummariesConfig()
             });
         }
 
-        public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration)
+        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration)
         {
             if (Handler == null)
             {
@@ -232,7 +232,7 @@ namespace Chino
             await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
         }
 
-        public override async Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistory()
+        public override async Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
         {
             var teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
 
@@ -241,7 +241,7 @@ namespace Chino
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration, string token)
+        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token)
         {
             if (Handler == null)
             {
@@ -262,10 +262,10 @@ namespace Chino
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        public override async Task RequestPreAuthorizedTemporaryExposureKeyHistory()
+        public override async Task RequestPreAuthorizedTemporaryExposureKeyHistoryAsync()
             => await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
 
-        public override async Task RequestPreAuthorizedTemporaryExposureKeyRelease()
+        public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
             => await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
 
     }
