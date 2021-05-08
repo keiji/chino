@@ -22,6 +22,8 @@ COPYRIGHT HOLDERは Cappuccino Authors としています。
 その上で、ENv2などの検討にあたって、COCOAよりももっと小さなコードで各機能をテストできる環境の必要性は常々感じています。
 たとえCOCOAに採用されなくても、本プロジェクトの意義はあると考えています。
 
+[Prism(Xamarin.Forms)から利用するサンプル実装](https://github.com/keiji/chino.prism)
+
 ## License
 
 Cappuccino is distributed under the terms of the MIT License.
