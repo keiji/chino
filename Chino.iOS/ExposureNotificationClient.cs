@@ -112,7 +112,7 @@ namespace Chino
             }
         }
 
-        public override Task ProvideDiagnosisKeysAsync(List<string> keyFiles) => ProvideDiagnosisKeys(keyFiles, new ExposureConfiguration());
+        public override Task ProvideDiagnosisKeysAsync(List<string> keyFiles) => ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration());
 
         // https://developer.apple.com/documentation/exposurenotification/enmanager/3586331-detectexposures
         private async Task<(string?, string?)> DecompressZip(string zipFilePath)
