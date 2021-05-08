@@ -15,8 +15,6 @@ namespace Chino
     {
         private const long MAXIMUM_ZIP_ARCHIVE_ENTRY_SIZE = 10 * 1024 * 1024;
 
-        public static readonly ExposureNotificationClient Shared = new ExposureNotificationClient();
-
         private readonly ENManager EnManager = new ENManager()
         {
             DiagnosisKeysAvailableHandler = new ENDiagnosisKeysAvailableHandler(teks =>
@@ -36,14 +34,14 @@ namespace Chino
 
         public string UserExplanation { private get; set; }
 
-        public Task Init(string userExplanation)
+        private bool IsInitialized = false;
+
+        public async Task Init(string userExplanation)
         {
             UserExplanation = userExplanation;
 
-            return Task.Run(async () =>
-            {
-                await EnManager.ActivateAsync();
-            });
+            await EnManager.ActivateAsync();
+            IsInitialized = true;
         }
 
         ~ExposureNotificationClient()
@@ -51,24 +49,55 @@ namespace Chino
             EnManager.Invalidate();
         }
 
-        public async override Task Start() => await EnManager.SetExposureNotificationEnabledAsync(true);
+        private void CheckInitialized()
+        {
+            if (!IsInitialized)
+            {
+                Logger.E("Init method must be called first.");
+            }
+        }
 
-        public async override Task Stop() => await EnManager.SetExposureNotificationEnabledAsync(false);
+        public async override Task Start()
+        {
+            CheckInitialized();
 
-        public override Task<bool> IsEnabled() => Task.Run(() => EnManager.ExposureNotificationEnabled);
+            await EnManager.SetExposureNotificationEnabledAsync(true);
+        }
 
-        public override Task<long> GetVersion() => Task.Run(() => long.Parse(NSBundle.MainBundle.InfoDictionary["ENAPIVersion"].ToString()));
+        public async override Task Stop()
+        {
+            CheckInitialized();
+
+            await EnManager.SetExposureNotificationEnabledAsync(false);
+
+            IsInitialized = false;
+        }
+
+        public override Task<bool> IsEnabled()
+        {
+            CheckInitialized();
+
+            return Task.Run(() => EnManager.ExposureNotificationEnabled);
+        }
+
+        public override Task<long> GetVersion()
+        {
+            CheckInitialized();
+
+            return Task.Run(() => long.Parse(NSBundle.MainBundle.InfoDictionary["ENAPIVersion"].ToString()));
+        }
 
         public override Task<IExposureNotificationStatus> GetStatus()
         {
-            return Task.Run(() =>
-             {
-                 return (IExposureNotificationStatus)new ExposureNotificationStatus(EnManager.ExposureNotificationStatus);
-             });
+            CheckInitialized();
+
+            return Task.Run(() => (IExposureNotificationStatus)new ExposureNotificationStatus(EnManager.ExposureNotificationStatus));
         }
 
         public async override Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistory()
         {
+            CheckInitialized();
+
             if (!IsTest)
             {
                 ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
@@ -131,6 +160,8 @@ namespace Chino
 
         public async override Task ProvideDiagnosisKeys(List<string> zippedKeyFiles, ExposureConfiguration configuration)
         {
+            CheckInitialized();
+
             long enAPiVersion = await GetVersion();
 
             ExposureConfiguration = configuration;
@@ -249,7 +280,11 @@ namespace Chino
         [Obsolete]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
         public override async Task ProvideDiagnosisKeys(List<string> keyFiles, ExposureConfiguration configuration, string token)
-            => await ProvideDiagnosisKeys(keyFiles, configuration);
+        {
+            CheckInitialized();
+
+            await ProvideDiagnosisKeys(keyFiles, configuration);
+        }
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
         private async Task GetExposureV2(ENExposureDetectionSummary summary)
@@ -293,9 +328,16 @@ namespace Chino
         }
 
         public override async Task RequestPreAuthorizedTemporaryExposureKeyHistory()
-            => await EnManager.PreAuthorizeDiagnosisKeysAsync();
+        {
+            CheckInitialized();
 
+            await EnManager.PreAuthorizeDiagnosisKeysAsync();
+        }
         public override async Task RequestPreAuthorizedTemporaryExposureKeyRelease()
-            => await EnManager.RequestPreAuthorizedDiagnosisKeysAsync();
+        {
+            CheckInitialized();
+
+            await EnManager.RequestPreAuthorizedDiagnosisKeysAsync();
+        }
     }
 }

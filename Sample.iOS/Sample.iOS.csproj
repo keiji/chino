@@ -129,6 +129,7 @@
         <Compile Include="ViewController.designer.cs">
             <DependentUpon>ViewController.cs</DependentUpon>
         </Compile>
+        <Compile Include="ExposureNotificationClientManager.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Chino.iOS\Chino.iOS.csproj">
