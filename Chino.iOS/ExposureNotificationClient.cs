@@ -197,8 +197,8 @@ namespace Chino
 
             ENExposureConfiguration exposureConfiguration = enAPiVersion switch
             {
-                2 => ExposureConfiguration.AppleExposureV2Config.ToENExposureConfiguration(),
-                _ => ExposureConfiguration.AppleExposureV1Config.ToENExposureConfiguration(),
+                2 => ExposureConfiguration.AppleExposureConfigV2.ToENExposureConfiguration(),
+                _ => ExposureConfiguration.AppleExposureConfigV1.ToENExposureConfiguration(),
 
             };
             Logger.D(exposureConfiguration.ToString());
