@@ -59,7 +59,7 @@ namespace Chino
         }
 
         public static ENExposureConfiguration ToENExposureConfiguration(
-            this ExposureConfiguration.AppleExposureV1Configuration appleExposureConfiguration
+            this ExposureConfiguration.AppleExposureConfigurationV1 appleExposureConfiguration
         )
         {
             ENExposureConfiguration configuration = new ENExposureConfiguration();
@@ -118,7 +118,7 @@ namespace Chino
         }
 
         public static ENExposureConfiguration ToENExposureConfiguration(
-            this ExposureConfiguration.AppleExposureV2Configuration appleExposureConfiguration
+            this ExposureConfiguration.AppleExposureConfigurationV2 appleExposureConfiguration
         )
         {
             ENExposureConfiguration configuration = new ENExposureConfiguration();

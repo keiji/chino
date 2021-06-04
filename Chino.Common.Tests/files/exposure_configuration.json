@@ -113,7 +113,7 @@
       "Unknown": 1.0
     }
   },
-  "apple_exposure_v1_config": {
+  "apple_exposure_config_v1": {
     "attenuation_level_values": [
       1,
       2,
@@ -157,7 +157,7 @@
     "minimum_risk_score": 0,
     "minimum_risk_score_full_range": 0.0
   },
-  "apple_exposure_v2_config": {
+  "apple_exposure_config_v2": {
     "infectiousness_when_days_since_onset_missing": 1,
     "attenuation_duration_thresholds": [
       50,

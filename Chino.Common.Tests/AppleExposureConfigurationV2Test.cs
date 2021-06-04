@@ -6,13 +6,13 @@ namespace Chino.Common.Tests
 {
     public class AppleExposureV2ConfigurationTest
     {
-        private readonly string PATH_JSON = "./files/apple_exposure_v2_configuration.json";
+        private readonly string PATH_JSON = "./files/apple_exposure_configuration_v2.json";
 
         [Test]
         public void TestSerializeToJson()
         {
-            var appleExposureV2Configuration = new ExposureConfiguration.AppleExposureV2Configuration();
-            var jsonStr = JsonConvert.SerializeObject(appleExposureV2Configuration, Formatting.Indented);
+            var appleExposureConfigurationV2 = new ExposureConfiguration.AppleExposureConfigurationV2();
+            var jsonStr = JsonConvert.SerializeObject(appleExposureConfigurationV2, Formatting.Indented);
             //Logger.D(jsonStr);
 
             using (var sr = new StreamReader(File.OpenRead(Utils.GetFullPath(PATH_JSON))))
@@ -26,8 +26,8 @@ namespace Chino.Common.Tests
         [Test]
         public void TestDeserializeFromJson()
         {
-            var expected = new ExposureConfiguration.AppleExposureV2Configuration();
-            var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV2Configuration>(PATH_JSON);
+            var expected = new ExposureConfiguration.AppleExposureConfigurationV2();
+            var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
 
             Assert.True(expected.Equals(appleExposureV2Configuration));
         }
@@ -35,12 +35,12 @@ namespace Chino.Common.Tests
         [Test]
         public void TestNotEquals()
         {
-            var expected = new ExposureConfiguration.AppleExposureV2Configuration
+            var expected = new ExposureConfiguration.AppleExposureConfigurationV2
             {
                 ImmediateDurationWeight = 20
             };
 
-            var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV2Configuration>(PATH_JSON);
+            var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
 
             Assert.False(expected.Equals(appleExposureV2Configuration));
         }

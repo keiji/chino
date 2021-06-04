@@ -34,14 +34,14 @@ namespace Chino
         /// <summary>
         /// The object that contains parameters for configuring exposure notification risk scoring behavior for v1.
         /// </summary>
-        [JsonProperty("apple_exposure_v1_config")]
-        public AppleExposureV1Configuration AppleExposureV1Config { get; set; } = new AppleExposureV1Configuration();
+        [JsonProperty("apple_exposure_config_v1")]
+        public AppleExposureConfigurationV1 AppleExposureConfigV1 { get; set; } = new AppleExposureConfigurationV1();
 
         /// <summary>
         /// The object that contains parameters for configuring exposure notification risk scoring behavior for v2.
         /// </summary>
-        [JsonProperty("apple_exposure_v2_config")]
-        public AppleExposureV2Configuration AppleExposureV2Config { get; set; } = new AppleExposureV2Configuration();
+        [JsonProperty("apple_exposure_config_v2")]
+        public AppleExposureConfigurationV2 AppleExposureConfigV2 { get; set; } = new AppleExposureConfigurationV2();
 
         /// <summary>
         /// Exposure configuration parameters that can be provided when initializing the service.
@@ -272,7 +272,7 @@ namespace Chino
         ///
         /// https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration/exposure_risk_value_calculation_in_exposurenotification_version_1
         [JsonObject]
-        public class AppleExposureV1Configuration
+        public class AppleExposureConfigurationV1
         {
             /*
              * print(ENExposureConfiguration())
@@ -382,7 +382,7 @@ namespace Chino
 
             public override bool Equals(object obj)
             {
-                return obj is AppleExposureV1Configuration configuration &&
+                return obj is AppleExposureConfigurationV1 configuration &&
                        AttenuationLevelValues.SequenceEqual(configuration.AttenuationLevelValues) &&
                        DaysSinceLastExposureLevelValues.SequenceEqual(configuration.DaysSinceLastExposureLevelValues) &&
                        DurationLevelValues.SequenceEqual(configuration.DurationLevelValues) &&
@@ -403,7 +403,7 @@ namespace Chino
         ///
         /// https://developer.apple.com/documentation/exposurenotification/enexposureconfiguration
         [JsonObject]
-        public class AppleExposureV2Configuration
+        public class AppleExposureConfigurationV2
         {
             /*
              * print(ENExposureConfiguration())
@@ -553,7 +553,7 @@ namespace Chino
 
             public override bool Equals(object obj)
             {
-                return obj is AppleExposureV2Configuration configuration &&
+                return obj is AppleExposureConfigurationV2 configuration &&
                        AttenuationDurationThresholds.SequenceEqual(configuration.AttenuationDurationThresholds) &&
                        ImmediateDurationWeight == configuration.ImmediateDurationWeight &&
                        NearDurationWeight == configuration.NearDurationWeight &&
@@ -601,13 +601,13 @@ namespace Chino
                    EqualityComparer<GoogleExposureConfiguration>.Default.Equals(GoogleExposureConfig, configuration.GoogleExposureConfig) &&
                    EqualityComparer<GoogleDiagnosisKeysDataMappingConfiguration>.Default.Equals(GoogleDiagnosisKeysDataMappingConfig, configuration.GoogleDiagnosisKeysDataMappingConfig) &&
                    EqualityComparer<DailySummariesConfig>.Default.Equals(GoogleDailySummariesConfig, configuration.GoogleDailySummariesConfig) &&
-                   EqualityComparer<AppleExposureV1Configuration>.Default.Equals(AppleExposureV1Config, configuration.AppleExposureV1Config) &&
-                   EqualityComparer<AppleExposureV2Configuration>.Default.Equals(AppleExposureV2Config, configuration.AppleExposureV2Config);
+                   EqualityComparer<AppleExposureConfigurationV1>.Default.Equals(AppleExposureConfigV1, configuration.AppleExposureConfigV1) &&
+                   EqualityComparer<AppleExposureConfigurationV2>.Default.Equals(AppleExposureConfigV2, configuration.AppleExposureConfigV2);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(GoogleExposureConfig, GoogleDiagnosisKeysDataMappingConfig, GoogleDailySummariesConfig, AppleExposureV1Config, AppleExposureV2Config);
+            return HashCode.Combine(GoogleExposureConfig, GoogleDiagnosisKeysDataMappingConfig, GoogleDailySummariesConfig, AppleExposureConfigV1, AppleExposureConfigV2);
         }
     }
 }

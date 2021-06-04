@@ -6,12 +6,12 @@ namespace Chino.Common.Tests
 {
     public class AppleExposureV1ConfigurationTest
     {
-        private readonly string PATH_JSON = "./files/apple_exposure_v1_configuration.json";
+        private readonly string PATH_JSON = "./files/apple_exposure_configuration_v1.json";
 
         [Test]
         public void TestSerializeToJson()
         {
-            var appleExposureV1Configuration = new ExposureConfiguration.AppleExposureV1Configuration();
+            var appleExposureV1Configuration = new ExposureConfiguration.AppleExposureConfigurationV1();
             var jsonStr = JsonConvert.SerializeObject(appleExposureV1Configuration, Formatting.Indented);
             //Logger.D(jsonStr);
 
@@ -26,8 +26,8 @@ namespace Chino.Common.Tests
         [Test]
         public void TestDeserializeFromJson()
         {
-            var expected = new ExposureConfiguration.AppleExposureV1Configuration();
-            var appleExposureV1Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV1Configuration>(PATH_JSON);
+            var expected = new ExposureConfiguration.AppleExposureConfigurationV1();
+            var appleExposureV1Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV1>(PATH_JSON);
 
             Assert.True(expected.Equals(appleExposureV1Configuration));
         }
@@ -35,12 +35,12 @@ namespace Chino.Common.Tests
         [Test]
         public void TestNotEquals()
         {
-            var expected = new ExposureConfiguration.AppleExposureV1Configuration
+            var expected = new ExposureConfiguration.AppleExposureConfigurationV1
             {
                 MinimumRiskScore = 1
             };
 
-            var appleExposureV1Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureV1Configuration>(PATH_JSON);
+            var appleExposureV1Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV1>(PATH_JSON);
 
             Assert.False(expected.Equals(appleExposureV1Configuration));
         }
