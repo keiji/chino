@@ -19,6 +19,9 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: macos-latest
+    strategy:
+      matrix:
+        Configuration: [Debug, Release]
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -63,28 +66,16 @@ jobs:
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: true
     # Build check Chino library
-    - name: AndroidDebug
+    - name: Android
       run: |
-        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=Debug
-    - name: AndroidRelease
+        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
+    - name: iOS
       run: |
-        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=Release
-    - name: iOSDebug
-      run: |
-        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=Debug
-    - name: iOSRelease
-      run: |
-        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=Release
+        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
     # Build check Sample app
-    - name: SampleAndroidDebug
+    - name: SampleAndroid
       run: |
-        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=Debug
-    - name: SampleAndroidRelease
-      run: |
-        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=Release
+        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
     - name: SampleiOSDebug
       run: |
-        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=Debug
-    - name: SampleiOSRelease
-      run: |
-        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=Release
+        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
