@@ -77,7 +77,7 @@ jobs:
         xamarin-android-version: 11.2 # specify full version; it is not recomended option because your pipeline can be broken suddenly in future
         xcode-version: 12
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
     - name: Cache
       uses: actions/cache@v2.1.5
       env:
