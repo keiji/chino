@@ -15,21 +15,12 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  test:
     runs-on: macos-latest
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - name: Select Xcode version
-      run: |
-        sudo xcode-select -s '/Applications/Xcode_12.4.app/Contents/Developer'
-        xcodebuild -version
     - name: Setup Xamarin
-      # You may pin to the exact commit or the version.
-      # uses: maxim-lobanov/setup-xamarin@00b44a3ef9e2d1953010956de2022e8d095a196c
       uses: maxim-lobanov/setup-xamarin@v1
       with:
         mono-version: 6.12 # specify version in '<major>.<minor>' format
@@ -38,7 +29,50 @@ jobs:
         xamarin-android-version: 11.2 # specify full version; it is not recomended option because your pipeline can be broken suddenly in future
         xcode-version: 12
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
+    - name: Cache
+      uses: actions/cache@v2.1.5
+      env:
+        cache-name: cache-nuget-packages
+      with:
+        path: ${{ github.workspace }}/.nuget/packages
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.csproj') }}
+    - name: Prepare
+      run: |
+        nuget restore Chino.Common/Chino.Common.csproj
+        nuget restore Chino.Common.Tests/Chino.Common.Tests.csproj
+        nuget restore Chino.iOS/Chino.iOS.csproj
+        nuget restore Chino.Android/Chino.Android.csproj
+        nuget restore Sample.iOS/Sample.iOS.csproj
+        nuget restore Sample.Android/Sample.Android.csproj
+    - name: Common.Tests
+      run: |
+        cd Chino.Common.Tests
+        dotnet test
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: true
+  build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        Configuration: [Debug, Release]
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    steps:
+    - name: Select Xcode version
+      run: |
+        sudo xcode-select -s '/Applications/Xcode_12.4.app/Contents/Developer'
+        xcodebuild -version
+    - name: Setup Xamarin
+      uses: maxim-lobanov/setup-xamarin@v1
+      with:
+        mono-version: 6.12 # specify version in '<major>.<minor>' format
+        xamarin-ios-version: 14.0 # specify version in '<major>' format
+        xamarin-mac-version: latest # specify 'latest' keyword to pick up the latest available version
+        xamarin-android-version: 11.2 # specify full version; it is not recomended option because your pipeline can be broken suddenly in future
+        xcode-version: 12
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Cache
       uses: actions/cache@v2.1.5
       env:
@@ -56,35 +90,17 @@ jobs:
         nuget restore Chino.Android/Chino.Android.csproj
         nuget restore Sample.iOS/Sample.iOS.csproj
         nuget restore Sample.Android/Sample.Android.csproj
-    - name: Common.Tests
-      run: |
-        cd Chino.Common.Tests
-        dotnet test
-      env:
-        DOTNET_CLI_TELEMETRY_OPTOUT: true
     # Build check Chino library
-    - name: AndroidDebug
+    - name: Android
       run: |
-        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=Debug
-    - name: AndroidRelease
+        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
+    - name: iOS
       run: |
-        msbuild ./Chino.Android/Chino.Android.csproj /t:Rebuild /p:Configuration=Release
-    - name: iOSDebug
-      run: |
-        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=Debug
-    - name: iOSRelease
-      run: |
-        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=Release
+        msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
     # Build check Sample app
-    - name: SampleAndroidDebug
+    - name: SampleAndroid
       run: |
-        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=Debug
-    - name: SampleAndroidRelease
-      run: |
-        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=Release
+        msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
     - name: SampleiOSDebug
       run: |
-        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=Debug
-    - name: SampleiOSRelease
-      run: |
-        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=Release
+        msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
