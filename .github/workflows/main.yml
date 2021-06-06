@@ -39,12 +39,7 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.csproj') }}
     - name: Prepare
       run: |
-        nuget restore Chino.Common/Chino.Common.csproj
-        nuget restore Chino.Common.Tests/Chino.Common.Tests.csproj
-        nuget restore Chino.iOS/Chino.iOS.csproj
-        nuget restore Chino.Android/Chino.Android.csproj
-        nuget restore Sample.iOS/Sample.iOS.csproj
-        nuget restore Sample.Android/Sample.Android.csproj
+        nuget restore
     - name: Common.Tests
       run: |
         cd Chino.Common.Tests
@@ -84,12 +79,7 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.csproj') }}
     - name: Prepare
       run: |
-        nuget restore Chino.Common/Chino.Common.csproj
-        nuget restore Chino.Common.Tests/Chino.Common.Tests.csproj
-        nuget restore Chino.iOS/Chino.iOS.csproj
-        nuget restore Chino.Android/Chino.Android.csproj
-        nuget restore Sample.iOS/Sample.iOS.csproj
-        nuget restore Sample.Android/Sample.Android.csproj
+        nuget restore
     # Build check Chino library
     - name: Android
       run: |
@@ -98,9 +88,12 @@ jobs:
       run: |
         msbuild ./Chino.iOS/Chino.iOS.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
     # Build check Sample app
+    - name: SampleCommon
+      run: |
+        msbuild ./Sample.Common/Sample.Common.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
     - name: SampleAndroid
       run: |
         msbuild ./Sample.Android/Sample.Android.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}
-    - name: SampleiOSDebug
+    - name: SampleiOS
       run: |
         msbuild ./Sample.iOS/Sample.iOS.csproj /t:Rebuild /p:Configuration=${{ matrix.Configuration }}

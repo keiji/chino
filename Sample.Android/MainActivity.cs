@@ -12,7 +12,7 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using Chino;
 using Java.IO;
-
+using Sample.Common.Model;
 using Logger = Chino.ChinoLogger;
 
 namespace Sample.Android
@@ -25,6 +25,8 @@ namespace Sample.Android
         private const int REQUEST_PREAUTHORIZE_KEYS = 0x12;
 
         private const string DIAGNOSIS_KEYS_DIR = "diagnosis_keys";
+        private const string TEKS_DIR = "temporary_exposure_keys";
+        private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
 
         private AbsExposureNotificationClient? EnClient = null;
 
@@ -34,12 +36,18 @@ namespace Sample.Android
         private Button? buttonRequestPreauthorizedKeys = null;
         private Button? buttonRequestReleaseKeys = null;
 
+        private File _teksDir;
+        private File _diagnosisKeysDir;
+        private File _exposureDetectionResultDir;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
+
+            InitializeDirs();
 
             EnClient = ((MainApplication)ApplicationContext).GetEnClient();
 
@@ -56,7 +64,10 @@ namespace Sample.Android
             {
                 Logger.D("buttonGetTekHistory clicked");
 
-                await ShowTekHistory();
+                List<ITemporaryExposureKey> teks = await GetTekHistory();
+
+                ShowTekHistory(teks);
+                await SaveTekHistoryAsync(teks);
             };
 
             buttonProvideDiagnosisKeys = FindViewById<Button>(Resource.Id.btn_provide_diagnosis_keys);
@@ -82,6 +93,27 @@ namespace Sample.Android
 
                 await RequestReleaseKeys();
             };
+        }
+
+        private void InitializeDirs()
+        {
+            _teksDir = new File(FilesDir, TEKS_DIR);
+            if (!_teksDir.Exists())
+            {
+                _teksDir.Mkdirs();
+            }
+
+            _diagnosisKeysDir = new File(FilesDir, DIAGNOSIS_KEYS_DIR);
+            if (!_diagnosisKeysDir.Exists())
+            {
+                _diagnosisKeysDir.Mkdirs();
+            }
+
+            _exposureDetectionResultDir = new File(FilesDir, EXPOSURE_DETECTION_RESULT_DIR);
+            if (!_exposureDetectionResultDir.Exists())
+            {
+                _exposureDetectionResultDir.Mkdirs();
+            }
         }
 
         private async Task RequestReleaseKeys()
@@ -119,13 +151,7 @@ namespace Sample.Android
 
         private async Task ProvideDiagnosisKeys()
         {
-            File diagnosisKeyDir = new File(FilesDir, DIAGNOSIS_KEYS_DIR);
-            if (!diagnosisKeyDir.Exists())
-            {
-                diagnosisKeyDir.Mkdirs();
-            }
-
-            File[] diagnosisKeyFiles = await diagnosisKeyDir.ListFilesAsync();
+            File[] diagnosisKeyFiles = await _diagnosisKeysDir.ListFilesAsync();
             List<string> diagnosisKeyPaths = diagnosisKeyFiles.ToList()
                 .FindAll(file => file.IsFile)
                 .Select(file => file.AbsolutePath).ToList()
@@ -141,20 +167,33 @@ namespace Sample.Android
             }
         }
 
-        private async Task ShowTekHistory()
+        private void ShowTekHistory(List<ITemporaryExposureKey> temporaryExposureKeys)
         {
             if (buttonGetTekHistory == null)
             {
                 return;
             }
 
-            List<ITemporaryExposureKey> teks = await GetTekHistory();
-            Logger.D(teks, RiskLevel.Highest.ToInt(), ReportType.ConfirmedTest);
-
-            List<string> tekKeyData = teks.Select(tek => Convert.ToBase64String(tek.KeyData)).ToList();
+            List<string> tekKeyData = temporaryExposureKeys.Select(tek => Convert.ToBase64String(tek.KeyData)).ToList();
             string str = string.Join("\n", tekKeyData);
 
             buttonGetTekHistory.Text = str;
+        }
+
+        private async Task SaveTekHistoryAsync(List<ITemporaryExposureKey> temporaryExposureKeys)
+        {
+            TemporaryExposureKeys teks = new TemporaryExposureKeys(temporaryExposureKeys, DateTime.Now) {
+                Device = Build.Model
+            };
+
+            string fileName = $"{teks.Id}.json";
+            string json = teks.ToJsonString();
+            Logger.D(json);
+
+            File filePath = new File(_teksDir, fileName);
+            using BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+            await bw.WriteAsync(json);
+            await bw.FlushAsync();
         }
 
         private async Task<List<ITemporaryExposureKey>> GetTekHistory()
@@ -218,7 +257,9 @@ namespace Sample.Android
                     DisableEnButton();
                     break;
                 case REQUEST_GET_TEK_HISTORY:
-                    await ShowTekHistory();
+                    List<ITemporaryExposureKey> teks = await GetTekHistory();
+                    ShowTekHistory(teks);
+                    await SaveTekHistoryAsync(teks);
                     break;
                 case REQUEST_PREAUTHORIZE_KEYS:
                     await RequestPreAuthorizeKeys();
