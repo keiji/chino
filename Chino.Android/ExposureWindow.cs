@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using Newtonsoft.Json;
 using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
 using AndroidScanInstance = Android.Gms.Nearby.ExposureNotification.ScanInstance;
 
@@ -10,6 +10,7 @@ namespace Chino
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureWindow
     public class ExposureWindow : IExposureWindow
     {
+        [JsonIgnore]
         public readonly AndroidExposureWindow Source;
 
         public ExposureWindow(AndroidExposureWindow source)
@@ -31,6 +32,7 @@ namespace Chino
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ScanInstance
     public class ScanInstance : IScanInstance
     {
+        [JsonIgnore]
         public readonly AndroidScanInstance Source;
 
         public ScanInstance(AndroidScanInstance source)

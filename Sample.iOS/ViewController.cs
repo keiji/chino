@@ -1,5 +1,6 @@
 ﻿using Chino;
 using Foundation;
+using Newtonsoft.Json;
 using Sample.Common.Model;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
-
+using Xamarin.Essentials;
 using Logger = Chino.ChinoLogger;
 
 namespace Sample.iOS
@@ -16,13 +17,12 @@ namespace Sample.iOS
     {
         private const string USER_EXPLANATION = "User notification";
 
-        private const string DIAGNOSIS_KEYS_DIR = "diagnosis_keys";
         private const string TEKS_DIR = "temporary_exposure_keys";
-        private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
+        private const string EXPOSURE_DETECTION = "exposure_detection";
+        private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
 
         private string _teksDir;
-        private string _diagnosisKeysDir;
-        private string _exposureDetectionResultDir;
+        private string _exposureDetectionDir;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -52,9 +52,6 @@ namespace Sample.iOS
                 {
                     exception.LogD();
                 }
-
-                long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
-                Logger.D($"ENAPIVersion: {version}");
             };
             buttonShowTeksHistory.TouchUpInside += async (sender, e) =>
             {
@@ -103,6 +100,8 @@ namespace Sample.iOS
                     exception.LogD();
                 }
             };
+
+            await InitializeExposureConfiguration();
         }
 
         private void InitializeDirs()
@@ -115,17 +114,30 @@ namespace Sample.iOS
                 Directory.CreateDirectory(_teksDir);
             }
 
-            _diagnosisKeysDir = Path.Combine(documents, DIAGNOSIS_KEYS_DIR);
-            if (!Directory.Exists(_diagnosisKeysDir))
+            _exposureDetectionDir = Path.Combine(documents, EXPOSURE_DETECTION);
+            if (!Directory.Exists(_exposureDetectionDir))
             {
-                Directory.CreateDirectory(_diagnosisKeysDir);
+                Directory.CreateDirectory(_exposureDetectionDir);
+            }
+        }
+
+        private ExposureConfiguration _exposureConfiguration;
+
+        private async Task InitializeExposureConfiguration()
+        {
+            var exposureConfigurationPath = Path.Combine(_exposureDetectionDir, EXPOSURE_CONFIGURATION_FILENAME);
+            if (File.Exists(exposureConfigurationPath))
+            {
+                _exposureConfiguration = JsonConvert.DeserializeObject<ExposureConfiguration>(
+                    await File.ReadAllTextAsync(exposureConfigurationPath)
+                    );
+                return;
             }
 
-            _exposureDetectionResultDir = Path.Combine(documents, EXPOSURE_DETECTION_RESULT_DIR);
-            if (!Directory.Exists(_exposureDetectionResultDir))
-            {
-                Directory.CreateDirectory(_exposureDetectionResultDir);
-            }
+            _exposureConfiguration = new ExposureConfiguration();
+            var json = JsonConvert.SerializeObject(_exposureConfiguration, Formatting.Indented);
+
+            await File.WriteAllTextAsync(exposureConfigurationPath, json);
         }
 
         private async Task RequestPreauthorizedKeys()
@@ -136,7 +148,7 @@ namespace Sample.iOS
 
         private async Task DetectExposure()
         {
-            List<string> diagnosisKeyPaths = Directory.GetFiles(_diagnosisKeysDir).ToList()
+            List<string> diagnosisKeyPaths = Directory.GetFiles(_exposureDetectionDir).ToList()
                 .FindAll(path => !Directory.Exists(path))
                 .FindAll(path => path.EndsWith(".zip"));
 
@@ -145,9 +157,7 @@ namespace Sample.iOS
                 Logger.D($"path {path}");
             }
 
-            ExposureConfiguration exposureConfiguration = new ExposureConfiguration();
-
-            await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, exposureConfiguration);
+            await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
         }
 
         private void ShowTeks(IList<ITemporaryExposureKey> temporaryExposureKeys)
@@ -161,7 +171,7 @@ namespace Sample.iOS
         {
             TemporaryExposureKeys teks = new TemporaryExposureKeys(temporaryExposureKeys, DateTime.Now)
             {
-                Device = UIDevice.CurrentDevice.Model
+                Device = DeviceInfo.Model
             };
 
             string fileName = $"{teks.Id}.json";
@@ -177,26 +187,27 @@ namespace Sample.iOS
             await Task.Delay(1000);
 
             IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
+            long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
 
             switch (status.Status())
             {
                 case Status.Active:
-                    buttonEnableEn.SetTitle("EN is Active.", UIControlState.Normal);
+                    buttonEnableEn.SetTitle($"EN v{version} is Active.", UIControlState.Normal);
                     break;
                 case Status.NotActive:
-                    buttonEnableEn.SetTitle("EN is NotActive.", UIControlState.Normal);
+                    buttonEnableEn.SetTitle($"EN v{version} is NotActive.", UIControlState.Normal);
                     break;
                 case Status.BluetoothOff:
-                    buttonEnableEn.SetTitle("EN is BluetoothOff.", UIControlState.Normal);
+                    buttonEnableEn.SetTitle($"EN v{version} is BluetoothOff.", UIControlState.Normal);
                     break;
                 case Status.Unauthorized:
-                    buttonEnableEn.SetTitle("EN is Unauthorized.", UIControlState.Normal);
+                    buttonEnableEn.SetTitle($"EN v{version} is Unauthorized.", UIControlState.Normal);
                     break;
                 case Status.Unknown:
-                    buttonEnableEn.SetTitle("EN is Unknown.", UIControlState.Normal);
+                    buttonEnableEn.SetTitle($"EN v{version} is Unknown.", UIControlState.Normal);
                     break;
                 case Status.Misc:
-                    buttonEnableEn.SetTitle("EN is Misc.", UIControlState.Normal);
+                    buttonEnableEn.SetTitle($"EN v{version} is Misc.", UIControlState.Normal);
                     break;
             }
         }

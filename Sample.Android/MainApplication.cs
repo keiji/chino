@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Runtime;
 using Chino;
-
+using Java.IO;
+using Sample.Common.Model;
+using Xamarin.Essentials;
 using Logger = Chino.ChinoLogger;
 
 namespace Sample.Android
@@ -20,11 +23,26 @@ namespace Sample.Android
         {
         }
 
+        private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
+
+        private File _exposureDetectionResultDir;
+
         private ExposureNotificationClient EnClient = null;
 
         public override void OnCreate()
         {
+            InitializeDirs();
+
             AbsExposureNotificationClient.Handler = this;
+        }
+
+        private void InitializeDirs()
+        {
+            _exposureDetectionResultDir = new File(FilesDir, EXPOSURE_DETECTION_RESULT_DIR);
+            if (!_exposureDetectionResultDir.Exists())
+            {
+                _exposureDetectionResultDir.Mkdirs();
+            }
         }
 
         public AbsExposureNotificationClient GetEnClient()
@@ -41,27 +59,49 @@ namespace Sample.Android
         public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
         {
             Logger.D("TemporaryExposureKeyReleased");
-
-            foreach (ITemporaryExposureKey tek in temporaryExposureKeys)
-            {
-                Logger.D(Convert.ToBase64String(tek.KeyData));
-            }
         }
 
         public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
         {
             Logger.D("ExposureDetected ExposureWindows");
+
+            var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
+                DateTime.Now,
+                dailySummaries, exposureWindows);
+
+            Task.Run(async () => await SaveExposureResult(exposureResult));
         }
 
         public void ExposureDetected(IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
         {
-            Logger.D("ExposureDetected ExposureInformations");
+            var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
+                DateTime.Now,
+                exposureSummary, exposureInformations);
+
+            Task.Run(async () => await SaveExposureResult(exposureResult));
         }
 
         public void ExposureNotDetected()
         {
-            Logger.D("ExposureNotDetected");
+            var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
+                DateTime.Now);
+
+            Task.Run(async () => await SaveExposureResult(exposureResult));
         }
 
+        private async Task SaveExposureResult(ExposureResult exposureResult)
+        {
+            exposureResult.Device = DeviceInfo.Model;
+            exposureResult.EnVersion = (await EnClient.GetVersionAsync()).ToString();
+
+            string fileName = $"{exposureResult.Id}.json";
+            string json = exposureResult.ToJsonString();
+
+            var filePath = new File(_exposureDetectionResultDir, fileName);
+
+            using BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+            await bw.WriteAsync(json);
+            await bw.FlushAsync();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary;
+﻿using Newtonsoft.Json;
+using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary;
 using AndroidReportType = Android.Gms.Nearby.ExposureNotification.ReportType;
 
 namespace Chino
@@ -6,6 +7,7 @@ namespace Chino
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummary
     public class DailySummary: IDailySummary
     {
+        [JsonIgnore]
         public AndroidDailySummary Source;
 
         public DailySummary(AndroidDailySummary source)
@@ -17,29 +19,31 @@ namespace Chino
 
         public IDailySummary.IExposureSummaryData DaySummary => new ExposureSummaryData(Source.SummaryData);
 
-        public IDailySummary.IExposureSummaryData ConfirmedClinicalDiagnosisSummary =>
-            new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(AndroidReportType.ConfirmedClinicalDiagnosis)
-                );
+        public IDailySummary.IExposureSummaryData ConfirmedClinicalDiagnosisSummary
+            => GetExposureSummaryData(Source.GetSummaryDataForReportType(AndroidReportType.ConfirmedClinicalDiagnosis));
 
-        public IDailySummary.IExposureSummaryData ConfirmedTestSummary =>
-            new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(AndroidReportType.ConfirmedTest)
-                );
+        public IDailySummary.IExposureSummaryData ConfirmedTestSummary
+            => GetExposureSummaryData(Source.GetSummaryDataForReportType(AndroidReportType.ConfirmedTest));
 
-        public IDailySummary.IExposureSummaryData RecursiveSummary =>
-            new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(AndroidReportType.Recursive)
-                );
+        public IDailySummary.IExposureSummaryData RecursiveSummary
+            => GetExposureSummaryData(Source.GetSummaryDataForReportType(AndroidReportType.Recursive));
 
-        public IDailySummary.IExposureSummaryData SelfReportedSummary =>
-            new ExposureSummaryData(
-                Source.GetSummaryDataForReportType(AndroidReportType.SelfReport)
-                );
+        public IDailySummary.IExposureSummaryData SelfReportedSummary
+            => GetExposureSummaryData(Source.GetSummaryDataForReportType(AndroidReportType.SelfReport));
+
+        private static IDailySummary.IExposureSummaryData? GetExposureSummaryData(AndroidDailySummary.ExposureSummaryData? summaryItem)
+        {
+            if (summaryItem == null)
+            {
+                return null;
+            }
+            return new ExposureSummaryData(summaryItem);
+        }
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummary.ExposureSummaryData
         public class ExposureSummaryData : IDailySummary.IExposureSummaryData
         {
+            [JsonIgnore]
             public AndroidDailySummary.ExposureSummaryData Source;
 
             public ExposureSummaryData(AndroidDailySummary.ExposureSummaryData source)
