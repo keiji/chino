@@ -15,8 +15,6 @@ namespace Sample.iOS
 {
     public partial class ViewController : UIViewController
     {
-        private const string USER_EXPLANATION = "User notification";
-
         private const string TEKS_DIR = "temporary_exposure_keys";
         private const string EXPOSURE_DETECTION = "exposure_detection";
         private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
@@ -36,8 +34,11 @@ namespace Sample.iOS
 
             InitializeDirs();
 
-            await ExposureNotificationClientManager.Shared.InitAsync(USER_EXPLANATION);
-            await ShowStatusAsync();
+            await ExposureNotificationClientManager.Shared.ActivateAsync();
+
+            IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
+            long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
+            ShowStatusAsync(status, version);
 
             buttonEnableEn.TouchUpInside += async (sender, e) =>
             {
@@ -46,7 +47,10 @@ namespace Sample.iOS
                 try
                 {
                     await ExposureNotificationClientManager.Shared.StartAsync();
-                    await ShowStatusAsync();
+
+                    IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
+                    long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
+                    ShowStatusAsync(status, version);
                 }
                 catch (NSErrorException exception)
                 {
@@ -182,13 +186,8 @@ namespace Sample.iOS
             await File.WriteAllTextAsync(filePath, json);
         }
 
-        private async Task ShowStatusAsync()
+        private void ShowStatusAsync(IExposureNotificationStatus status, long version)
         {
-            await Task.Delay(1000);
-
-            IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
-            long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
-
             switch (status.Status())
             {
                 case Status.Active:

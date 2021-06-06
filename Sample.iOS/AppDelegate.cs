@@ -16,6 +16,7 @@ namespace Sample.iOS
     [Register("AppDelegate")]
     public class AppDelegate : UIResponder, IUIApplicationDelegate, IExposureNotificationHandler
     {
+        private const string USER_EXPLANATION = "Chino.Sample.iOS";
         private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
 
         private string _exposureDetectionResultDir;
@@ -31,6 +32,7 @@ namespace Sample.iOS
             InitializeDirs();
 
             AbsExposureNotificationClient.Handler = this;
+            ExposureNotificationClientManager.Shared.UserExplanation = USER_EXPLANATION;
             ExposureNotificationClientManager.Shared.IsTest = true;
 
             return true;
