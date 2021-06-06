@@ -34,8 +34,6 @@ namespace Sample.iOS
 
             InitializeDirs();
 
-            await ExposureNotificationClientManager.Shared.ActivateAsync();
-
             IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
             long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
             ShowStatusAsync(status, version);
