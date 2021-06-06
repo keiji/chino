@@ -1,5 +1,6 @@
 ﻿using Chino;
 using Foundation;
+using Sample.Common.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,14 @@ namespace Sample.iOS
     {
         private const string USER_EXPLANATION = "User notification";
 
+        private const string DIAGNOSIS_KEYS_DIR = "diagnosis_keys";
+        private const string TEKS_DIR = "temporary_exposure_keys";
+        private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
+
+        private string _teksDir;
+        private string _diagnosisKeysDir;
+        private string _exposureDetectionResultDir;
+
         public ViewController(IntPtr handle) : base(handle)
         {
         }
@@ -24,6 +33,8 @@ namespace Sample.iOS
             base.ViewDidLoad();
 
             Logger.D("ViewDidLoad");
+
+            InitializeDirs();
 
             await ExposureNotificationClientManager.Shared.Init(USER_EXPLANATION);
             await ShowStatusAsync();
@@ -49,7 +60,10 @@ namespace Sample.iOS
             {
                 try
                 {
-                    await ShowTeksAsync();
+                    List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
+
+                    ShowTeks(teks);
+                    await SaveTeksAsync(teks);
                 }
                 catch (NSErrorException exception)
                 {
@@ -91,6 +105,29 @@ namespace Sample.iOS
             };
         }
 
+        private void InitializeDirs()
+        {
+            var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            _teksDir = Path.Combine(documents, TEKS_DIR);
+            if (!Directory.Exists(_teksDir))
+            {
+                Directory.CreateDirectory(_teksDir);
+            }
+
+            _diagnosisKeysDir = Path.Combine(documents, DIAGNOSIS_KEYS_DIR);
+            if (!Directory.Exists(_diagnosisKeysDir))
+            {
+                Directory.CreateDirectory(_diagnosisKeysDir);
+            }
+
+            _exposureDetectionResultDir = Path.Combine(documents, EXPOSURE_DETECTION_RESULT_DIR);
+            if (!Directory.Exists(_exposureDetectionResultDir))
+            {
+                Directory.CreateDirectory(_exposureDetectionResultDir);
+            }
+        }
+
         private async Task RequestPreauthorizedKeys()
             => await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
 
@@ -99,10 +136,7 @@ namespace Sample.iOS
 
         private async Task DetectExposure()
         {
-            string tmpDir = Path.GetTempPath();
-            Logger.D(tmpDir);
-
-            List<string> diagnosisKeyPaths = Directory.GetFiles(tmpDir).ToList()
+            List<string> diagnosisKeyPaths = Directory.GetFiles(_diagnosisKeysDir).ToList()
                 .FindAll(path => !Directory.Exists(path))
                 .FindAll(path => path.EndsWith(".zip"));
 
@@ -116,14 +150,26 @@ namespace Sample.iOS
             await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, exposureConfiguration);
         }
 
-        private async Task ShowTeksAsync()
+        private void ShowTeks(IList<ITemporaryExposureKey> temporaryExposureKeys)
         {
-            List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
-            Logger.D(teks, (int)RiskLevel.High.ToByte(), ReportType.ConfirmedTest);
-
-            List<string> tekKeyData = teks.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
+            List<string> tekKeyData = temporaryExposureKeys.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
             var str = string.Join("\n", tekKeyData);
             buttonShowTeksHistory.SetTitle(str, UIControlState.Normal);
+        }
+
+        private async Task SaveTeksAsync(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        {
+            TemporaryExposureKeys teks = new TemporaryExposureKeys(temporaryExposureKeys, DateTime.Now)
+            {
+                Device = UIDevice.CurrentDevice.Model
+            };
+
+            string fileName = $"{teks.Id}.json";
+            string json = teks.ToJsonString();
+            Logger.D(json);
+
+            var filePath = Path.Combine(_teksDir, fileName);
+            await File.WriteAllTextAsync(filePath, json);
         }
 
         private async Task ShowStatusAsync()

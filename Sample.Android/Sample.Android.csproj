@@ -138,6 +138,10 @@
       <Project>{D5755F55-40E5-4EA3-B74F-C1FC03C39EBB}</Project>
       <Name>Chino.Android</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sample.Common\Sample.Common.csproj">
+      <Project>{2069B89B-21FE-4343-A472-C4A6A59B47B6}</Project>
+      <Name>Sample.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Chino.Common\Chino.Common.csproj">
       <Project>{F5D65FC0-BD93-49BE-8B26-D7E7D73BC0E2}</Project>
       <Name>Chino.Common</Name>
