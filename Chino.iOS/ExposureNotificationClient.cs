@@ -36,14 +36,16 @@ namespace Chino
 
         public string UserExplanation { private get; set; }
 
-        private bool IsInitialized = false;
+        private bool IsActivated = false;
 
-        public async Task InitAsync(string userExplanation)
+        public async Task ActivateAsync()
         {
-            UserExplanation = userExplanation;
-
+            if (IsActivated)
+            {
+                return;
+            }
             await EnManager.ActivateAsync();
-            IsInitialized = true;
+            IsActivated = true;
         }
 
         ~ExposureNotificationClient()
@@ -51,54 +53,47 @@ namespace Chino
             EnManager.Invalidate();
         }
 
-        private void CheckInitialized()
+        private void CheckActivated()
         {
-            if (!IsInitialized)
+            if (!IsActivated)
             {
-                Logger.E("Init method must be called first.");
+                Logger.E("StartAsync method must be called first.");
             }
         }
 
         public async override Task StartAsync()
         {
-            CheckInitialized();
-
+            await ActivateAsync();
             await EnManager.SetExposureNotificationEnabledAsync(true);
         }
 
         public async override Task StopAsync()
         {
-            CheckInitialized();
+            CheckActivated();
 
             await EnManager.SetExposureNotificationEnabledAsync(false);
-
-            IsInitialized = false;
         }
 
         public override Task<bool> IsEnabledAsync()
         {
-            CheckInitialized();
+            CheckActivated();
 
             return Task.Run(() => EnManager.ExposureNotificationEnabled);
         }
 
         public override Task<long> GetVersionAsync()
         {
-            CheckInitialized();
-
             return Task.Run(() => long.Parse(NSBundle.MainBundle.InfoDictionary["ENAPIVersion"].ToString()));
         }
 
         public override Task<IExposureNotificationStatus> GetStatusAsync()
         {
-            CheckInitialized();
-
             return Task.Run(() => (IExposureNotificationStatus)new ExposureNotificationStatus(EnManager.ExposureNotificationStatus));
         }
 
         public async override Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
         {
-            CheckInitialized();
+            CheckActivated();
 
             if (!IsTest)
             {
@@ -162,7 +157,7 @@ namespace Chino
 
         public async override Task ProvideDiagnosisKeysAsync(List<string> zippedKeyFiles, ExposureConfiguration configuration)
         {
-            CheckInitialized();
+            CheckActivated();
 
             long enAPiVersion = await GetVersionAsync();
 
@@ -283,7 +278,7 @@ namespace Chino
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
         public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token)
         {
-            CheckInitialized();
+            CheckActivated();
 
             await ProvideDiagnosisKeysAsync(keyFiles, configuration);
         }
@@ -331,13 +326,13 @@ namespace Chino
 
         public override async Task RequestPreAuthorizedTemporaryExposureKeyHistoryAsync()
         {
-            CheckInitialized();
+            CheckActivated();
 
             await EnManager.PreAuthorizeDiagnosisKeysAsync();
         }
         public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
         {
-            CheckInitialized();
+            CheckActivated();
 
             await EnManager.RequestPreAuthorizedDiagnosisKeysAsync();
         }
