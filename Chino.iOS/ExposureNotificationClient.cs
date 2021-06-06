@@ -38,7 +38,7 @@ namespace Chino
 
         private bool IsInitialized = false;
 
-        public async Task Init(string userExplanation)
+        public async Task InitAsync(string userExplanation)
         {
             UserExplanation = userExplanation;
 

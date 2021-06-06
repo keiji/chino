@@ -36,7 +36,7 @@ namespace Sample.iOS
 
             InitializeDirs();
 
-            await ExposureNotificationClientManager.Shared.Init(USER_EXPLANATION);
+            await ExposureNotificationClientManager.Shared.InitAsync(USER_EXPLANATION);
             await ShowStatusAsync();
 
             buttonEnableEn.TouchUpInside += async (sender, e) =>
