@@ -1,10 +1,12 @@
 ﻿using ExposureNotifications;
+using Newtonsoft.Json;
 
 namespace Chino
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposuredetectionsummary
     public class ExposureSummary : IExposureSummary
     {
+        [JsonIgnore]
         public ENExposureDetectionSummary Source;
 
         public ExposureSummary(ENExposureDetectionSummary source)

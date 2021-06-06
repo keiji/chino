@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Newtonsoft.Json;
 using AndroidExposureSummary = Android.Gms.Nearby.ExposureNotification.ExposureSummary;
 
 namespace Chino
@@ -8,6 +8,7 @@ namespace Chino
     [Obsolete]
     public class ExposureSummary: IExposureSummary
     {
+        [JsonIgnore]
         public readonly AndroidExposureSummary Source;
 
         public ExposureSummary(AndroidExposureSummary source)

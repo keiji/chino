@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using ExposureNotifications;
+using Newtonsoft.Json;
 
 namespace Chino
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposurewindow
     public class ExposureWindow : IExposureWindow
     {
+        [JsonIgnore]
         public readonly ENExposureWindow Source;
 
         public ExposureWindow(ENExposureWindow source)
@@ -29,6 +31,7 @@ namespace Chino
     // https://developer.apple.com/documentation/exposurenotification/enscaninstance
     public class ScanInstance : IScanInstance
     {
+        [JsonIgnore]
         public readonly ENScanInstance Source;
 
         public ScanInstance(ENScanInstance source)

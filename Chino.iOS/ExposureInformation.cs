@@ -1,11 +1,13 @@
 ﻿using System;
 using ExposureNotifications;
+using Newtonsoft.Json;
 
 namespace Chino
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposureinfo
     public class ExposureInformation : IExposureInformation
     {
+        [JsonIgnore]
         public readonly ENExposureInfo Source;
 
         public ExposureInformation(ENExposureInfo source)
