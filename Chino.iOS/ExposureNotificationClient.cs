@@ -74,11 +74,10 @@ namespace Chino
             await EnManager.SetExposureNotificationEnabledAsync(false);
         }
 
-        public override Task<bool> IsEnabledAsync()
+        public async override Task<bool> IsEnabledAsync()
         {
-            CheckActivated();
-
-            return Task.Run(() => EnManager.ExposureNotificationEnabled);
+            await ActivateAsync();
+            return EnManager.ExposureNotificationEnabled;
         }
 
         public override Task<long> GetVersionAsync()
@@ -86,9 +85,10 @@ namespace Chino
             return Task.Run(() => long.Parse(NSBundle.MainBundle.InfoDictionary["ENAPIVersion"].ToString()));
         }
 
-        public override Task<IExposureNotificationStatus> GetStatusAsync()
+        public async override Task<IExposureNotificationStatus> GetStatusAsync()
         {
-            return Task.Run(() => (IExposureNotificationStatus)new ExposureNotificationStatus(EnManager.ExposureNotificationStatus));
+            await ActivateAsync();
+            return new ExposureNotificationStatus(EnManager.ExposureNotificationStatus);
         }
 
         public async override Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
