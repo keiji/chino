@@ -13,16 +13,13 @@
   "days_since_exposure_threshold": 0,
   "infectiousness_weights": {
     "High": 1.0,
-    "Standard": 1.0,
-    "None": 1.0
+    "Standard": 1.0
   },
   "minimum_risk_score": 0.0,
   "report_type_weights": {
     "ConfirmedClinicalDiagnosis": 1.0,
     "ConfirmedTest": 1.0,
     "SelfReport": 1.0,
-    "Recursive": 1.0,
-    "Revoked": 1.0,
-    "Unknown": 1.0
+    "Recursive": 1.0
   }
 }
