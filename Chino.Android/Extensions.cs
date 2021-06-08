@@ -3,6 +3,8 @@ using AndroidExposureConfiguration = Android.Gms.Nearby.ExposureNotification.Exp
 using AndroidDailySummariesConfig = Android.Gms.Nearby.ExposureNotification.DailySummariesConfig;
 using System.Linq;
 
+using Logger = Chino.ChinoLogger;
+
 namespace Chino
 {
     public static class Extensions
@@ -51,15 +53,27 @@ namespace Chino
                 .SetDaysSinceExposureThreshold(dailySummariesConfig.DaysSinceExposureThreshold)
                 .SetMinimumWindowScore(dailySummariesConfig.MinimumWindowScore);
 
-            dailySummariesConfig.InfectiousnessWeights.Keys.Zip(
-                dailySummariesConfig.InfectiousnessWeights.Values,
-                (key, value) => builder.SetInfectiousnessWeight((int)key, value)
-                );
+            foreach (var key in dailySummariesConfig.InfectiousnessWeights.Keys)
+            {
+                if (key == Infectiousness.None)
+                {
+                    Logger.E("Infectiousness.None is ignored");
+                    continue;
+                }
+                var value = dailySummariesConfig.InfectiousnessWeights[key];
+                builder.SetInfectiousnessWeight((int)key, value);
+            }
 
-            dailySummariesConfig.ReportTypeWeights.Keys.Zip(
-                dailySummariesConfig.ReportTypeWeights.Values,
-                (key, value) => builder.SetReportTypeWeight((int)key, value)
-                );
+            foreach (var key in dailySummariesConfig.ReportTypeWeights.Keys)
+            {
+                if (key == ReportType.Unknown || key == ReportType.Revoked)
+                {
+                    Logger.E($"ReportType.{key} is ignored");
+                    continue;
+                }
+                var value = dailySummariesConfig.ReportTypeWeights[key];
+                builder.SetReportTypeWeight((int)key, value);
+            }
 
             return builder.Build();
         }

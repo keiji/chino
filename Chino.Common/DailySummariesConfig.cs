@@ -42,7 +42,6 @@ namespace Chino
         {
             { Infectiousness.High, 1.0 },
             { Infectiousness.Standard, 1.0 },
-            { Infectiousness.None, 1.0 },
         };
 
         /// <summary>
@@ -63,8 +62,6 @@ namespace Chino
             { ReportType.ConfirmedTest, 1.0 },
             { ReportType.SelfReport, 1.0 },
             { ReportType.Recursive, 1.0 },
-            { ReportType.Revoked, 1.0 },
-            { ReportType.Unknown, 1.0 }
         };
 
         public override bool Equals(object obj)
