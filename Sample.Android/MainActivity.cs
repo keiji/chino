@@ -193,7 +193,7 @@ namespace Sample.Android
 
             try
             {
-                await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths);
+                await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
             }
             catch (ApiException apiException)
             {
