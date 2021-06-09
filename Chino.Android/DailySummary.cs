@@ -15,7 +15,7 @@ namespace Chino
             Source = source;
         }
 
-        public long DaysSinceEpoch => Source.DaysSinceEpoch;
+        public long DateMillisSinceEpoch => ConvertToMillis(Source.DaysSinceEpoch);
 
         public IDailySummary.IExposureSummaryData DaySummary => new ExposureSummaryData(Source.SummaryData);
 
@@ -39,6 +39,8 @@ namespace Chino
             }
             return new ExposureSummaryData(summaryItem);
         }
+
+        private static long ConvertToMillis(int daysSinceEpoch) => daysSinceEpoch * 24 * 60 * 60 * 1000;
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummary.ExposureSummaryData
         public class ExposureSummaryData : IDailySummary.IExposureSummaryData
