@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.ExposureInformation;
 
@@ -16,7 +17,7 @@ namespace Chino
             Source = source;
         }
 
-        public int[] AttenuationDurationsInMinutes => Source.GetAttenuationDurationsInMinutes();
+        public int[] AttenuationDurationsInMillis => ConvertToMillis(Source.GetAttenuationDurationsInMinutes());
 
         public int AttenuationValue => Source.AttenuationValue;
 
@@ -27,5 +28,8 @@ namespace Chino
         public int TotalRiskScore => Source.TotalRiskScore;
 
         public RiskLevel TransmissionRiskLevel => (RiskLevel)Enum.ToObject(typeof(RiskLevel), Source.TransmissionRiskLevel);
+
+        private static int[] ConvertToMillis(int[] attenuationDurationsInMinutes)
+            => attenuationDurationsInMinutes.Select(d => d * 60 * 1000).ToArray();
     }
 }

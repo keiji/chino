@@ -11,9 +11,9 @@
     public interface IExposureInformation
     {
         /// <summary>
-        /// Array of durations in minutes at certain radio signal attenuations.
+        /// Array of durations in milliseconds at certain radio signal attenuations.
         /// </summary>
-        public int[] AttenuationDurationsInMinutes { get; }
+        public int[] AttenuationDurationsInMillis { get; }
 
         /// <summary>
         /// The time-weighted signal strength attenuation value which goes into getTotalRiskScore().

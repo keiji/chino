@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ExposureNotifications;
 using Newtonsoft.Json;
 
@@ -15,7 +16,7 @@ namespace Chino
             Source = source;
         }
 
-        public int[] AttenuationDurationsInMinutes => Source.AttenuationDurations;
+        public int[] AttenuationDurationsInMillis => ConvertToMillis(Source.AttenuationDurations);
 
         public int AttenuationValue => Source.AttenuationValue;
 
@@ -26,5 +27,8 @@ namespace Chino
         public int TotalRiskScore => Source.TotalRiskScore;
 
         public RiskLevel TransmissionRiskLevel => (RiskLevel)Enum.ToObject(typeof(RiskLevel), Source.TransmissionRiskLevel);
+
+        private static int[] ConvertToMillis(int[] attenuationDurations)
+            => attenuationDurations.Select(d => d * 1000).ToArray();
     }
 }
