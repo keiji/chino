@@ -47,7 +47,7 @@ namespace Chino
         /// <summary>
         /// Minimum score that ExposureWindows must reach in order to be included in the DailySummary.ExposureSummaryData.
         /// </summary>
-        [JsonProperty("minimum_risk_score")]
+        [JsonProperty("minimum_window_score")]
         public double MinimumWindowScore { get; set; } = 0.0;
 
         /// <summary>
