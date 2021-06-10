@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.Common", "Sample.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chino.Android.Tests", "Chino.Android.Tests\Chino.Android.Tests.csproj", "{7E89ABBF-1E2C-4FE7-AA1B-6599EB4856A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chino.iOS.Tests", "Chino.iOS.Tests\Chino.iOS.Tests.csproj", "{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +132,18 @@ Global
 		{7E89ABBF-1E2C-4FE7-AA1B-6599EB4856A2}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{7E89ABBF-1E2C-4FE7-AA1B-6599EB4856A2}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{7E89ABBF-1E2C-4FE7-AA1B-6599EB4856A2}.Release|iPhone.Build.0 = Release|Any CPU
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Debug|Any CPU.ActiveCfg = Debug|iPhoneSimulator
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Debug|Any CPU.Build.0 = Debug|iPhoneSimulator
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Release|Any CPU.ActiveCfg = Release|iPhone
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Release|Any CPU.Build.0 = Release|iPhone
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Debug|iPhone.Build.0 = Debug|iPhone
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Release|iPhone.ActiveCfg = Release|iPhone
+		{2F9F7143-D6E5-4E04-B7BF-B65F8EE03A3D}.Release|iPhone.Build.0 = Release|iPhone
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
