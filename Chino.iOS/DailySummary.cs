@@ -15,7 +15,7 @@ namespace Chino
             Source = source;
         }
 
-        public long DaysSinceEpoch => Source.Date.GetDateMillisSinceEpoch();
+        public long DateMillisSinceEpoch => Source.Date.GetDateMillisSinceEpoch();
 
         public IDailySummary.IExposureSummaryData? DaySummary => GetExposureSummaryData(Source.DaySummary);
 

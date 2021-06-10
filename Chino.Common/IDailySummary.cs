@@ -10,7 +10,7 @@
         /// <summary>
         /// Returns days since epoch of the ExposureWindows that went into this summary.
         /// </summary>
-        public long DaysSinceEpoch { get; }
+        public long DateMillisSinceEpoch { get; }
 
         /// <summary>
         /// Summary of all exposures on this day.
