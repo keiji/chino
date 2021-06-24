@@ -51,6 +51,12 @@ namespace Sample.Common.Model
 
         private void UpdateId()
         {
+            if (temporaryExposureKeys.Count == 0)
+            {
+                Id = $"{_device}";
+                return;
+            }
+
             var latest = temporaryExposureKeys.Max(tek => tek.rollingStartNumber + tek.rollingPeriod);
             Id = $"{_device}-{latest}";
         }
