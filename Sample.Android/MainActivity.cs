@@ -134,7 +134,7 @@ namespace Sample.Android
                 using BufferedReader br = new BufferedReader(new FileReader(exposureConfigurationPath));
                 StringBuilder sb = new StringBuilder();
                 string str = null;
-                while((str = await br.ReadLineAsync()) != null)
+                while ((str = await br.ReadLineAsync()) != null)
                 {
                     sb.Append(str);
                 }
@@ -216,7 +216,8 @@ namespace Sample.Android
 
         private async Task SaveTekHistoryAsync(List<ITemporaryExposureKey> temporaryExposureKeys)
         {
-            TemporaryExposureKeys teks = new TemporaryExposureKeys(temporaryExposureKeys, DateTime.Now) {
+            TemporaryExposureKeys teks = new TemporaryExposureKeys(temporaryExposureKeys, DateTime.Now)
+            {
                 Device = DeviceInfo.Model
             };
 
