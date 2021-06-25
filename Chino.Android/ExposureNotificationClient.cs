@@ -281,6 +281,8 @@ namespace Chino
                 return;
             }
 
+            ExposureConfiguration = configuration;
+
             var files = keyFiles.Select(f => new File(f)).ToList();
             await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
         }
