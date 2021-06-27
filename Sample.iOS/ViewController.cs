@@ -1,4 +1,5 @@
 ﻿using Chino;
+using Chino.iOS;
 using Foundation;
 using Newtonsoft.Json;
 using Sample.Common.Model;

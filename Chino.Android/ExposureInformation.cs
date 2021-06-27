@@ -3,7 +3,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.ExposureInformation;
 
-namespace Chino
+namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureInformation
     [Obsolete]

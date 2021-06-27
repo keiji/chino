@@ -10,7 +10,7 @@ using UIKit;
 
 using Logger = Chino.ChinoLogger;
 
-namespace Chino
+namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enmanager
     public class ExposureNotificationClient : AbsExposureNotificationClient

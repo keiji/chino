@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using AndroidExposureSummary = Android.Gms.Nearby.ExposureNotification.ExposureSummary;
 
-namespace Chino
+namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureSummary
     [Obsolete]

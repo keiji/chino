@@ -2,7 +2,7 @@
 
 using Logger = Chino.ChinoLogger;
 
-namespace Chino
+namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enstatus
     public class ExposureNotificationStatus : IExposureNotificationStatus

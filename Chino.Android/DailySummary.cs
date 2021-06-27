@@ -2,7 +2,7 @@
 using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary;
 using AndroidReportType = Android.Gms.Nearby.ExposureNotification.ReportType;
 
-namespace Chino
+namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummary
     public class DailySummary: IDailySummary

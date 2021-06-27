@@ -7,7 +7,7 @@ using UIKit;
 
 using Logger = Chino.ChinoLogger;
 
-namespace Chino
+namespace Chino.iOS
 {
     public static class Extensions
     {

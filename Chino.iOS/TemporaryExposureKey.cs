@@ -1,7 +1,7 @@
 ﻿using System;
 using ExposureNotifications;
 
-namespace Chino
+namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/entemporaryexposurekey
     public class TemporaryExposureKey : ITemporaryExposureKey

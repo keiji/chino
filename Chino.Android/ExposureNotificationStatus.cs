@@ -1,6 +1,6 @@
 ﻿using AndroidExposureNotificationStatus = Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus;
 
-namespace Chino
+namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationStatus
     public class ExposureNotificationStatus : IExposureNotificationStatus

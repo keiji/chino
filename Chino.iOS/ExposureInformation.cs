@@ -3,7 +3,7 @@ using System.Linq;
 using ExposureNotifications;
 using Newtonsoft.Json;
 
-namespace Chino
+namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposureinfo
     public class ExposureInformation : IExposureInformation

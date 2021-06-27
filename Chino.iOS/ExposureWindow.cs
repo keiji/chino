@@ -4,7 +4,7 @@ using System.Linq;
 using ExposureNotifications;
 using Newtonsoft.Json;
 
-namespace Chino
+namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposurewindow
     public class ExposureWindow : IExposureWindow
