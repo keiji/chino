@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
 using AndroidScanInstance = Android.Gms.Nearby.ExposureNotification.ScanInstance;
 
-namespace Chino
+namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureWindow
     public class ExposureWindow : IExposureWindow

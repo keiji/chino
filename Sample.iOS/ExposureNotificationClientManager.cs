@@ -1,4 +1,4 @@
-﻿using Chino;
+﻿using Chino.iOS;
 
 namespace Sample.iOS
 {

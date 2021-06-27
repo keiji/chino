@@ -22,7 +22,7 @@ using Logger = Chino.ChinoLogger;
 [assembly: UsesFeature("android.hardware.bluetooth")]
 [assembly: UsesPermission(Android.Manifest.Permission.Bluetooth)]
 
-namespace Chino
+namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationClient
     public class ExposureNotificationClient : AbsExposureNotificationClient

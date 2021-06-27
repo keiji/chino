@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Runtime;
 using Chino;
+using Chino.Android.Google;
 using Java.IO;
 using Sample.Common.Model;
 using Xamarin.Essentials;

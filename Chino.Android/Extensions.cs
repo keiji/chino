@@ -5,7 +5,7 @@ using System.Linq;
 
 using Logger = Chino.ChinoLogger;
 
-namespace Chino
+namespace Chino.Android.Google
 {
     public static class Extensions
     {

@@ -1,8 +1,7 @@
-﻿using System;
-using ExposureNotifications;
+﻿using ExposureNotifications;
 using Newtonsoft.Json;
 
-namespace Chino
+namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposuredaysummary
     public class DailySummary : IDailySummary
