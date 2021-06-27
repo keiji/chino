@@ -10,7 +10,7 @@
     <AssemblyName>Chino</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <PackageId>Chino.iOS</PackageId>
-    <PackageVersion>1.0.0-beta03</PackageVersion>
+    <PackageVersion>1.0.0-beta04</PackageVersion>
     <Authors>Cappuccino Authors</Authors>
     <Description>Cappuccino is an yet another Exposure Notification Library for COCOA</Description>
   </PropertyGroup>
