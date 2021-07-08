@@ -47,6 +47,7 @@
     <Compile Include="DailySummary.cs" />
     <Compile Include="ExposureSummary.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="ExposureNotificationStatusCodes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

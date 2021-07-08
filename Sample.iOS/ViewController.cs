@@ -1,4 +1,5 @@
 ﻿using Chino;
+using Chino.Common;
 using Chino.iOS;
 using Foundation;
 using Newtonsoft.Json;
@@ -51,6 +52,10 @@ namespace Sample.iOS
                     long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
                     ShowStatusAsync(status, version);
                 }
+                catch (ENException enException)
+                {
+                    ShowENException(enException);
+                }
                 catch (NSErrorException exception)
                 {
                     exception.LogD();
@@ -65,6 +70,10 @@ namespace Sample.iOS
                     ShowTeks(teks);
                     await SaveTeksAsync(teks);
                 }
+                catch (ENException enException)
+                {
+                    ShowENException(enException);
+                }
                 catch (NSErrorException exception)
                 {
                     exception.LogD();
@@ -75,6 +84,10 @@ namespace Sample.iOS
                 try
                 {
                     await DetectExposure();
+                }
+                catch (ENException enException)
+                {
+                    ShowENException(enException);
                 }
                 catch (NSErrorException exception)
                 {
@@ -87,6 +100,10 @@ namespace Sample.iOS
                 {
                     await RequestPreauthorizedKeys();
                 }
+                catch (ENException enException)
+                {
+                    ShowENException(enException);
+                }
                 catch (NSErrorException exception)
                 {
                     exception.LogD();
@@ -98,6 +115,10 @@ namespace Sample.iOS
                 {
                     await RequestReleaseKeys();
                 }
+                catch (ENException enException)
+                {
+                    ShowENException(enException);
+                }
                 catch (NSErrorException exception)
                 {
                     exception.LogD();
@@ -105,6 +126,34 @@ namespace Sample.iOS
             };
 
             await InitializeExposureConfiguration();
+        }
+
+        private void ShowENException(ENException enException)
+        {
+            Logger.D($"ENException - Code:{enException.Code}, {enException.Message}");
+
+            string message = enException.Code switch
+            {
+                ENException.Code_iOS.ApiMisuse => "ApiMisuse",
+                ENException.Code_iOS.BadFormat => "BadFormat",
+                ENException.Code_iOS.BadParameter => "BadParameter",
+                ENException.Code_iOS.BluetoothOff => "BluetoothOff",
+                ENException.Code_iOS.DataInaccessible => "DataInaccessible",
+                ENException.Code_iOS.InsufficientMemory => "InsufficientMemory",
+                ENException.Code_iOS.InsufficientStorage => "InsufficientStorage",
+                ENException.Code_iOS.Internal => "Internal",
+                ENException.Code_iOS.Invalidated => "Invalidated",
+                ENException.Code_iOS.NotAuthorized => "NotAuthorized",
+                ENException.Code_iOS.NotEnabled => "NotEnabled",
+                ENException.Code_iOS.NotEntitled => "NotEntitled",
+                ENException.Code_iOS.RateLimited => "RateLimited",
+                ENException.Code_iOS.Restricted => "Restricted",
+                ENException.Code_iOS.TravelStatusNotAvailable => "TravelStatusNotAvailable",
+                ENException.Code_iOS.Unsupported => "Unsupported",
+                _ => "Unknown",
+            };
+
+            labelStatus.Text = $"ENException: {message}";
         }
 
         private void InitializeDirs()
@@ -166,8 +215,7 @@ namespace Sample.iOS
         private void ShowTeks(IList<ITemporaryExposureKey> temporaryExposureKeys)
         {
             List<string> tekKeyData = temporaryExposureKeys.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
-            var str = string.Join("\n", tekKeyData);
-            buttonShowTeksHistory.SetTitle(str, UIControlState.Normal);
+            labelStatus.Text = string.Join("\n", tekKeyData);
         }
 
         private async Task SaveTeksAsync(IList<ITemporaryExposureKey> temporaryExposureKeys)

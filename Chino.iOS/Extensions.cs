@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Chino.Common;
 using ExposureNotifications;
 using Foundation;
 using UIKit;
@@ -13,7 +14,56 @@ namespace Chino.iOS
     {
         public static void LogD(this NSErrorException nsErrorException)
         {
-            Logger.D($"Error occurred {nsErrorException.Code} - {nsErrorException.Message}");
+            Logger.D($"Error occurred {nsErrorException.Code} - {nsErrorException.Domain} - {nsErrorException.Message}");
+        }
+
+        private const string ENErrorDomain = "ENErrorDomain";
+
+        private const int ApiMisuse = (int)ENErrorCode.ApiMisuse;
+        private const int BadFormat = (int)ENErrorCode.BadFormat;
+        private const int BadParameter = (int)ENErrorCode.BadParameter;
+        private const int BluetoothOff = (int)ENErrorCode.BluetoothOff;
+        private const int DataInaccessible = (int)ENErrorCode.DataInaccessible;
+        private const int InsufficientMemory = (int)ENErrorCode.InsufficientMemory;
+        private const int InsufficientStorage = (int)ENErrorCode.InsufficientStorage;
+        private const int Internal = (int)ENErrorCode.Internal;
+        private const int Invalidated = (int)ENErrorCode.Invalidated;
+        private const int NotAuthorized = (int)ENErrorCode.NotAuthorized;
+        private const int NotEnabled = (int)ENErrorCode.NotEnabled;
+        private const int NotEntitled = (int)ENErrorCode.NotEntitled;
+        private const int RateLimited = (int)ENErrorCode.RateLimited;
+        private const int Restricted = (int)ENErrorCode.Restricted;
+        private const int TravelStatusNotAvailable = (int)ENErrorCode.TravelStatusNotAvailable;
+        private const int Unknown = (int)ENErrorCode.Unknown;
+        private const int Unsupported = (int)ENErrorCode.Unsupported;
+
+        public static bool IsENException(this NSErrorException nsErrorException) => nsErrorException.Domain == ENErrorDomain;
+
+        public static ENException ToENException(this NSErrorException nsErrorException)
+        {
+            int code = (int)nsErrorException.Code switch
+            {
+                ApiMisuse => ENException.Code_iOS.ApiMisuse,
+                BadFormat => ENException.Code_iOS.BadFormat,
+                BadParameter => ENException.Code_iOS.BadParameter,
+                BluetoothOff => ENException.Code_iOS.BluetoothOff,
+                DataInaccessible => ENException.Code_iOS.DataInaccessible,
+                InsufficientMemory => ENException.Code_iOS.InsufficientMemory,
+                InsufficientStorage => ENException.Code_iOS.InsufficientStorage,
+                Internal => ENException.Code_iOS.Internal,
+                Invalidated => ENException.Code_iOS.Invalidated,
+                NotAuthorized => ENException.Code_iOS.NotAuthorized,
+                NotEnabled => ENException.Code_iOS.NotEnabled,
+                NotEntitled => ENException.Code_iOS.NotEntitled,
+                RateLimited => ENException.Code_iOS.RateLimited,
+                Restricted => ENException.Code_iOS.Restricted,
+                TravelStatusNotAvailable => ENException.Code_iOS.TravelStatusNotAvailable,
+                Unknown => ENException.Code_iOS.Unknown,
+                Unsupported => ENException.Code_iOS.Unsupported,
+                _ => ENException.Code_iOS.Unknown,
+            };
+
+            return new ENException(code, nsErrorException.Message);
         }
 
         public static long GetDateMillisSinceEpoch(this NSDate date)

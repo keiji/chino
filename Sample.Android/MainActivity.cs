@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using Chino;
+using Chino.Common;
 using Java.IO;
 using Java.Lang;
 using Newtonsoft.Json;
@@ -38,6 +39,7 @@ namespace Sample.Android
         private Button? buttonProvideDiagnosisKeys = null;
         private Button? buttonRequestPreauthorizedKeys = null;
         private Button? buttonRequestReleaseKeys = null;
+        private TextView? status = null;
 
         private File _teksDir;
         private File _exposureDetectionDir;
@@ -95,6 +97,8 @@ namespace Sample.Android
 
                 await RequestReleaseKeys();
             };
+
+            status = FindViewById<TextView>(Resource.Id.tv_status);
         }
 
         protected override async void OnStart()
@@ -157,9 +161,13 @@ namespace Sample.Android
             {
                 await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
             }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
             catch (ApiException apiException)
             {
-                Logger.D($"RequestReleaseKeys ApiException {apiException.StatusCode}");
+                ShowApiException("RequestReleaseKeys", apiException);
             }
 
         }
@@ -172,13 +180,19 @@ namespace Sample.Android
                 await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
                 Logger.D("RequestPreAuthorizeKeys Success");
             }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
             catch (ApiException apiException)
             {
-                Logger.D($"RequestPreAuthorizeKeys ApiException {apiException.StatusCode}");
-
                 if (apiException.StatusCode == CommonStatusCodes.ResolutionRequired)
                 {
                     apiException.Status.StartResolutionForResult(this, REQUEST_PREAUTHORIZE_KEYS);
+                }
+                else
+                {
+                    ShowApiException("RequestPreAuthorizeKeys", apiException);
                 }
             }
         }
@@ -191,13 +205,23 @@ namespace Sample.Android
                 .Select(file => file.AbsolutePath).ToList()
                 .FindAll(file => file.EndsWith(".zip"));
 
+            if(diagnosisKeyFiles.Length == 0)
+            {
+                status.Text = "No diagnosisKey file found";
+                return;
+            }
+
             try
             {
                 await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
             }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
             catch (ApiException apiException)
             {
-                Logger.D($"ProvideDiagnosisKeys ApiException {apiException.StatusCode}");
+                ShowApiException("ProvideDiagnosisKeys", apiException);
             }
         }
 
@@ -209,9 +233,7 @@ namespace Sample.Android
             }
 
             List<string> tekKeyData = temporaryExposureKeys.Select(tek => Convert.ToBase64String(tek.KeyData)).ToList();
-            string str = string.Join("\n", tekKeyData);
-
-            buttonGetTekHistory.Text = str;
+            status.Text = string.Join("\n", tekKeyData);
         }
 
         private async Task SaveTekHistoryAsync(List<ITemporaryExposureKey> temporaryExposureKeys)
@@ -238,13 +260,19 @@ namespace Sample.Android
             {
                 return await EnClient.GetTemporaryExposureKeyHistoryAsync();
             }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
             catch (ApiException apiException)
             {
-                Logger.D($"GetTekHistory ApiException {apiException.StatusCode}");
-
                 if (apiException.StatusCode == CommonStatusCodes.ResolutionRequired)
                 {
                     apiException.Status.StartResolutionForResult(this, REQUEST_GET_TEK_HISTORY);
+                }
+                else
+                {
+                    ShowApiException("GetTekHistory", apiException);
                 }
             }
 
@@ -261,16 +289,54 @@ namespace Sample.Android
                 long version = await EnClient.GetVersionAsync();
                 Logger.D($"Version: {version}");
             }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
             catch (ApiException apiException)
             {
-                Logger.D($"EnableEnAsync ApiException {apiException.StatusCode}");
-
                 if (apiException.StatusCode == CommonStatusCodes.ResolutionRequired)
                 {
                     apiException.Status.StartResolutionForResult(this, REQUEST_EN_START);
                 }
+                else
+                {
+                    ShowApiException("EnableEnAsync", apiException);
+                }
             }
         }
+
+        private void ShowENException(ENException enException)
+        {
+            Logger.D($"ENException - Code:{enException.Code}, {enException.Message}");
+
+            string message = enException.Code switch
+            {
+                ENException.Code_Android.FAILED => "FAILED",
+                ENException.Code_Android.FAILED_ALREADY_STARTED => "FAILED_ALREADY_STARTED",
+                ENException.Code_Android.FAILED_BLUETOOTH_DISABLED => "FAILED_BLUETOOTH_DISABLED",
+                ENException.Code_Android.FAILED_DISK_IO => "FAILED_DISK_IO",
+                ENException.Code_Android.FAILED_KEY_RELEASE_NOT_PREAUTHORIZED => "FAILED_KEY_RELEASE_NOT_PREAUTHORIZED",
+                ENException.Code_Android.FAILED_NOT_IN_FOREGROUND => "FAILED_NOT_IN_FOREGROUND",
+                ENException.Code_Android.FAILED_NOT_SUPPORTED => "FAILED_NOT_SUPPORTED",
+                ENException.Code_Android.FAILED_RATE_LIMITED => "FAILED_RATE_LIMITED",
+                ENException.Code_Android.FAILED_REJECTED_OPT_IN => "FAILED_REJECTED_OPT_IN",
+                ENException.Code_Android.FAILED_SERVICE_DISABLED => "FAILED_SERVICE_DISABLED",
+                ENException.Code_Android.FAILED_TEMPORARILY_DISABLED => "FAILED_TEMPORARILY_DISABLED",
+                ENException.Code_Android.FAILED_UNAUTHORIZED => "FAILED_UNAUTHORIZED",
+                _ => "Unknown",
+            };
+
+            status.Text = $"ENException: {message}";
+        }
+
+        private void ShowApiException(string callFrom, ApiException apiException)
+        {
+            Logger.D($"{callFrom} ApiException {apiException.StatusCode}");
+
+            status.Text = $"ApiException: {apiException.Message}";
+        }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -289,7 +355,7 @@ namespace Sample.Android
             switch (requestCode)
             {
                 case REQUEST_EN_START:
-                    DisableEnButton();
+                    ShowEnEnabled();
                     break;
                 case REQUEST_GET_TEK_HISTORY:
                     List<ITemporaryExposureKey> teks = await GetTekHistory();
@@ -302,14 +368,15 @@ namespace Sample.Android
             }
         }
 
-        private void DisableEnButton()
+        private void ShowEnEnabled()
         {
             if (buttonEn == null)
             {
                 return;
             }
 
-            buttonEn.Text = "Exposure Notification is Enabled";
+            status.Text = "Exposure Notification is enabled.";
+            buttonEn.Text = "Exposure Notification is enabled";
             buttonEn.Enabled = false;
         }
     }
