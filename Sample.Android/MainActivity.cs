@@ -109,10 +109,7 @@ namespace Sample.Android
 
             await InitializeExposureConfiguration();
 
-            if (await EnClient.IsEnabledAsync())
-            {
-                await InitializeExposureNotificationApiStatus();
-            }
+            await InitializeExposureNotificationApiStatus();
 
             buttonProvideDiagnosisKeys.Enabled = true;
 
@@ -120,9 +117,20 @@ namespace Sample.Android
 
         private async Task InitializeExposureNotificationApiStatus()
         {
-            var enStatuses = await EnClient.GetStatusAsync();
-            var version = await EnClient.GetVersionAsync();
-            ShowStatus(enStatuses, version);
+            try
+            {
+                var enStatuses = await EnClient.GetStatusAsync();
+                var version = await EnClient.GetVersionAsync();
+                ShowStatus(enStatuses, version);
+            }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
+            catch (ApiException apiException)
+            {
+                ShowApiException("GetStatusAsync GetVersionAsync", apiException);
+            }
         }
 
         private void InitializeDirs()
