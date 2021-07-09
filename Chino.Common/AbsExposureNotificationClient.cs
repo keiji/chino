@@ -45,10 +45,10 @@ namespace Chino
         public abstract Task<long> GetVersionAsync();
 
         /// <summary>
-        /// Gets the current Exposure Notification status.
+        /// Gets the list of current Exposure Notification status.
         /// </summary>
         /// <returns></returns>
-        public abstract Task<IExposureNotificationStatus> GetStatusAsync();
+        public abstract Task<IList<ExposureNotificationStatus>> GetStatusAsync();
 
         /// <summary>
         /// Gets TemporaryExposureKey history to be stored on the server.

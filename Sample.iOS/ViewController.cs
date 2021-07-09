@@ -36,9 +36,9 @@ namespace Sample.iOS
 
             InitializeDirs();
 
-            IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
+            IList<ExposureNotificationStatus> statuses = await ExposureNotificationClientManager.Shared.GetStatusAsync();
             long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
-            ShowStatusAsync(status, version);
+            ShowStatus(statuses, version);
 
             buttonEnableEn.TouchUpInside += async (sender, e) =>
             {
@@ -48,9 +48,9 @@ namespace Sample.iOS
                 {
                     await ExposureNotificationClientManager.Shared.StartAsync();
 
-                    IExposureNotificationStatus status = await ExposureNotificationClientManager.Shared.GetStatusAsync();
+                    IList<ExposureNotificationStatus> statuses = await ExposureNotificationClientManager.Shared.GetStatusAsync();
                     long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
-                    ShowStatusAsync(status, version);
+                    ShowStatus(statuses, version);
                 }
                 catch (ENException enException)
                 {
@@ -233,29 +233,24 @@ namespace Sample.iOS
             await File.WriteAllTextAsync(filePath, json);
         }
 
-        private void ShowStatusAsync(IExposureNotificationStatus status, long version)
+        private void ShowStatus(IList<ExposureNotificationStatus> statuses, long version)
         {
-            switch (status.Status())
+            labelStatus.Text = $"EN Version: {version}\n";
+            labelStatus.Text += string.Join("\n", statuses.Select(status => $"EN is {ConvertToStatus(status)}"));
+        }
+
+        private static string ConvertToStatus(ExposureNotificationStatus status)
+        {
+            return status.Code switch
             {
-                case Status.Active:
-                    buttonEnableEn.SetTitle($"EN v{version} is Active.", UIControlState.Normal);
-                    break;
-                case Status.NotActive:
-                    buttonEnableEn.SetTitle($"EN v{version} is NotActive.", UIControlState.Normal);
-                    break;
-                case Status.BluetoothOff:
-                    buttonEnableEn.SetTitle($"EN v{version} is BluetoothOff.", UIControlState.Normal);
-                    break;
-                case Status.Unauthorized:
-                    buttonEnableEn.SetTitle($"EN v{version} is Unauthorized.", UIControlState.Normal);
-                    break;
-                case Status.Unknown:
-                    buttonEnableEn.SetTitle($"EN v{version} is Unknown.", UIControlState.Normal);
-                    break;
-                case Status.Misc:
-                    buttonEnableEn.SetTitle($"EN v{version} is Misc.", UIControlState.Normal);
-                    break;
-            }
+                ExposureNotificationStatus.Code_iOS.Active => "Active",
+                ExposureNotificationStatus.Code_iOS.BluetoothOff => "BluetoothOff",
+                ExposureNotificationStatus.Code_iOS.Disabled => "Disabled",
+                ExposureNotificationStatus.Code_iOS.Paused => "Paused",
+                ExposureNotificationStatus.Code_iOS.Restricted => "Restricted",
+                ExposureNotificationStatus.Code_iOS.Unauthorized => "Unauthorized",
+                _ => "Unknown",
+            };
         }
 
         public override void DidReceiveMemoryWarning()

@@ -66,6 +66,22 @@ namespace Chino.iOS
             return new ENException(code, nsErrorException.Message);
         }
 
+        public static ExposureNotificationStatus ToExposureNotificationStatus(this ENStatus status)
+        {
+            int code = status switch {
+                ENStatus.Active => ExposureNotificationStatus.Code_iOS.Active,
+                ENStatus.BluetoothOff => ExposureNotificationStatus.Code_iOS.BluetoothOff,
+                ENStatus.Disabled => ExposureNotificationStatus.Code_iOS.Disabled,
+                ENStatus.Paused => ExposureNotificationStatus.Code_iOS.Paused,
+                ENStatus.Restricted => ExposureNotificationStatus.Code_iOS.Restricted,
+                ENStatus.Unauthorized => ExposureNotificationStatus.Code_iOS.Unauthorized,
+                _ => ExposureNotificationStatus.Code_iOS.Unknown,
+            };
+
+            return new ExposureNotificationStatus(code);
+        }
+
+
         public static long GetDateMillisSinceEpoch(this NSDate date)
         {
             DateTime dateTime = (DateTime)date;
