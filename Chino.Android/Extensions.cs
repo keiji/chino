@@ -4,11 +4,37 @@ using AndroidDailySummariesConfig = Android.Gms.Nearby.ExposureNotification.Dail
 using System.Linq;
 
 using Logger = Chino.ChinoLogger;
+using Android.Gms.Common.Apis;
+using Chino.Common;
 
 namespace Chino.Android.Google
 {
     public static class Extensions
     {
+        public static bool IsENException(this ApiException apiException)
+            => ExposureNotificationStatusCodes.FAILED_ALL.Contains(apiException.StatusCode);
+
+        public static ENException ToENException(this ApiException apiException)
+        {
+            int code = apiException.StatusCode switch
+            {
+                ExposureNotificationStatusCodes.FAILED => ENException.Code_Android.FAILED,
+                ExposureNotificationStatusCodes.FAILED_ALREADY_STARTED => ENException.Code_Android.FAILED_ALREADY_STARTED,
+                ExposureNotificationStatusCodes.FAILED_BLUETOOTH_DISABLED => ENException.Code_Android.FAILED_BLUETOOTH_DISABLED,
+                ExposureNotificationStatusCodes.FAILED_DISK_IO => ENException.Code_Android.FAILED_DISK_IO,
+                ExposureNotificationStatusCodes.FAILED_KEY_RELEASE_NOT_PREAUTHORIZED => ENException.Code_Android.FAILED_KEY_RELEASE_NOT_PREAUTHORIZED,
+                ExposureNotificationStatusCodes.FAILED_NOT_IN_FOREGROUND => ENException.Code_Android.FAILED_NOT_IN_FOREGROUND,
+                ExposureNotificationStatusCodes.FAILED_NOT_SUPPORTED => ENException.Code_Android.FAILED_NOT_SUPPORTED,
+                ExposureNotificationStatusCodes.FAILED_RATE_LIMITED => ENException.Code_Android.FAILED_RATE_LIMITED,
+                ExposureNotificationStatusCodes.FAILED_REJECTED_OPT_IN => ENException.Code_Android.FAILED_REJECTED_OPT_IN,
+                ExposureNotificationStatusCodes.FAILED_SERVICE_DISABLED => ENException.Code_Android.FAILED_SERVICE_DISABLED,
+                ExposureNotificationStatusCodes.FAILED_TEMPORARILY_DISABLED => ENException.Code_Android.FAILED_TEMPORARILY_DISABLED,
+                ExposureNotificationStatusCodes.FAILED_UNAUTHORIZED => ENException.Code_Android.FAILED_UNAUTHORIZED,
+                _ => ENException.Code_Android.FAILED,
+            };
+
+            return new ENException(code, apiException.Message);
+        }
 
         public static int ToInt(this RiskLevel riskLevel)
         {

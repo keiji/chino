@@ -17,6 +17,7 @@ using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.Expos
 using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
 
 using Logger = Chino.ChinoLogger;
+using Android.Gms.Common.Apis;
 
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
@@ -107,12 +108,23 @@ namespace Chino.Android.Google
             {
                 Logger.D($"GetExposureV1Async");
 
-                AndroidExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
+                try
+                {
+                    AndroidExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
 
-                IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
-                List<IExposureInformation> exposureInformations = eis.Select(ei => (IExposureInformation)new ExposureInformation(ei)).ToList();
+                    IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
+                    List<IExposureInformation> exposureInformations = eis.Select(ei => (IExposureInformation)new ExposureInformation(ei)).ToList();
 
-                Handler.ExposureDetected(new ExposureSummary(exposureSummary), exposureInformations);
+                    Handler.ExposureDetected(new ExposureSummary(exposureSummary), exposureInformations);
+                }
+                catch (ApiException exception)
+                {
+                    if (exception.IsENException())
+                    {
+                        throw exception.ToENException();
+                    }
+                    throw exception;
+                }
             }
 #pragma warning restore CS06122,CS0618 // Type or member is obsolete
 
@@ -120,19 +132,30 @@ namespace Chino.Android.Google
             {
                 Logger.D($"GetExposureV2Async");
 
-                IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
-                    enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
-                    );
-                List<IDailySummary> dailySummaries = dss.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
+                try
+                {
+                    IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
+                        enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
+                        );
+                    List<IDailySummary> dailySummaries = dss.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
 
-                Print(dailySummaries);
+                    Print(dailySummaries);
 
-                IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
-                List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
+                    IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
+                    List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
 
-                Logger.D(exposureWindows);
+                    Logger.D(exposureWindows);
 
-                Handler.ExposureDetected(dailySummaries, exposureWindows);
+                    Handler.ExposureDetected(dailySummaries, exposureWindows);
+                }
+                catch (ApiException exception)
+                {
+                    if (exception.IsENException())
+                    {
+                        throw exception.ToENException();
+                    }
+                    throw exception;
+                }
             }
 
         }
@@ -155,7 +178,18 @@ namespace Chino.Android.Google
 
         public void Init(Context applicationContext)
         {
-            EnClient = Nearby.GetExposureNotificationClient(applicationContext);
+            try
+            {
+                EnClient = Nearby.GetExposureNotificationClient(applicationContext);
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         private void CheckInitialized()
@@ -171,35 +205,90 @@ namespace Chino.Android.Google
         {
             CheckInitialized();
 
-            await EnClient.StartAsync();
+            try
+            {
+                await EnClient.StartAsync();
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public override async Task StopAsync()
         {
             CheckInitialized();
 
-            await EnClient.StopAsync();
+            try
+            {
+                await EnClient.StopAsync();
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public override async Task<bool> IsEnabledAsync()
         {
             CheckInitialized();
 
-            return await EnClient.IsEnabledAsync();
+            try
+            {
+                return await EnClient.IsEnabledAsync();
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public override async Task<long> GetVersionAsync()
         {
             CheckInitialized();
 
-            return await EnClient.GetVersionAsync();
+            try
+            {
+                return await EnClient.GetVersionAsync();
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public override async Task<IExposureNotificationStatus> GetStatusAsync()
         {
             CheckInitialized();
 
-            return new ExposureNotificationStatus(await EnClient.GetStatusAsync());
+            try
+            {
+                return new ExposureNotificationStatus(await EnClient.GetStatusAsync());
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles)
@@ -247,19 +336,39 @@ namespace Chino.Android.Google
                 .SetReportTypeWhenMissing((int)googleDiagnosisKeysDataMappingConfig.ReportTypeWhenMissing)
                 .Build();
 
-            await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
+            try
+            {
+                await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
 
-            var files = keyFiles.Select(f => new File(f)).ToList();
-            DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);
-            await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
+                var files = keyFiles.Select(f => new File(f)).ToList();
+                DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);
+                await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public override async Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
         {
-            var teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
-
-            return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
-
+            try
+            {
+                var teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
+                return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -284,7 +393,19 @@ namespace Chino.Android.Google
             ExposureConfiguration = configuration;
 
             var files = keyFiles.Select(f => new File(f)).ToList();
-            await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
+
+            try
+            {
+                await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
@@ -292,13 +413,35 @@ namespace Chino.Android.Google
         {
             CheckInitialized();
 
-            await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+            try
+            {
+                await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
         public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
         {
             CheckInitialized();
 
-            await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+            try
+            {
+                await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+            }
+            catch (ApiException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
     }
 

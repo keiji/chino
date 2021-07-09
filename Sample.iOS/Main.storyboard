@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -23,25 +23,31 @@
                                 <rect key="frame" x="20" y="44" width="374" height="818"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2rb-rV-4PG">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="163.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="144"/>
                                         <state key="normal" title="Enable Exposure Notification"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="62P-su-oTx">
-                                        <rect key="frame" x="0.0" y="163.5" width="374" height="163.5"/>
+                                        <rect key="frame" x="0.0" y="144" width="374" height="144"/>
                                         <state key="normal" title="Show TEKs HIstory"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wQx-iy-0vJ">
-                                        <rect key="frame" x="0.0" y="327" width="374" height="164"/>
+                                        <rect key="frame" x="0.0" y="288" width="374" height="144"/>
                                         <state key="normal" title="Detect Exposure"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dkK-9p-goj">
-                                        <rect key="frame" x="0.0" y="491" width="374" height="163.5"/>
+                                        <rect key="frame" x="0.0" y="432" width="374" height="143.5"/>
                                         <state key="normal" title="RequestPreauthorizedKeys"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fC7-fH-wlq">
-                                        <rect key="frame" x="0.0" y="654.5" width="374" height="163.5"/>
+                                        <rect key="frame" x="0.0" y="575.5" width="374" height="144"/>
                                         <state key="normal" title="RequestReleaseKeys"/>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Z3-hJ-hm8">
+                                        <rect key="frame" x="0.0" y="719.5" width="374" height="98.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -59,6 +65,7 @@
                         <outlet property="buttonRequestPreauthorizedKeys" destination="dkK-9p-goj" id="eYr-3s-pbI"/>
                         <outlet property="buttonRequestReleaseKeys" destination="fC7-fH-wlq" id="gy7-oS-uG2"/>
                         <outlet property="buttonShowTeksHistory" destination="62P-su-oTx" id="gU2-9A-6Tt"/>
+                        <outlet property="labelStatus" destination="9Z3-hJ-hm8" id="YlN-lD-jvK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

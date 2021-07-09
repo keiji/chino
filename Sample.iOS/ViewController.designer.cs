@@ -26,6 +26,9 @@ namespace Sample.iOS
 
 		[Outlet]
 		UIKit.UIButton buttonShowTeksHistory { get; set; }
+
+		[Outlet]
+		UIKit.UILabel labelStatus { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
@@ -39,11 +42,6 @@ namespace Sample.iOS
 				buttonEnableEn = null;
 			}
 
-			if (buttonShowTeksHistory != null) {
-				buttonShowTeksHistory.Dispose ();
-				buttonShowTeksHistory = null;
-			}
-
 			if (buttonRequestPreauthorizedKeys != null) {
 				buttonRequestPreauthorizedKeys.Dispose ();
 				buttonRequestPreauthorizedKeys = null;
@@ -52,6 +50,16 @@ namespace Sample.iOS
 			if (buttonRequestReleaseKeys != null) {
 				buttonRequestReleaseKeys.Dispose ();
 				buttonRequestReleaseKeys = null;
+			}
+
+			if (buttonShowTeksHistory != null) {
+				buttonShowTeksHistory.Dispose ();
+				buttonShowTeksHistory = null;
+			}
+
+			if (labelStatus != null) {
+				labelStatus.Dispose ();
+				labelStatus = null;
 			}
 		}
 	}

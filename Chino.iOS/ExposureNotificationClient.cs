@@ -44,13 +44,32 @@ namespace Chino.iOS
             {
                 return;
             }
-            await EnManager.ActivateAsync();
-            IsActivated = true;
+
+            try
+            {
+                await EnManager.ActivateAsync();
+                IsActivated = true;
+            }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         ~ExposureNotificationClient()
         {
-            EnManager.Invalidate();
+            try
+            {
+                EnManager.Invalidate();
+            }
+            catch (NSErrorException exception)
+            {
+                exception.LogD();
+            }
         }
 
         private void CheckActivated()
@@ -64,20 +83,55 @@ namespace Chino.iOS
         public async override Task StartAsync()
         {
             await ActivateAsync();
-            await EnManager.SetExposureNotificationEnabledAsync(true);
+
+            try
+            {
+                await EnManager.SetExposureNotificationEnabledAsync(true);
+            }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public async override Task StopAsync()
         {
             CheckActivated();
 
-            await EnManager.SetExposureNotificationEnabledAsync(false);
+            try
+            {
+                await EnManager.SetExposureNotificationEnabledAsync(false);
+            }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public async override Task<bool> IsEnabledAsync()
         {
             await ActivateAsync();
-            return EnManager.ExposureNotificationEnabled;
+
+            try
+            {
+                return EnManager.ExposureNotificationEnabled;
+            }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public override Task<long> GetVersionAsync()
@@ -88,22 +142,45 @@ namespace Chino.iOS
         public async override Task<IExposureNotificationStatus> GetStatusAsync()
         {
             await ActivateAsync();
-            return new ExposureNotificationStatus(EnManager.ExposureNotificationStatus);
+
+            try
+            {
+                return new ExposureNotificationStatus(EnManager.ExposureNotificationStatus);
+            }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
 
         public async override Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
         {
             CheckActivated();
 
-            if (!IsTest)
+            try
             {
-                ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
-                return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                if (!IsTest)
+                {
+                    ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
+                    return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                }
+                else
+                {
+                    ENTemporaryExposureKey[] teks = await EnManager.GetTestDiagnosisKeysAsync();
+                    return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                }
             }
-            else
+            catch (NSErrorException exception)
             {
-                ENTemporaryExposureKey[] teks = await EnManager.GetTestDiagnosisKeysAsync();
-                return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
             }
         }
 
@@ -198,38 +275,51 @@ namespace Chino.iOS
             };
             Logger.D(exposureConfiguration.ToString());
 
-            ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
-
-            // Delete decompressed files
-            Logger.D($"{decompressedFiles.Count()} files will be deleted.");
-
-            foreach (string file in decompressedFiles)
+            try
             {
-                try
+                ENExposureDetectionSummary summary = await EnManager.DetectExposuresAsync(exposureConfiguration, urls);
+
+                if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
                 {
-                    File.Delete(file);
+                    await GetExposureV2(summary);
                 }
-                catch (Exception exception)
+                else if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
                 {
-                    Logger.E(exception);
+                    await GetExposureV1(summary);
+                }
+                else if (ObjCRuntime.Class.GetHandle("ENManager") != null)
+                {
+                    await GetExposureV2(summary);
+                }
+                else
+                {
+                    Logger.I("Exposure Notifications not supported on this version of iOS.");
                 }
             }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
+            finally
+            {
+                // Delete decompressed files
+                Logger.D($"{decompressedFiles.Count()} files will be deleted.");
 
-            if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
-            {
-                await GetExposureV2(summary);
-            }
-            else if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
-            {
-                await GetExposureV1(summary);
-            }
-            else if (ObjCRuntime.Class.GetHandle("ENManager") != null)
-            {
-                await GetExposureV2(summary);
-            }
-            else
-            {
-                Logger.I("Exposure Notifications not supported on this version of iOS.");
+                foreach (string file in decompressedFiles)
+                {
+                    try
+                    {
+                        File.Delete(file);
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.E(exception);
+                    }
+                }
             }
         }
 
@@ -328,13 +418,35 @@ namespace Chino.iOS
         {
             CheckActivated();
 
-            await EnManager.PreAuthorizeDiagnosisKeysAsync();
+            try
+            {
+                await EnManager.PreAuthorizeDiagnosisKeysAsync();
+            }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
         public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
         {
             CheckActivated();
 
-            await EnManager.RequestPreAuthorizedDiagnosisKeysAsync();
+            try
+            {
+                await EnManager.RequestPreAuthorizedDiagnosisKeysAsync();
+            }
+            catch (NSErrorException exception)
+            {
+                if (exception.IsENException())
+                {
+                    throw exception.ToENException();
+                }
+                throw exception;
+            }
         }
     }
 }
