@@ -139,7 +139,7 @@ namespace Chino.iOS
             return Task.Run(() => long.Parse(NSBundle.MainBundle.InfoDictionary["ENAPIVersion"].ToString()));
         }
 
-        public async override Task<IList<ExposureNotificationStatus>> GetStatusAsync()
+        public async override Task<IList<ExposureNotificationStatus>> GetStatusesAsync()
         {
             await ActivateAsync();
 

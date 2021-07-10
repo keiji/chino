@@ -274,7 +274,7 @@ namespace Chino.Android.Google
             }
         }
 
-        public override async Task<IList<ExposureNotificationStatus>> GetStatusAsync()
+        public override async Task<IList<ExposureNotificationStatus>> GetStatusesAsync()
         {
             CheckInitialized();
 
