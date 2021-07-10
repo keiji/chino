@@ -36,7 +36,7 @@ namespace Sample.iOS
 
             InitializeDirs();
 
-            IList<ExposureNotificationStatus> statuses = await ExposureNotificationClientManager.Shared.GetStatusAsync();
+            IList<ExposureNotificationStatus> statuses = await ExposureNotificationClientManager.Shared.GetStatusesAsync();
             long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
             ShowStatus(statuses, version);
 
@@ -48,7 +48,7 @@ namespace Sample.iOS
                 {
                     await ExposureNotificationClientManager.Shared.StartAsync();
 
-                    IList<ExposureNotificationStatus> statuses = await ExposureNotificationClientManager.Shared.GetStatusAsync();
+                    IList<ExposureNotificationStatus> statuses = await ExposureNotificationClientManager.Shared.GetStatusesAsync();
                     long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
                     ShowStatus(statuses, version);
                 }

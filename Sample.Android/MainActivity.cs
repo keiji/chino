@@ -119,7 +119,7 @@ namespace Sample.Android
         {
             try
             {
-                var enStatuses = await EnClient.GetStatusAsync();
+                var enStatuses = await EnClient.GetStatusesAsync();
                 var version = await EnClient.GetVersionAsync();
                 ShowStatus(enStatuses, version);
             }

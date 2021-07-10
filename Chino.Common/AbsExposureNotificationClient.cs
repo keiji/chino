@@ -48,7 +48,7 @@ namespace Chino
         /// Gets the list of current Exposure Notification status.
         /// </summary>
         /// <returns></returns>
-        public abstract Task<IList<ExposureNotificationStatus>> GetStatusAsync();
+        public abstract Task<IList<ExposureNotificationStatus>> GetStatusesAsync();
 
         /// <summary>
         /// Gets TemporaryExposureKey history to be stored on the server.
