@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExposureNotifications;
 using Foundation;
+using ObjCRuntime;
 using UIKit;
 
 using Logger = Chino.ChinoLogger;
@@ -13,6 +14,7 @@ using Logger = Chino.ChinoLogger;
 namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enmanager
+    [Introduced(PlatformName.iOS, 12, 5)]
     public class ExposureNotificationClient : AbsExposureNotificationClient
     {
         private const long MAXIMUM_ZIP_ARCHIVE_ENTRY_SIZE = 10 * 1024 * 1024;
@@ -418,8 +420,14 @@ namespace Chino.iOS
             }
         }
 
+        [Introduced(PlatformName.iOS, 14, 4)]
         public override async Task RequestPreAuthorizedTemporaryExposureKeyHistoryAsync()
         {
+            if (!UIDevice.CurrentDevice.CheckSystemVersion(14, 4))
+            {
+                throw new NotSupportedException("RequestPreAuthorizedTemporaryExposureKeyHistoryAsync is only available on iOS 14.4 or newer.");
+            }
+
             CheckActivated();
 
             try
@@ -435,8 +443,15 @@ namespace Chino.iOS
                 throw exception;
             }
         }
+
+        [Introduced(PlatformName.iOS, 14, 4)]
         public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
         {
+            if (!UIDevice.CurrentDevice.CheckSystemVersion(14, 4))
+            {
+                throw new NotSupportedException("RequestPreAuthorizedTemporaryExposureKeyReleaseAsync is only available on iOS 14.4 or newer.");
+            }
+
             CheckActivated();
 
             try
