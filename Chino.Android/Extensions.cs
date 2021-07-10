@@ -42,7 +42,7 @@ namespace Chino.Android.Google
         {
             int code = ExposureNotificationStatus.Code_Android.UNKNOWN;
 
-            // Cannot use switch statement because AndroidExposureNotificatonStatus.* is not constant.
+            // Cannot use switch statement because AndroidExposureNotificationStatus.* is not constant.
             if (status == AndroidExposureNotificationStatus.Activated)
             {
                 code = ExposureNotificationStatus.Code_Android.ACTIVATED;
