@@ -109,8 +109,28 @@ namespace Sample.Android
 
             await InitializeExposureConfiguration();
 
+            await InitializeExposureNotificationApiStatus();
+
             buttonProvideDiagnosisKeys.Enabled = true;
 
+        }
+
+        private async Task InitializeExposureNotificationApiStatus()
+        {
+            try
+            {
+                var enStatuses = await EnClient.GetStatusAsync();
+                var version = await EnClient.GetVersionAsync();
+                ShowStatus(enStatuses, version);
+            }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
+            catch (ApiException apiException)
+            {
+                ShowApiException("GetStatusAsync GetVersionAsync", apiException);
+            }
         }
 
         private void InitializeDirs()
@@ -304,6 +324,32 @@ namespace Sample.Android
                     ShowApiException("EnableEnAsync", apiException);
                 }
             }
+        }
+
+        private void ShowStatus(IList<ExposureNotificationStatus> enStatuses, long version)
+        {
+            status.Text = $"EN version: {version}\n";
+            status.Text += string.Join("\n", enStatuses.Select(status => ConvertToStatus(status)).ToList());
+        }
+
+        private static string ConvertToStatus(ExposureNotificationStatus enStatus)
+        {
+            return enStatus.Code switch
+            {
+                ExposureNotificationStatus.Code_Android.ACTIVATED => $"EN is ACTIVATED",
+                ExposureNotificationStatus.Code_Android.BLUETOOTH_DISABLED => $"EN is BLUETOOTH_DISABLED",
+                ExposureNotificationStatus.Code_Android.BLUETOOTH_SUPPORT_UNKNOWN => $"EN is BLUETOOTH_SUPPORT_UNKNOWN",
+                ExposureNotificationStatus.Code_Android.EN_NOT_SUPPORT => $"EN is EN_NOT_SUPPORT",
+                ExposureNotificationStatus.Code_Android.FOCUS_LOST => $"EN is FOCUS_LOST",
+                ExposureNotificationStatus.Code_Android.HW_NOT_SUPPORT => $"EN is HW_NOT_SUPPORT",
+                ExposureNotificationStatus.Code_Android.INACTIVATED => $"EN is INACTIVATED",
+                ExposureNotificationStatus.Code_Android.LOCATION_DISABLED => $"EN is LOCATION_DISABLED",
+                ExposureNotificationStatus.Code_Android.LOW_STORAGE => $"EN is LOW_STORAGE",
+                ExposureNotificationStatus.Code_Android.NOT_IN_ALLOWLIST => $"EN is NOT_IN_ALLOWLIST",
+                ExposureNotificationStatus.Code_Android.NO_CONSENT => $"EN is NO_CONSENT",
+                ExposureNotificationStatus.Code_Android.USER_PROFILE_NOT_SUPPORT => $"EN is USER_PROFILE_NOT_SUPPORT",
+                _ => "ENStatus is Unknown"
+            };
         }
 
         private void ShowENException(ENException enException)

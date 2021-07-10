@@ -18,6 +18,7 @@ using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWi
 
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
+using Java.Util;
 
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
@@ -273,13 +274,14 @@ namespace Chino.Android.Google
             }
         }
 
-        public override async Task<IExposureNotificationStatus> GetStatusAsync()
+        public override async Task<IList<ExposureNotificationStatus>> GetStatusAsync()
         {
             CheckInitialized();
 
             try
             {
-                return new ExposureNotificationStatus(await EnClient.GetStatusAsync());
+                var statuses = await EnClient.GetStatusAsync();
+                return statuses.Select(status => status.ToExposureNotificationStatus()).ToList();
             }
             catch (ApiException exception)
             {

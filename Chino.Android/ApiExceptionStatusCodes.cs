@@ -1,7 +1,6 @@
-﻿using System;
-namespace Chino
+﻿namespace Chino
 {
-    public static class ExposureNotificationStatusCodes
+    public static class ApiExceptionStatusCodes
     {
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationStatusCodes
         public const int FAILED = 13;

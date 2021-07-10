@@ -1,6 +1,8 @@
-﻿using AndroidRiskLevel = Android.Gms.Nearby.ExposureNotification.RiskLevel;
+﻿using AndroidExposureNotificationStatus = Android.Gms.Nearby.ExposureNotification.ExposureNotificationStatus;
+using AndroidRiskLevel = Android.Gms.Nearby.ExposureNotification.RiskLevel;
 using AndroidExposureConfiguration = Android.Gms.Nearby.ExposureNotification.ExposureConfiguration;
 using AndroidDailySummariesConfig = Android.Gms.Nearby.ExposureNotification.DailySummariesConfig;
+
 using System.Linq;
 
 using Logger = Chino.ChinoLogger;
@@ -12,28 +14,85 @@ namespace Chino.Android.Google
     public static class Extensions
     {
         public static bool IsENException(this ApiException apiException)
-            => ExposureNotificationStatusCodes.FAILED_ALL.Contains(apiException.StatusCode);
+            => ApiExceptionStatusCodes.FAILED_ALL.Contains(apiException.StatusCode);
 
         public static ENException ToENException(this ApiException apiException)
         {
             int code = apiException.StatusCode switch
             {
-                ExposureNotificationStatusCodes.FAILED => ENException.Code_Android.FAILED,
-                ExposureNotificationStatusCodes.FAILED_ALREADY_STARTED => ENException.Code_Android.FAILED_ALREADY_STARTED,
-                ExposureNotificationStatusCodes.FAILED_BLUETOOTH_DISABLED => ENException.Code_Android.FAILED_BLUETOOTH_DISABLED,
-                ExposureNotificationStatusCodes.FAILED_DISK_IO => ENException.Code_Android.FAILED_DISK_IO,
-                ExposureNotificationStatusCodes.FAILED_KEY_RELEASE_NOT_PREAUTHORIZED => ENException.Code_Android.FAILED_KEY_RELEASE_NOT_PREAUTHORIZED,
-                ExposureNotificationStatusCodes.FAILED_NOT_IN_FOREGROUND => ENException.Code_Android.FAILED_NOT_IN_FOREGROUND,
-                ExposureNotificationStatusCodes.FAILED_NOT_SUPPORTED => ENException.Code_Android.FAILED_NOT_SUPPORTED,
-                ExposureNotificationStatusCodes.FAILED_RATE_LIMITED => ENException.Code_Android.FAILED_RATE_LIMITED,
-                ExposureNotificationStatusCodes.FAILED_REJECTED_OPT_IN => ENException.Code_Android.FAILED_REJECTED_OPT_IN,
-                ExposureNotificationStatusCodes.FAILED_SERVICE_DISABLED => ENException.Code_Android.FAILED_SERVICE_DISABLED,
-                ExposureNotificationStatusCodes.FAILED_TEMPORARILY_DISABLED => ENException.Code_Android.FAILED_TEMPORARILY_DISABLED,
-                ExposureNotificationStatusCodes.FAILED_UNAUTHORIZED => ENException.Code_Android.FAILED_UNAUTHORIZED,
+                ApiExceptionStatusCodes.FAILED => ENException.Code_Android.FAILED,
+                ApiExceptionStatusCodes.FAILED_ALREADY_STARTED => ENException.Code_Android.FAILED_ALREADY_STARTED,
+                ApiExceptionStatusCodes.FAILED_BLUETOOTH_DISABLED => ENException.Code_Android.FAILED_BLUETOOTH_DISABLED,
+                ApiExceptionStatusCodes.FAILED_DISK_IO => ENException.Code_Android.FAILED_DISK_IO,
+                ApiExceptionStatusCodes.FAILED_KEY_RELEASE_NOT_PREAUTHORIZED => ENException.Code_Android.FAILED_KEY_RELEASE_NOT_PREAUTHORIZED,
+                ApiExceptionStatusCodes.FAILED_NOT_IN_FOREGROUND => ENException.Code_Android.FAILED_NOT_IN_FOREGROUND,
+                ApiExceptionStatusCodes.FAILED_NOT_SUPPORTED => ENException.Code_Android.FAILED_NOT_SUPPORTED,
+                ApiExceptionStatusCodes.FAILED_RATE_LIMITED => ENException.Code_Android.FAILED_RATE_LIMITED,
+                ApiExceptionStatusCodes.FAILED_REJECTED_OPT_IN => ENException.Code_Android.FAILED_REJECTED_OPT_IN,
+                ApiExceptionStatusCodes.FAILED_SERVICE_DISABLED => ENException.Code_Android.FAILED_SERVICE_DISABLED,
+                ApiExceptionStatusCodes.FAILED_TEMPORARILY_DISABLED => ENException.Code_Android.FAILED_TEMPORARILY_DISABLED,
+                ApiExceptionStatusCodes.FAILED_UNAUTHORIZED => ENException.Code_Android.FAILED_UNAUTHORIZED,
                 _ => ENException.Code_Android.FAILED,
             };
 
             return new ENException(code, apiException.Message);
+        }
+
+        public static ExposureNotificationStatus ToExposureNotificationStatus(this AndroidExposureNotificationStatus status)
+        {
+            int code = ExposureNotificationStatus.Code_Android.UNKNOWN;
+
+            // Cannot use switch statement because AndroidExposureNotificationStatus.* is not constant.
+            if (status == AndroidExposureNotificationStatus.Activated)
+            {
+                code = ExposureNotificationStatus.Code_Android.ACTIVATED;
+            }
+            else if (status == AndroidExposureNotificationStatus.BluetoothDisabled)
+            {
+                code = ExposureNotificationStatus.Code_Android.BLUETOOTH_DISABLED;
+            }
+            else if (status == AndroidExposureNotificationStatus.BluetoothSupportUnknown)
+            {
+                code = ExposureNotificationStatus.Code_Android.BLUETOOTH_SUPPORT_UNKNOWN;
+            }
+            else if (status == AndroidExposureNotificationStatus.EnNotSupport)
+            {
+                code = ExposureNotificationStatus.Code_Android.EN_NOT_SUPPORT;
+            }
+            else if (status == AndroidExposureNotificationStatus.FocusLost)
+            {
+                code = ExposureNotificationStatus.Code_Android.FOCUS_LOST;
+            }
+            else if (status == AndroidExposureNotificationStatus.HwNotSupport)
+            {
+                code = ExposureNotificationStatus.Code_Android.HW_NOT_SUPPORT;
+            }
+            else if (status == AndroidExposureNotificationStatus.Inactivated)
+            {
+                code = ExposureNotificationStatus.Code_Android.INACTIVATED;
+            }
+            else if (status == AndroidExposureNotificationStatus.LocationDisabled)
+            {
+                code = ExposureNotificationStatus.Code_Android.LOCATION_DISABLED;
+            }
+            else if (status == AndroidExposureNotificationStatus.LowStorage)
+            {
+                code = ExposureNotificationStatus.Code_Android.LOW_STORAGE;
+            }
+            else if (status == AndroidExposureNotificationStatus.NotInAllowlist)
+            {
+                code = ExposureNotificationStatus.Code_Android.NOT_IN_ALLOWLIST;
+            }
+            else if (status == AndroidExposureNotificationStatus.NoConsent)
+            {
+                code = ExposureNotificationStatus.Code_Android.NO_CONSENT;
+            }
+            else if (status == AndroidExposureNotificationStatus.UserProfileNotSupport)
+            {
+                code = ExposureNotificationStatus.Code_Android.USER_PROFILE_NOT_SUPPORT;
+            }
+
+            return new ExposureNotificationStatus(code);
         }
 
         public static int ToInt(this RiskLevel riskLevel)

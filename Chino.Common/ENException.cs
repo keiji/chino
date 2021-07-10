@@ -11,49 +11,43 @@ namespace Chino.Common
             Code = code;
         }
 
-        enum Type
-        {
-            Android = 1 << 7,
-            iOS = 1 << 8
-        }
-
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationStatusCodes
         public static class Code_Android
         {
-            public const int FAILED = (int)Type.Android + 0;
-            public const int FAILED_ALREADY_STARTED = (int)Type.Android + 1;
-            public const int FAILED_BLUETOOTH_DISABLED = (int)Type.Android + 2;
-            public const int FAILED_DISK_IO = (int)Type.Android + 3;
-            public const int FAILED_KEY_RELEASE_NOT_PREAUTHORIZED = (int)Type.Android + 4;
-            public const int FAILED_NOT_IN_FOREGROUND = (int)Type.Android + 5;
-            public const int FAILED_NOT_SUPPORTED = (int)Type.Android + 6;
-            public const int FAILED_RATE_LIMITED = (int)Type.Android + 7;
-            public const int FAILED_REJECTED_OPT_IN = (int)Type.Android + 8;
-            public const int FAILED_SERVICE_DISABLED = (int)Type.Android + 9;
-            public const int FAILED_TEMPORARILY_DISABLED = (int)Type.Android + 10;
-            public const int FAILED_UNAUTHORIZED = (int)Type.Android + 11;
+            public const int FAILED = (int)PlatformType.Android + 0;
+            public const int FAILED_ALREADY_STARTED = (int)PlatformType.Android + 1;
+            public const int FAILED_BLUETOOTH_DISABLED = (int)PlatformType.Android + 2;
+            public const int FAILED_DISK_IO = (int)PlatformType.Android + 3;
+            public const int FAILED_KEY_RELEASE_NOT_PREAUTHORIZED = (int)PlatformType.Android + 4;
+            public const int FAILED_NOT_IN_FOREGROUND = (int)PlatformType.Android + 5;
+            public const int FAILED_NOT_SUPPORTED = (int)PlatformType.Android + 6;
+            public const int FAILED_RATE_LIMITED = (int)PlatformType.Android + 7;
+            public const int FAILED_REJECTED_OPT_IN = (int)PlatformType.Android + 8;
+            public const int FAILED_SERVICE_DISABLED = (int)PlatformType.Android + 9;
+            public const int FAILED_TEMPORARILY_DISABLED = (int)PlatformType.Android + 10;
+            public const int FAILED_UNAUTHORIZED = (int)PlatformType.Android + 11;
         }
 
         // https://developer.apple.com/documentation/exposurenotification/enerror
         public static class Code_iOS
         {
-            public const int ApiMisuse = (int)Type.iOS + 0;
-            public const int BadFormat = (int)Type.iOS + 1;
-            public const int BadParameter = (int)Type.iOS + 2;
-            public const int BluetoothOff = (int)Type.iOS + 3;
-            public const int InsufficientMemory = (int)Type.iOS + 4;
-            public const int InsufficientStorage = (int)Type.iOS + 5;
-            public const int Internal = (int)Type.iOS + 6;
-            public const int Invalidated = (int)Type.iOS + 7;
-            public const int NotAuthorized = (int)Type.iOS + 8;
-            public const int NotEnabled = (int)Type.iOS + 9;
-            public const int NotEntitled = (int)Type.iOS + 10;
-            public const int RateLimited = (int)Type.iOS + 11;
-            public const int Restricted = (int)Type.iOS + 12;
-            public const int Unknown = (int)Type.iOS + 13;
-            public const int Unsupported = (int)Type.iOS + 14;
-            public const int DataInaccessible = (int)Type.iOS + 15;
-            public const int TravelStatusNotAvailable = (int)Type.iOS + 16;
+            public const int ApiMisuse = (int)PlatformType.iOS + 0;
+            public const int BadFormat = (int)PlatformType.iOS + 1;
+            public const int BadParameter = (int)PlatformType.iOS + 2;
+            public const int BluetoothOff = (int)PlatformType.iOS + 3;
+            public const int InsufficientMemory = (int)PlatformType.iOS + 4;
+            public const int InsufficientStorage = (int)PlatformType.iOS + 5;
+            public const int Internal = (int)PlatformType.iOS + 6;
+            public const int Invalidated = (int)PlatformType.iOS + 7;
+            public const int NotAuthorized = (int)PlatformType.iOS + 8;
+            public const int NotEnabled = (int)PlatformType.iOS + 9;
+            public const int NotEntitled = (int)PlatformType.iOS + 10;
+            public const int RateLimited = (int)PlatformType.iOS + 11;
+            public const int Restricted = (int)PlatformType.iOS + 12;
+            public const int Unknown = (int)PlatformType.iOS + 13;
+            public const int Unsupported = (int)PlatformType.iOS + 14;
+            public const int DataInaccessible = (int)PlatformType.iOS + 15;
+            public const int TravelStatusNotAvailable = (int)PlatformType.iOS + 16;
         }
     }
 }
