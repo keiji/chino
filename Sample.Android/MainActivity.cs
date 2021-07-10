@@ -401,6 +401,7 @@ namespace Sample.Android
             switch (requestCode)
             {
                 case REQUEST_EN_START:
+                    await EnableEnAsync();
                     ShowEnEnabled();
                     break;
                 case REQUEST_GET_TEK_HISTORY:
