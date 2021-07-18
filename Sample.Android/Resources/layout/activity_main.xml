@@ -1,46 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
 
-  <Button
-    android:id="@+id/btn_enable_en"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Enable ExposureNotification"
+	<Button
+		android:id="@+id/btn_enable_en"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Enable ExposureNotification"
     />
 
-  <Button
-    android:id="@+id/btn_get_teks"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Show TEKs History"
+	<Button
+		android:id="@+id/btn_get_teks"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Show TEKs History"
     />
 
-  <Button
-    android:id="@+id/btn_provide_diagnosis_keys"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Provide Diagnosis Keys" />
+	<Button
+		android:id="@+id/btn_provide_diagnosis_keys_legacy_v1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Provide Diagnosis Keys (Legacy-V1)" />
 
-  <Button
-    android:id="@+id/btn_request_preauthorize_keys"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Request Preauthorized Keys" />
+	<Button
+		android:id="@+id/btn_provide_diagnosis_keys"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Provide Diagnosis Keys" />
 
-  <Button
-    android:id="@+id/btn_request_release_keys"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Request Release Keys" />
+	<Button
+		android:id="@+id/btn_request_preauthorize_keys"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Request Preauthorized Keys" />
 
-  <TextView
-    android:id="@+id/tv_status"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+	<Button
+		android:id="@+id/btn_request_release_keys"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Request Release Keys" />
+
+	<TextView
+		android:id="@+id/tv_status"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" />
 
 </LinearLayout>

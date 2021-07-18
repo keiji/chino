@@ -37,6 +37,7 @@ namespace Sample.Android
         private Button? buttonEn = null;
         private Button? buttonGetTekHistory = null;
         private Button? buttonProvideDiagnosisKeys = null;
+        private Button? buttonProvideDiagnosisKeysV1 = null;
         private Button? buttonRequestPreauthorizedKeys = null;
         private Button? buttonRequestReleaseKeys = null;
         private TextView? status = null;
@@ -82,6 +83,14 @@ namespace Sample.Android
                 await ProvideDiagnosisKeys();
             };
 
+            buttonProvideDiagnosisKeysV1 = FindViewById<Button>(Resource.Id.btn_provide_diagnosis_keys_legacy_v1);
+            buttonProvideDiagnosisKeysV1.Click += async delegate
+            {
+                Logger.D("buttonProvideDiagnosisKeysV1 clicked");
+
+                await ProvideDiagnosisKeysV1();
+            };
+
             buttonRequestPreauthorizedKeys = FindViewById<Button>(Resource.Id.btn_request_preauthorize_keys);
             buttonRequestPreauthorizedKeys.Click += async delegate
             {
@@ -106,12 +115,14 @@ namespace Sample.Android
             base.OnStart();
 
             buttonProvideDiagnosisKeys.Enabled = false;
+            buttonProvideDiagnosisKeysV1.Enabled = false;
 
             await InitializeExposureConfiguration();
 
             await InitializeExposureNotificationApiStatus();
 
             buttonProvideDiagnosisKeys.Enabled = true;
+            buttonProvideDiagnosisKeysV1.Enabled = true;
 
         }
 
@@ -217,15 +228,46 @@ namespace Sample.Android
             }
         }
 
-        private async Task ProvideDiagnosisKeys()
+        private async Task<List<string>> PrepareDiagnosisKeyFilesAsync()
         {
             File[] diagnosisKeyFiles = await _exposureDetectionDir.ListFilesAsync();
-            List<string> diagnosisKeyPaths = diagnosisKeyFiles.ToList()
+            return diagnosisKeyFiles.ToList()
                 .FindAll(file => file.IsFile)
                 .Select(file => file.AbsolutePath).ToList()
                 .FindAll(file => file.EndsWith(".zip"));
+        }
 
-            if(diagnosisKeyFiles.Length == 0)
+        private async Task ProvideDiagnosisKeysV1()
+        {
+            var diagnosisKeyPaths = await PrepareDiagnosisKeyFilesAsync();
+            if (diagnosisKeyPaths.Count == 0)
+            {
+                status.Text = "No diagnosisKey file found";
+                return;
+            }
+
+            try
+            {
+                await EnClient.ProvideDiagnosisKeysAsync(
+                    diagnosisKeyPaths,
+                    _exposureConfiguration,
+                    Guid.NewGuid().ToString()
+                    );
+            }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
+            catch (ApiException apiException)
+            {
+                ShowApiException("ProvideDiagnosisKeys", apiException);
+            }
+        }
+
+        private async Task ProvideDiagnosisKeys()
+        {
+            var diagnosisKeyPaths = await PrepareDiagnosisKeyFilesAsync();
+            if (diagnosisKeyPaths.Count == 0)
             {
                 status.Text = "No diagnosisKey file found";
                 return;
