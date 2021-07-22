@@ -389,11 +389,7 @@ namespace Chino.iOS
             if (dailySummaries.Count > 0)
             {
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
-                Print(summary);
-
                 List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
-
-                Logger.D(exposureWindows);
 
                 Handler.ExposureDetected(dailySummaries, exposureWindows);
             }
