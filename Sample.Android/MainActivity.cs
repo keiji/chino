@@ -15,6 +15,7 @@ using Chino.Common;
 using Java.IO;
 using Java.Lang;
 using Newtonsoft.Json;
+using Sample.Common;
 using Sample.Common.Model;
 using Xamarin.Essentials;
 using Logger = Chino.ChinoLogger;
@@ -34,12 +35,19 @@ namespace Sample.Android
 
         private AbsExposureNotificationClient? EnClient = null;
 
+        private IEnServer _enServer = new EnServer();
+
         private Button? buttonEn = null;
         private Button? buttonGetTekHistory = null;
         private Button? buttonProvideDiagnosisKeys = null;
         private Button? buttonProvideDiagnosisKeysV1 = null;
         private Button? buttonRequestPreauthorizedKeys = null;
         private Button? buttonRequestReleaseKeys = null;
+
+        private TextView? serverInfo = null;
+        private Button? buttonDownloadDiagnosisKeys = null;
+        private Button? buttonUploadDiagnosisKeys = null;
+
         private TextView? status = null;
 
         private File _teksDir;
@@ -107,7 +115,71 @@ namespace Sample.Android
                 await RequestReleaseKeys();
             };
 
+            buttonUploadDiagnosisKeys = FindViewById<Button>(Resource.Id.btn_upload_diagnosis_keys);
+            buttonUploadDiagnosisKeys.Click += async delegate
+            {
+                Logger.D("buttonUploadDiagnosisKeys clicked");
+
+                await UploadDiagnosisKeys();
+            };
+
+            buttonDownloadDiagnosisKeys = FindViewById<Button>(Resource.Id.btn_download_diagnosis_keys);
+            buttonDownloadDiagnosisKeys.Click += async delegate
+            {
+                Logger.D("buttonDownloadDiagnosisKeys clicked");
+
+                await DownloadDiagnosisKeys();
+            };
+
             status = FindViewById<TextView>(Resource.Id.tv_status);
+
+            serverInfo = FindViewById<TextView>(Resource.Id.tv_server_info);
+            serverInfo.Text = $"Endpoint: {Constants.API_ENDPOINT}\n";
+            serverInfo.Append($"Cluster ID: {Constants.CLUSTER_ID}");
+        }
+
+        private async Task UploadDiagnosisKeys()
+        {
+            Logger.D("UploadDiagnosisKeys");
+            status.Text = "UploadDiagnosisKeys is clicked.\n";
+
+            try
+            {
+                IList<ITemporaryExposureKey> teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
+                await _enServer.UploadDiagnosisKeysAsync(Constants.CLUSTER_ID, teks);
+
+                status.Append($"diagnosisKeyEntryList have been uploaded.\n");
+
+            }
+            catch (ENException enException)
+            {
+                ShowENException(enException);
+            }
+            catch (ApiException apiException)
+            {
+                if (apiException.StatusCode == CommonStatusCodes.ResolutionRequired)
+                {
+                    apiException.Status.StartResolutionForResult(this, REQUEST_GET_TEK_HISTORY);
+                }
+                else
+                {
+                    ShowApiException("GetTekHistory", apiException);
+                }
+            }
+        }
+
+        private async Task DownloadDiagnosisKeys()
+        {
+            Logger.D("DownloadDiagnosisKeys");
+            status.Text = "DownloadDiagnosisKeys is clicked.\n";
+
+            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync(Constants.CLUSTER_ID);
+            foreach(var diagnosisKeyEntry in diagnosisKeyEntryList)
+            {
+                await _enServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir.AbsolutePath);
+
+                status.Append($"{diagnosisKeyEntry.Url} has been downloaded.\n");
+            }
         }
 
         protected override async void OnStart()
@@ -427,7 +499,7 @@ namespace Sample.Android
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
