@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -11,61 +13,133 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="mgG-Yh-ynA">
-                                <rect key="frame" x="20" y="44" width="374" height="818"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceHorizontal="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZKe-7g-I5P">
+                                <rect key="frame" x="0.0" y="52" width="414" height="810"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2rb-rV-4PG">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="144"/>
-                                        <state key="normal" title="Enable Exposure Notification"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="62P-su-oTx">
-                                        <rect key="frame" x="0.0" y="144" width="374" height="144"/>
-                                        <state key="normal" title="Show TEKs HIstory"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wQx-iy-0vJ">
-                                        <rect key="frame" x="0.0" y="288" width="374" height="144"/>
-                                        <state key="normal" title="Detect Exposure"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dkK-9p-goj">
-                                        <rect key="frame" x="0.0" y="432" width="374" height="143.5"/>
-                                        <state key="normal" title="RequestPreauthorizedKeys"/>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fC7-fH-wlq">
-                                        <rect key="frame" x="0.0" y="575.5" width="374" height="144"/>
-                                        <state key="normal" title="RequestReleaseKeys"/>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Z3-hJ-hm8">
-                                        <rect key="frame" x="0.0" y="719.5" width="374" height="98.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XHi-he-O6I">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="700"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2rb-rV-4PG">
+                                                <rect key="frame" x="16" y="32" width="382" height="30"/>
+                                                <state key="normal" title="Enable Exposure Notification"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="62P-su-oTx">
+                                                <rect key="frame" x="16" y="86" width="382" height="30"/>
+                                                <state key="normal" title="Show TEKs HIstory"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wQx-iy-0vJ">
+                                                <rect key="frame" x="16" y="140" width="382" height="30"/>
+                                                <state key="normal" title="Detect Exposure"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fC7-fH-wlq">
+                                                <rect key="frame" x="16" y="248" width="382" height="30"/>
+                                                <state key="normal" title="RequestReleaseKeys"/>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="ServerInfo" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ppA-Gv-4nd" userLabel="Label ServerInfo">
+                                                <rect key="frame" x="16" y="310" width="82.5" height="27.5"/>
+                                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="SrverInfo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Ky-dr-x5z" userLabel="ServerInfo">
+                                                <rect key="frame" x="16" y="346" width="69" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3bY-sb-EUB">
+                                                <rect key="frame" x="16" y="390" width="382" height="30"/>
+                                                <state key="normal" title="Upload diagnosis keys"/>
+                                            </button>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Z3-hJ-hm8" userLabel="Label Status">
+                                                <rect key="frame" x="16" y="506" width="52" height="27.5"/>
+                                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" lineBreakMode="wordWrap" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JDe-AC-Nxc" userLabel="Status">
+                                                <rect key="frame" x="16" y="542" width="2258.5" height="150"/>
+                                                <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar ligula et suscipit placerat. Suspendisse iaculis dictum leo eget fermentum. Maecenas non condimentum elit. Nullam tempor vestibulum eleifend. Praesent sit amet lobortis erat. Suspendisse accumsan sapien non volutpat tempus. </string>
+                                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6ae-h4-LuD">
+                                                <rect key="frame" x="16" y="444" width="382" height="30"/>
+                                                <state key="normal" title="Download diagnosis keys"/>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dkK-9p-goj">
+                                                <rect key="frame" x="16" y="194" width="382" height="30"/>
+                                                <state key="normal" title="RequestPreauthorizedKeys"/>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="dkK-9p-goj" firstAttribute="top" secondItem="wQx-iy-0vJ" secondAttribute="bottom" constant="24" id="4gS-NO-qKY"/>
+                                            <constraint firstItem="9Z3-hJ-hm8" firstAttribute="top" secondItem="6ae-h4-LuD" secondAttribute="bottom" constant="32" id="5v2-XB-erz"/>
+                                            <constraint firstItem="3bY-sb-EUB" firstAttribute="top" secondItem="1Ky-dr-x5z" secondAttribute="bottom" constant="24" id="8mU-mz-BeP"/>
+                                            <constraint firstItem="62P-su-oTx" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="AWE-Ut-TNY"/>
+                                            <constraint firstItem="ppA-Gv-4nd" firstAttribute="top" secondItem="fC7-fH-wlq" secondAttribute="bottom" constant="32" id="AtQ-CV-fyn"/>
+                                            <constraint firstItem="1Ky-dr-x5z" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="B7a-LS-gWU"/>
+                                            <constraint firstItem="9Z3-hJ-hm8" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="BDS-de-yY6"/>
+                                            <constraint firstItem="1Ky-dr-x5z" firstAttribute="top" secondItem="ppA-Gv-4nd" secondAttribute="bottom" constant="8" id="DGX-df-eWx"/>
+                                            <constraint firstAttribute="trailing" secondItem="fC7-fH-wlq" secondAttribute="trailing" constant="16" id="E9m-QB-4OL"/>
+                                            <constraint firstItem="JDe-AC-Nxc" firstAttribute="top" secondItem="9Z3-hJ-hm8" secondAttribute="bottom" constant="8" id="JQW-dj-A6t"/>
+                                            <constraint firstAttribute="trailing" secondItem="6ae-h4-LuD" secondAttribute="trailing" constant="16" id="NA8-2u-J1B"/>
+                                            <constraint firstItem="fC7-fH-wlq" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="NSL-4j-arD"/>
+                                            <constraint firstItem="3bY-sb-EUB" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="RrH-lP-Ehp"/>
+                                            <constraint firstItem="2rb-rV-4PG" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="UGE-zf-G7j"/>
+                                            <constraint firstItem="6ae-h4-LuD" firstAttribute="top" secondItem="3bY-sb-EUB" secondAttribute="bottom" constant="24" id="UuM-B6-yJN"/>
+                                            <constraint firstItem="ppA-Gv-4nd" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="VDt-45-7Je"/>
+                                            <constraint firstItem="wQx-iy-0vJ" firstAttribute="top" secondItem="62P-su-oTx" secondAttribute="bottom" constant="24" id="ZdE-E3-XG4"/>
+                                            <constraint firstAttribute="trailing" secondItem="wQx-iy-0vJ" secondAttribute="trailing" constant="16" id="f8K-a4-doW"/>
+                                            <constraint firstItem="62P-su-oTx" firstAttribute="top" secondItem="2rb-rV-4PG" secondAttribute="bottom" constant="24" id="hGu-bF-OuH"/>
+                                            <constraint firstAttribute="trailing" secondItem="3bY-sb-EUB" secondAttribute="trailing" constant="16" id="k55-DT-c28"/>
+                                            <constraint firstItem="wQx-iy-0vJ" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="p7N-mt-aTV"/>
+                                            <constraint firstAttribute="trailing" secondItem="dkK-9p-goj" secondAttribute="trailing" constant="16" id="pUs-By-eUM"/>
+                                            <constraint firstItem="dkK-9p-goj" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="pZm-xE-IHH"/>
+                                            <constraint firstItem="fC7-fH-wlq" firstAttribute="top" secondItem="dkK-9p-goj" secondAttribute="bottom" constant="24" id="qca-Py-ybP"/>
+                                            <constraint firstAttribute="trailing" secondItem="2rb-rV-4PG" secondAttribute="trailing" constant="16" id="s9k-qu-k17"/>
+                                            <constraint firstItem="6ae-h4-LuD" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="usA-9Y-TwV"/>
+                                            <constraint firstItem="JDe-AC-Nxc" firstAttribute="leading" secondItem="XHi-he-O6I" secondAttribute="leading" constant="16" id="v2R-C9-hOG"/>
+                                            <constraint firstAttribute="height" constant="700" id="vXa-QV-kVT"/>
+                                            <constraint firstAttribute="trailing" secondItem="62P-su-oTx" secondAttribute="trailing" constant="16" id="w8Y-qq-kAS"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
-                            </stackView>
+                                <constraints>
+                                    <constraint firstItem="XHi-he-O6I" firstAttribute="leading" secondItem="xuD-pB-Puk" secondAttribute="leading" id="TUu-aF-Kx9"/>
+                                    <constraint firstItem="XHi-he-O6I" firstAttribute="trailing" secondItem="xuD-pB-Puk" secondAttribute="trailing" id="isf-EG-OOq"/>
+                                    <constraint firstItem="XHi-he-O6I" firstAttribute="top" secondItem="G0c-Mj-aqn" secondAttribute="top" id="jA6-2t-508"/>
+                                </constraints>
+                                <viewLayoutGuide key="contentLayoutGuide" id="G0c-Mj-aqn"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="xuD-pB-Puk"/>
+                            </scrollView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="QKc-YC-VFE"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="mgG-Yh-ynA" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Opw-BN-65m"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="mgG-Yh-ynA" secondAttribute="bottom" id="cjx-qV-aq0"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="mgG-Yh-ynA" secondAttribute="trailing" id="jwE-GB-rew"/>
-                            <constraint firstItem="mgG-Yh-ynA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="rN2-fg-hJH"/>
+                            <constraint firstItem="ZKe-7g-I5P" firstAttribute="trailing" secondItem="QKc-YC-VFE" secondAttribute="trailing" id="Mco-Ld-K7Z"/>
+                            <constraint firstItem="ZKe-7g-I5P" firstAttribute="leading" secondItem="QKc-YC-VFE" secondAttribute="leading" id="dnj-eo-80Y"/>
+                            <constraint firstItem="ZKe-7g-I5P" firstAttribute="bottom" secondItem="QKc-YC-VFE" secondAttribute="bottom" id="gYR-aS-TUr"/>
+                            <constraint firstItem="ZKe-7g-I5P" firstAttribute="top" secondItem="QKc-YC-VFE" secondAttribute="top" id="lEN-Sz-aA2"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="buttonDetectExposure" destination="wQx-iy-0vJ" id="oLg-pW-vSi"/>
+                        <outlet property="buttonDownloadDiagnosisKeys" destination="6ae-h4-LuD" id="zvR-JV-7JD"/>
                         <outlet property="buttonEnableEn" destination="2rb-rV-4PG" id="G4Z-Ob-qGQ"/>
                         <outlet property="buttonRequestPreauthorizedKeys" destination="dkK-9p-goj" id="eYr-3s-pbI"/>
                         <outlet property="buttonRequestReleaseKeys" destination="fC7-fH-wlq" id="gy7-oS-uG2"/>
                         <outlet property="buttonShowTeksHistory" destination="62P-su-oTx" id="gU2-9A-6Tt"/>
-                        <outlet property="labelStatus" destination="9Z3-hJ-hm8" id="YlN-lD-jvK"/>
+                        <outlet property="buttonUploadDiagnosisKeys" destination="3bY-sb-EUB" id="PpT-5g-weW"/>
+                        <outlet property="labelServerInfo" destination="1Ky-dr-x5z" id="Tr5-HG-bE5"/>
+                        <outlet property="scrollView" destination="ZKe-7g-I5P" id="5CQ-xj-UfV"/>
+                        <outlet property="status" destination="JDe-AC-Nxc" id="B5s-mt-zrc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -73,4 +147,9 @@
             <point key="canvasLocation" x="0.0" y="0.0"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

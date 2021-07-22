@@ -16,6 +16,9 @@ namespace Sample.iOS
 		UIKit.UIButton buttonDetectExposure { get; set; }
 
 		[Outlet]
+		UIKit.UIButton buttonDownloadDiagnosisKeys { get; set; }
+
+		[Outlet]
 		UIKit.UIButton buttonEnableEn { get; set; }
 
 		[Outlet]
@@ -28,13 +31,27 @@ namespace Sample.iOS
 		UIKit.UIButton buttonShowTeksHistory { get; set; }
 
 		[Outlet]
-		UIKit.UILabel labelStatus { get; set; }
+		UIKit.UIButton buttonUploadDiagnosisKeys { get; set; }
+
+		[Outlet]
+		UIKit.UILabel labelServerInfo { get; set; }
+
+		[Outlet]
+		UIKit.UIScrollView scrollView { get; set; }
+
+		[Outlet]
+		UIKit.UILabel status { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
 			if (buttonDetectExposure != null) {
 				buttonDetectExposure.Dispose ();
 				buttonDetectExposure = null;
+			}
+
+			if (buttonDownloadDiagnosisKeys != null) {
+				buttonDownloadDiagnosisKeys.Dispose ();
+				buttonDownloadDiagnosisKeys = null;
 			}
 
 			if (buttonEnableEn != null) {
@@ -57,9 +74,24 @@ namespace Sample.iOS
 				buttonShowTeksHistory = null;
 			}
 
-			if (labelStatus != null) {
-				labelStatus.Dispose ();
-				labelStatus = null;
+			if (buttonUploadDiagnosisKeys != null) {
+				buttonUploadDiagnosisKeys.Dispose ();
+				buttonUploadDiagnosisKeys = null;
+			}
+
+			if (labelServerInfo != null) {
+				labelServerInfo.Dispose ();
+				labelServerInfo = null;
+			}
+
+			if (status != null) {
+				status.Dispose ();
+				status = null;
+			}
+
+			if (scrollView != null) {
+				scrollView.Dispose ();
+				scrollView = null;
 			}
 		}
 	}

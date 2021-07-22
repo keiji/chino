@@ -3,6 +3,7 @@ using Chino.Common;
 using Chino.iOS;
 using Foundation;
 using Newtonsoft.Json;
+using Sample.Common;
 using Sample.Common.Model;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace Sample.iOS
         private const string TEKS_DIR = "temporary_exposure_keys";
         private const string EXPOSURE_DETECTION = "exposure_detection";
         private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
+
+        private IEnServer _enServer = new EnServer();
 
         private string _teksDir;
         private string _exposureDetectionDir;
@@ -124,8 +127,62 @@ namespace Sample.iOS
                     exception.LogD();
                 }
             };
+            buttonUploadDiagnosisKeys.TouchUpInside += async (sender, e) =>
+            {
+                try
+                {
+                    await UploadDiagnosisKeys();
+                }
+                catch (ENException enException)
+                {
+                    ShowENException(enException);
+                }
+                catch (NSErrorException exception)
+                {
+                    exception.LogD();
+                }
+            };
+            buttonDownloadDiagnosisKeys.TouchUpInside += async (sender, e) =>
+            {
+                try
+                {
+                    await DownloadDiagnosisKeys();
+                }
+                catch (ENException enException)
+                {
+                    ShowENException(enException);
+                }
+                catch (NSErrorException exception)
+                {
+                    exception.LogD();
+                }
+            };
 
             await InitializeExposureConfiguration();
+        }
+
+        private async Task UploadDiagnosisKeys()
+        {
+            Logger.D("UploadDiagnosisKeys");
+            status.Text = "UploadDiagnosisKeys is clicked.\n";
+
+            List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
+            await _enServer.UploadDiagnosisKeysAsync(Constants.CLUSTER_ID, teks);
+
+            status.Text += $"diagnosisKeyEntryList have been uploaded.\n";
+        }
+
+        private async Task DownloadDiagnosisKeys()
+        {
+            Logger.D("DownloadDiagnosisKeys");
+            status.Text = "DownloadDiagnosisKeys is clicked.\n";
+
+            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync(Constants.CLUSTER_ID);
+            foreach (var diagnosisKeyEntry in diagnosisKeyEntryList)
+            {
+                await _enServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir);
+                status.Text += $"{diagnosisKeyEntry.Url} has been downloaded.\n";
+            }
         }
 
         private void ShowENException(ENException enException)
@@ -153,7 +210,7 @@ namespace Sample.iOS
                 _ => "Unknown",
             };
 
-            labelStatus.Text = $"ENException: {message}";
+            status.Text = $"ENException: {message}";
         }
 
         private void InitializeDirs()
@@ -215,7 +272,7 @@ namespace Sample.iOS
         private void ShowTeks(IList<ITemporaryExposureKey> temporaryExposureKeys)
         {
             List<string> tekKeyData = temporaryExposureKeys.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
-            labelStatus.Text = string.Join("\n", tekKeyData);
+            status.Text = string.Join("\n", tekKeyData);
         }
 
         private async Task SaveTeksAsync(IList<ITemporaryExposureKey> temporaryExposureKeys)
@@ -235,8 +292,8 @@ namespace Sample.iOS
 
         private void ShowStatus(IList<ExposureNotificationStatus> statuses, long version)
         {
-            labelStatus.Text = $"EN Version: {version}\n";
-            labelStatus.Text += string.Join("\n", statuses.Select(status => $"EN is {ConvertToStatus(status)}"));
+            status.Text = $"EN Version: {version}\n";
+            status.Text += string.Join("\n", statuses.Select(status => $"EN is {ConvertToStatus(status)}"));
         }
 
         private static string ConvertToStatus(ExposureNotificationStatus status)
