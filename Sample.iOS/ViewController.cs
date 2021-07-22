@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UIKit;
 using Xamarin.Essentials;
+
 using Logger = Chino.ChinoLogger;
 
 namespace Sample.iOS
@@ -45,7 +46,7 @@ namespace Sample.iOS
 
             buttonEnableEn.TouchUpInside += async (sender, e) =>
             {
-                Logger.D("buttonEnableEn");
+                status.Text = "Enable Exposure Notification is clicked.\n";
 
                 try
                 {
@@ -66,6 +67,7 @@ namespace Sample.iOS
             };
             buttonShowTeksHistory.TouchUpInside += async (sender, e) =>
             {
+                status.Text = "Show TEKs History is clicked.\n";
                 try
                 {
                     List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
@@ -250,13 +252,23 @@ namespace Sample.iOS
         }
 
         private async Task RequestPreauthorizedKeys()
-            => await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+        {
+            status.Text = "RequestPreauthorizedKeys is clicked.\n";
+
+            await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+        }
 
         private async Task RequestReleaseKeys()
-            => await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+        {
+            status.Text = "RequestReleaseKeys is clicked.\n";
+
+            await ExposureNotificationClientManager.Shared.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+        }
 
         private async Task DetectExposure()
         {
+            status.Text = "DetectExposure is clicked.\n";
+
             List<string> diagnosisKeyPaths = Directory.GetFiles(_exposureDetectionDir).ToList()
                 .FindAll(path => !Directory.Exists(path))
                 .FindAll(path => path.EndsWith(".zip"));
