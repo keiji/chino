@@ -12,12 +12,14 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using Chino;
 using Chino.Common;
-using Java.IO;
-using Java.Lang;
 using Newtonsoft.Json;
 using Sample.Common;
 using Sample.Common.Model;
 using Xamarin.Essentials;
+using System.IO;
+
+using AndroidFile = Java.IO.File;
+
 using Logger = Chino.ChinoLogger;
 
 namespace Sample.Android
@@ -29,13 +31,9 @@ namespace Sample.Android
         private const int REQUEST_GET_TEK_HISTORY = 0x11;
         private const int REQUEST_PREAUTHORIZE_KEYS = 0x12;
 
-        private const string TEKS_DIR = "temporary_exposure_keys";
-        private const string EXPOSURE_DETECTION = "exposure_detection";
-        private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
-
         private AbsExposureNotificationClient? EnClient = null;
 
-        private IEnServer _enServer = new EnServer();
+        private IEnServer _enServer;
 
         private Button? buttonEn = null;
         private Button? buttonGetTekHistory = null;
@@ -50,8 +48,12 @@ namespace Sample.Android
 
         private TextView? status = null;
 
-        private File _teksDir;
-        private File _exposureDetectionDir;
+        private AndroidFile _teksDir;
+        private AndroidFile _configurationDir;
+        private AndroidFile _exposureDetectionDir;
+
+        private ServerConfiguration _serverConfiguration;
+        private ExposureConfiguration _exposureConfiguration;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -60,7 +62,7 @@ namespace Sample.Android
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
-            InitializeDirs();
+            PrepareDirs();
 
             EnClient = ((MainApplication)ApplicationContext).GetEnClient();
 
@@ -134,8 +136,6 @@ namespace Sample.Android
             status = FindViewById<TextView>(Resource.Id.tv_status);
 
             serverInfo = FindViewById<TextView>(Resource.Id.tv_server_info);
-            serverInfo.Text = $"Endpoint: {Constants.API_ENDPOINT}\n";
-            serverInfo.Append($"Cluster ID: {Constants.CLUSTER_ID}");
         }
 
         private async Task UploadDiagnosisKeys()
@@ -146,7 +146,7 @@ namespace Sample.Android
             try
             {
                 IList<ITemporaryExposureKey> teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
-                await _enServer.UploadDiagnosisKeysAsync(Constants.CLUSTER_ID, teks);
+                await _enServer.UploadDiagnosisKeysAsync(teks);
 
                 status.Append($"diagnosisKeyEntryList have been uploaded.\n");
 
@@ -173,7 +173,7 @@ namespace Sample.Android
             Logger.D("DownloadDiagnosisKeys");
             status.Text = "DownloadDiagnosisKeys is clicked.\n";
 
-            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync(Constants.CLUSTER_ID);
+            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync();
             foreach(var diagnosisKeyEntry in diagnosisKeyEntryList)
             {
                 await _enServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir.AbsolutePath);
@@ -189,13 +189,18 @@ namespace Sample.Android
             buttonProvideDiagnosisKeys.Enabled = false;
             buttonProvideDiagnosisKeysV1.Enabled = false;
 
-            await InitializeExposureConfiguration();
+            _serverConfiguration = await LoadServerConfiguration();
+            serverInfo.Text = $"Endpoint: {_serverConfiguration.ApiEndpoint}\n";
+            serverInfo.Append($"Cluster ID: {_serverConfiguration.ClusterId}");
+
+            _enServer = new EnServer(_serverConfiguration);
+
+            _exposureConfiguration = await LoadExposureConfiguration();
 
             await InitializeExposureNotificationApiStatus();
 
             buttonProvideDiagnosisKeys.Enabled = true;
             buttonProvideDiagnosisKeysV1.Enabled = true;
-
         }
 
         private async Task InitializeExposureNotificationApiStatus()
@@ -216,45 +221,57 @@ namespace Sample.Android
             }
         }
 
-        private void InitializeDirs()
+        private void PrepareDirs()
         {
-            _teksDir = new File(FilesDir, TEKS_DIR);
+            _teksDir = new AndroidFile(FilesDir, Constants.TEKS_DIR);
             if (!_teksDir.Exists())
             {
                 _teksDir.Mkdirs();
             }
 
-            _exposureDetectionDir = new File(FilesDir, EXPOSURE_DETECTION);
+            _configurationDir = new AndroidFile(FilesDir, Constants.CONFIGURATION_DIR);
+            if (!_configurationDir.Exists())
+            {
+                _configurationDir.Mkdirs();
+            }
+
+            _exposureDetectionDir = new AndroidFile(FilesDir, Constants.EXPOSURE_DETECTION_DIR);
             if (!_exposureDetectionDir.Exists())
             {
                 _exposureDetectionDir.Mkdirs();
             }
         }
 
-        private ExposureConfiguration _exposureConfiguration;
-
-        private async Task InitializeExposureConfiguration()
+        private async Task<ExposureConfiguration> LoadExposureConfiguration()
         {
-            var exposureConfigurationPath = new File(_exposureDetectionDir, EXPOSURE_CONFIGURATION_FILENAME);
+            var exposureConfigurationPath = new AndroidFile(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
             if (exposureConfigurationPath.Exists())
             {
-                using BufferedReader br = new BufferedReader(new FileReader(exposureConfigurationPath));
-                StringBuilder sb = new StringBuilder();
-                string str = null;
-                while ((str = await br.ReadLineAsync()) != null)
-                {
-                    sb.Append(str);
-                }
-                _exposureConfiguration = JsonConvert.DeserializeObject<ExposureConfiguration>(sb.ToString());
-                return;
+                string content = await File.ReadAllTextAsync(exposureConfigurationPath.AbsolutePath);
+                return JsonConvert.DeserializeObject<ExposureConfiguration>(content);
             }
 
-            _exposureConfiguration = new ExposureConfiguration();
-            var json = JsonConvert.SerializeObject(_exposureConfiguration, Formatting.Indented);
+            var exposureConfiguration = new ExposureConfiguration();
+            var json = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(exposureConfigurationPath.AbsolutePath, json);
 
-            using BufferedWriter bw = new BufferedWriter(new FileWriter(exposureConfigurationPath));
-            await bw.WriteAsync(json);
-            await bw.FlushAsync();
+            return exposureConfiguration;
+        }
+
+        private async Task<ServerConfiguration> LoadServerConfiguration()
+        {
+            var serverConfigurationPath = new AndroidFile(_configurationDir, Constants.SERVER_CONFIGURATION_FILENAME);
+            if (serverConfigurationPath.Exists())
+            {
+                var content = await File.ReadAllTextAsync(serverConfigurationPath.AbsolutePath);
+                return JsonConvert.DeserializeObject<ServerConfiguration>(content);
+            }
+
+            var serverConfiguration = new ServerConfiguration();
+            var json = JsonConvert.SerializeObject(serverConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(serverConfigurationPath.AbsolutePath, json);
+
+            return serverConfiguration;
         }
 
         private async Task RequestReleaseKeys()
@@ -302,7 +319,7 @@ namespace Sample.Android
 
         private async Task<List<string>> PrepareDiagnosisKeyFilesAsync()
         {
-            File[] diagnosisKeyFiles = await _exposureDetectionDir.ListFilesAsync();
+            AndroidFile[] diagnosisKeyFiles = await _exposureDetectionDir.ListFilesAsync();
             return diagnosisKeyFiles.ToList()
                 .FindAll(file => file.IsFile)
                 .Select(file => file.AbsolutePath).ToList()
@@ -381,10 +398,8 @@ namespace Sample.Android
             string json = teks.ToJsonString();
             Logger.D(json);
 
-            File filePath = new File(_teksDir, fileName);
-            using BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
-            await bw.WriteAsync(json);
-            await bw.FlushAsync();
+            AndroidFile filePath = new AndroidFile(_teksDir, fileName);
+            await File.WriteAllTextAsync(filePath.AbsolutePath, json);
         }
 
         private async Task<List<ITemporaryExposureKey>> GetTekHistory()

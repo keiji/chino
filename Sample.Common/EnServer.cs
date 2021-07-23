@@ -14,15 +14,16 @@ namespace Sample.Common
     {
         private const long BUFFER_LENGTH = 4 * 1024 * 1024;
 
-        private readonly HttpClient client;
+        private readonly ServerConfiguration _serverConfiguration;
+        private readonly HttpClient _client;
 
-        public EnServer()
+        public EnServer(ServerConfiguration serverConfiguration)
         {
-            client = new HttpClient();
+            _serverConfiguration = serverConfiguration;
+            _client = new HttpClient();
         }
 
         public async Task UploadDiagnosisKeysAsync(
-            string clusterId,
             IList<ITemporaryExposureKey> temporaryExposureKeyList,
             ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
             RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
@@ -34,8 +35,8 @@ namespace Sample.Common
 
             var httpContent = new StringContent(requestJson);
 
-            Uri uri = new Uri($"{Constants.API_ENDPOINT}/{clusterId}/chino-diagnosis-keys.json");
-            HttpResponseMessage response = await client.PutAsync(uri, httpContent);
+            Uri uri = new Uri($"{_serverConfiguration.ApiEndpoint}/{_serverConfiguration.ClusterId}/chino-diagnosis-keys.json");
+            HttpResponseMessage response = await _client.PutAsync(uri, httpContent);
             if (response.IsSuccessStatusCode)
             {
                 string content = await response.Content.ReadAsStringAsync();
@@ -47,10 +48,10 @@ namespace Sample.Common
             }
         }
 
-        public async Task<IList<DiagnosisKeyEntry>> GetDiagnosisKeysListAsync(string clusterId)
+        public async Task<IList<DiagnosisKeyEntry>> GetDiagnosisKeysListAsync()
         {
-            Uri uri = new Uri($"{Constants.API_ENDPOINT}/{clusterId}/list.json");
-            HttpResponseMessage response = await client.GetAsync(uri);
+            Uri uri = new Uri($"{_serverConfiguration.ApiEndpoint}/{_serverConfiguration.ClusterId}/list.json");
+            HttpResponseMessage response = await _client.GetAsync(uri);
             if (response.IsSuccessStatusCode)
             {
                 string content = await response.Content.ReadAsStringAsync();
@@ -68,7 +69,7 @@ namespace Sample.Common
         public async Task DownloadDiagnosisKeysAsync(DiagnosisKeyEntry diagnosisKeyEntry, string path)
         {
             Uri uri = new Uri(diagnosisKeyEntry.Url);
-            HttpResponseMessage response = await client.GetAsync(uri);
+            HttpResponseMessage response = await _client.GetAsync(uri);
             if (response.IsSuccessStatusCode)
             {
                 string fileName = uri.Segments[uri.Segments.Length - 1];

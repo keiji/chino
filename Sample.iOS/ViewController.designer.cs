@@ -34,10 +34,7 @@ namespace Sample.iOS
 		UIKit.UIButton buttonUploadDiagnosisKeys { get; set; }
 
 		[Outlet]
-		UIKit.UILabel labelServerInfo { get; set; }
-
-		[Outlet]
-		UIKit.UIScrollView scrollView { get; set; }
+		UIKit.UILabel serverInfo { get; set; }
 
 		[Outlet]
 		UIKit.UILabel status { get; set; }
@@ -79,19 +76,14 @@ namespace Sample.iOS
 				buttonUploadDiagnosisKeys = null;
 			}
 
-			if (labelServerInfo != null) {
-				labelServerInfo.Dispose ();
-				labelServerInfo = null;
+			if (serverInfo != null) {
+				serverInfo.Dispose ();
+				serverInfo = null;
 			}
 
 			if (status != null) {
 				status.Dispose ();
 				status = null;
-			}
-
-			if (scrollView != null) {
-				scrollView.Dispose ();
-				scrollView = null;
 			}
 		}
 	}

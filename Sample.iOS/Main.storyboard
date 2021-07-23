@@ -120,7 +120,7 @@
                         <outlet property="buttonRequestReleaseKeys" destination="fC7-fH-wlq" id="gy7-oS-uG2"/>
                         <outlet property="buttonShowTeksHistory" destination="62P-su-oTx" id="gU2-9A-6Tt"/>
                         <outlet property="buttonUploadDiagnosisKeys" destination="3bY-sb-EUB" id="PpT-5g-weW"/>
-                        <outlet property="labelServerInfo" destination="1Ky-dr-x5z" id="Tr5-HG-bE5"/>
+                        <outlet property="serverInfo" destination="1Ky-dr-x5z" id="OFc-8h-TWA"/>
                         <outlet property="status" destination="JDe-AC-Nxc" id="B5s-mt-zrc"/>
                     </connections>
                 </viewController>
