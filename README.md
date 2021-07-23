@@ -29,27 +29,34 @@ COPYRIGHT HOLDERは Cappuccino Authors としています。
 
 サンプルアプリは、Sample.Android, Sample.iOS, Sample.Commonのプロジェクトで構成されます。
 
-### Edit `Sample.Common/Constants.cs`
+### Edit `Sample.Common/ServerConfiguration.cs`
 サンプルアプリにはサーバーと連携して診断キーのアップロード、ダウンロードをする機能があります。
 
 連携するサーバーをカスタムするには、上記の実装のサーバーを用意した上で`API_ENDPOINT` を書き換えてください。
 （デフォルト値 `https://en.keiji.dev/diagnosis_keys` は、動作確認用に用意したサーバーです）
 
-`CUSTER_ID` はサーバーを仮想的に区切るための値で、6桁の数字として記述します。
+`CUSTER_ID` はサーバーを仮想的に区切るための値で、6桁の数字を指定します。
 
 ```
+using Newtonsoft.Json;
+
 namespace Sample.Common
 {
-    public static class Constants
+    [JsonObject]
+    public class ServerConfiguration
     {
-        public const string API_ENDPOINT = "https://en.keiji.dev/diagnosis_keys";
+        [JsonProperty("api_endpoint")]
+        public string ApiEndpoint = "https://en.keiji.dev/diagnosis_keys";
 
-        public const string CLUSTER_ID = "212458"; // 6 digits
+        [JsonProperty("cluster_id")]
+        public string ClusterId = "212458"; // 6 digits
     }
 }
 ```
 
-サーバーの実装は次のURLを参照してください。
+また、一度サンプルアプリを起動すると端末内に作成される`config/server_configuration.json`を書き換えると、設定値をオーバーライドできます。
+
+サーバーの実装の詳細は次のURLを参照してください。
 
  * https://github.com/keiji/en-calibration-server
 
