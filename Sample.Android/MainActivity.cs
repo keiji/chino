@@ -31,13 +31,6 @@ namespace Sample.Android
         private const int REQUEST_GET_TEK_HISTORY = 0x11;
         private const int REQUEST_PREAUTHORIZE_KEYS = 0x12;
 
-        private const string TEKS_DIR = "temporary_exposure_keys";
-        private const string EXPOSURE_DETECTION_DIR = "exposure_detection";
-
-        private const string CONFIGURATION_DIR = "config";
-        private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
-        private const string SERVER_CONFIGURATION_FILENAME = "server_configuration.json";
-
         private AbsExposureNotificationClient? EnClient = null;
 
         private IEnServer _enServer;
@@ -230,19 +223,19 @@ namespace Sample.Android
 
         private void PrepareDirs()
         {
-            _teksDir = new AndroidFile(FilesDir, TEKS_DIR);
+            _teksDir = new AndroidFile(FilesDir, Constants.TEKS_DIR);
             if (!_teksDir.Exists())
             {
                 _teksDir.Mkdirs();
             }
 
-            _configurationDir = new AndroidFile(FilesDir, CONFIGURATION_DIR);
+            _configurationDir = new AndroidFile(FilesDir, Constants.CONFIGURATION_DIR);
             if (!_configurationDir.Exists())
             {
                 _configurationDir.Mkdirs();
             }
 
-            _exposureDetectionDir = new AndroidFile(FilesDir, EXPOSURE_DETECTION_DIR);
+            _exposureDetectionDir = new AndroidFile(FilesDir, Constants.EXPOSURE_DETECTION_DIR);
             if (!_exposureDetectionDir.Exists())
             {
                 _exposureDetectionDir.Mkdirs();
@@ -251,7 +244,7 @@ namespace Sample.Android
 
         private async Task<ExposureConfiguration> LoadExposureConfiguration()
         {
-            var exposureConfigurationPath = new AndroidFile(_configurationDir, EXPOSURE_CONFIGURATION_FILENAME);
+            var exposureConfigurationPath = new AndroidFile(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
             if (exposureConfigurationPath.Exists())
             {
                 string content = await File.ReadAllTextAsync(exposureConfigurationPath.AbsolutePath);
@@ -267,7 +260,7 @@ namespace Sample.Android
 
         private async Task<ServerConfiguration> LoadServerConfiguration()
         {
-            var serverConfigurationPath = new AndroidFile(_configurationDir, SERVER_CONFIGURATION_FILENAME);
+            var serverConfigurationPath = new AndroidFile(_configurationDir, Constants.SERVER_CONFIGURATION_FILENAME);
             if (serverConfigurationPath.Exists())
             {
                 var content = await File.ReadAllTextAsync(serverConfigurationPath.AbsolutePath);

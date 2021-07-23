@@ -19,13 +19,6 @@ namespace Sample.iOS
 {
     public partial class ViewController : UIViewController
     {
-        private const string TEKS_DIR = "temporary_exposure_keys";
-        private const string EXPOSURE_DETECTION_DIR = "exposure_detection";
-
-        private const string CONFIGURATION_DIR = "config";
-        private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
-        private const string SERVER_CONFIGURATION_FILENAME = "server_configuration.json";
-
         private IEnServer _enServer;
 
         private string _teksDir;
@@ -229,19 +222,19 @@ namespace Sample.iOS
         {
             var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-            _teksDir = Path.Combine(documents, TEKS_DIR);
+            _teksDir = Path.Combine(documents, Constants.TEKS_DIR);
             if (!Directory.Exists(_teksDir))
             {
                 Directory.CreateDirectory(_teksDir);
             }
 
-            _exposureDetectionDir = Path.Combine(documents, EXPOSURE_DETECTION_DIR);
+            _exposureDetectionDir = Path.Combine(documents, Constants.EXPOSURE_DETECTION_DIR);
             if (!Directory.Exists(_exposureDetectionDir))
             {
                 Directory.CreateDirectory(_exposureDetectionDir);
             }
 
-            _configurationDir = Path.Combine(documents, CONFIGURATION_DIR);
+            _configurationDir = Path.Combine(documents, Constants.CONFIGURATION_DIR);
             if (!Directory.Exists(_configurationDir))
             {
                 Directory.CreateDirectory(_configurationDir);
@@ -250,7 +243,7 @@ namespace Sample.iOS
 
         private async Task<ExposureConfiguration> LoadExposureConfiguration()
         {
-            var exposureConfigurationPath = Path.Combine(_configurationDir, EXPOSURE_CONFIGURATION_FILENAME);
+            var exposureConfigurationPath = Path.Combine(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
             if (File.Exists(exposureConfigurationPath))
             {
                 return JsonConvert.DeserializeObject<ExposureConfiguration>(
@@ -267,7 +260,7 @@ namespace Sample.iOS
 
         private async Task<ServerConfiguration> LoadServerConfiguration()
         {
-            var serverConfigurationPath = Path.Combine(_configurationDir, SERVER_CONFIGURATION_FILENAME);
+            var serverConfigurationPath = Path.Combine(_configurationDir, Constants.SERVER_CONFIGURATION_FILENAME);
             if (File.Exists(serverConfigurationPath))
             {
                 return JsonConvert.DeserializeObject<ServerConfiguration>(
