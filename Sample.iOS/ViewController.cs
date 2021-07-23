@@ -20,13 +20,20 @@ namespace Sample.iOS
     public partial class ViewController : UIViewController
     {
         private const string TEKS_DIR = "temporary_exposure_keys";
-        private const string EXPOSURE_DETECTION = "exposure_detection";
-        private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
+        private const string EXPOSURE_DETECTION_DIR = "exposure_detection";
 
-        private IEnServer _enServer = new EnServer();
+        private const string CONFIGURATION_DIR = "config";
+        private const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
+        private const string SERVER_CONFIGURATION_FILENAME = "server_configuration.json";
+
+        private IEnServer _enServer;
 
         private string _teksDir;
+        private string _configurationDir;
         private string _exposureDetectionDir;
+
+        private ServerConfiguration _serverConfiguration;
+        private ExposureConfiguration _exposureConfiguration;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -38,7 +45,7 @@ namespace Sample.iOS
 
             Logger.D("ViewDidLoad");
 
-            InitializeDirs();
+            PrepareDirs();
 
             IList<ExposureNotificationStatus> statuses = await ExposureNotificationClientManager.Shared.GetStatusesAsync();
             long version = await ExposureNotificationClientManager.Shared.GetVersionAsync();
@@ -160,7 +167,10 @@ namespace Sample.iOS
                 }
             };
 
-            await InitializeExposureConfiguration();
+            _exposureConfiguration = await LoadExposureConfiguration();
+            _serverConfiguration = await LoadServerConfiguration();
+
+            _enServer = new EnServer(_serverConfiguration);
         }
 
         private async Task UploadDiagnosisKeys()
@@ -169,7 +179,7 @@ namespace Sample.iOS
             status.Text = "UploadDiagnosisKeys is clicked.\n";
 
             List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
-            await _enServer.UploadDiagnosisKeysAsync(Constants.CLUSTER_ID, teks);
+            await _enServer.UploadDiagnosisKeysAsync(teks);
 
             status.Text += $"diagnosisKeyEntryList have been uploaded.\n";
         }
@@ -179,7 +189,7 @@ namespace Sample.iOS
             Logger.D("DownloadDiagnosisKeys");
             status.Text = "DownloadDiagnosisKeys is clicked.\n";
 
-            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync(Constants.CLUSTER_ID);
+            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync();
             foreach (var diagnosisKeyEntry in diagnosisKeyEntryList)
             {
                 await _enServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir);
@@ -215,7 +225,7 @@ namespace Sample.iOS
             status.Text = $"ENException: {message}";
         }
 
-        private void InitializeDirs()
+        private void PrepareDirs()
         {
             var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
@@ -225,30 +235,50 @@ namespace Sample.iOS
                 Directory.CreateDirectory(_teksDir);
             }
 
-            _exposureDetectionDir = Path.Combine(documents, EXPOSURE_DETECTION);
+            _exposureDetectionDir = Path.Combine(documents, EXPOSURE_DETECTION_DIR);
             if (!Directory.Exists(_exposureDetectionDir))
             {
                 Directory.CreateDirectory(_exposureDetectionDir);
             }
+
+            _configurationDir = Path.Combine(documents, CONFIGURATION_DIR);
+            if (!Directory.Exists(_configurationDir))
+            {
+                Directory.CreateDirectory(_configurationDir);
+            }
         }
 
-        private ExposureConfiguration _exposureConfiguration;
-
-        private async Task InitializeExposureConfiguration()
+        private async Task<ExposureConfiguration> LoadExposureConfiguration()
         {
-            var exposureConfigurationPath = Path.Combine(_exposureDetectionDir, EXPOSURE_CONFIGURATION_FILENAME);
+            var exposureConfigurationPath = Path.Combine(_configurationDir, EXPOSURE_CONFIGURATION_FILENAME);
             if (File.Exists(exposureConfigurationPath))
             {
-                _exposureConfiguration = JsonConvert.DeserializeObject<ExposureConfiguration>(
+                return JsonConvert.DeserializeObject<ExposureConfiguration>(
                     await File.ReadAllTextAsync(exposureConfigurationPath)
                     );
-                return;
             }
 
-            _exposureConfiguration = new ExposureConfiguration();
-            var json = JsonConvert.SerializeObject(_exposureConfiguration, Formatting.Indented);
-
+            var exposureConfiguration = new ExposureConfiguration();
+            var json = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
             await File.WriteAllTextAsync(exposureConfigurationPath, json);
+
+            return _exposureConfiguration;
+        }
+
+        private async Task<ServerConfiguration> LoadServerConfiguration()
+        {
+            var serverConfigurationPath = Path.Combine(_configurationDir, SERVER_CONFIGURATION_FILENAME);
+            if (File.Exists(serverConfigurationPath))
+            {
+                return JsonConvert.DeserializeObject<ServerConfiguration>(
+                    await File.ReadAllTextAsync(serverConfigurationPath)
+                    );
+            }
+
+            var serverConfiguration = new ServerConfiguration();
+            var json = JsonConvert.SerializeObject(serverConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(serverConfigurationPath, json);
+            return serverConfiguration;
         }
 
         private async Task RequestPreauthorizedKeys()
