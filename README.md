@@ -32,10 +32,10 @@ COPYRIGHT HOLDERは Cappuccino Authors としています。
 ### Edit `Sample.Common/ServerConfiguration.cs`
 サンプルアプリにはサーバーと連携して診断キーのアップロード、ダウンロードをする機能があります。
 
-連携するサーバーをカスタムするには、上記の実装のサーバーを用意した上で`API_ENDPOINT` を書き換えてください。
+連携するサーバーをカスタムするには、上記の実装のサーバーを用意した上で`ApiEndpoint` を書き換えてください。
 （デフォルト値 `https://en.keiji.dev/diagnosis_keys` は、動作確認用に用意したサーバーです）
 
-`CUSTER_ID` はサーバーを仮想的に区切るための値で、6桁の数字を指定します。
+`ClusterId` はサーバーを仮想的に区切るための値で、6桁の数字を指定します。
 
 ```
 using Newtonsoft.Json;
