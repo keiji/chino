@@ -21,10 +21,10 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XG7-5a-Emv">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="635.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="696.5"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="24" translatesAutoresizingMaskIntoConstraints="NO" id="9Hn-36-8Ox">
-                                                <rect key="frame" x="0.0" y="0.0" width="414" height="635.5"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="696.5"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2rb-rV-4PG">
                                                         <rect key="frame" x="108.5" y="0.0" width="197" height="30"/>
@@ -52,28 +52,29 @@
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SrverInfo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Ky-dr-x5z" userLabel="ServerInfo">
-                                                        <rect key="frame" x="172.5" y="315.5" width="69" height="20.5"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Ky-dr-x5z" userLabel="ServerInfo">
+                                                        <rect key="frame" x="2" y="315.5" width="410" height="81.5"/>
+                                                        <string key="text">ServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfoServerInfo</string>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3bY-sb-EUB">
-                                                        <rect key="frame" x="130" y="360" width="154" height="30"/>
+                                                        <rect key="frame" x="130" y="421" width="154" height="30"/>
                                                         <state key="normal" title="Upload diagnosis keys"/>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6ae-h4-LuD">
-                                                        <rect key="frame" x="120.5" y="414" width="173" height="30"/>
+                                                        <rect key="frame" x="120.5" y="475" width="173" height="30"/>
                                                         <state key="normal" title="Download diagnosis keys"/>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Z3-hJ-hm8" userLabel="Label Status">
-                                                        <rect key="frame" x="181.5" y="468" width="51.5" height="21.5"/>
+                                                        <rect key="frame" x="181.5" y="529" width="51.5" height="21.5"/>
                                                         <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="18"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="wordWrap" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JDe-AC-Nxc" userLabel="Status">
-                                                        <rect key="frame" x="7.5" y="513.5" width="399" height="122"/>
+                                                        <rect key="frame" x="7.5" y="574.5" width="399" height="122"/>
                                                         <string key="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar ligula et suscipit placerat. Suspendisse iaculis dictum leo eget fermentum. Maecenas non condimentum elit. Nullam tempor vestibulum eleifend. Praesent sit amet lobortis erat. Suspendisse accumsan sapien non volutpat tempus. </string>
                                                         <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                                         <nil key="textColor"/>

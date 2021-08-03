@@ -164,6 +164,13 @@ namespace Sample.iOS
             _serverConfiguration = await LoadServerConfiguration();
 
             _enServer = new EnServer(_serverConfiguration);
+            ShowServerConfiguration(_serverConfiguration);
+        }
+
+        private void ShowServerConfiguration(ServerConfiguration serverConfiguration)
+        {
+            serverInfo.Text = $"Endpoint: {serverConfiguration.ApiEndpoint}\n";
+            serverInfo.Text += $"Cluster ID: {serverConfiguration.ClusterId}";
         }
 
         private async Task UploadDiagnosisKeys()
