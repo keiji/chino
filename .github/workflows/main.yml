@@ -98,3 +98,41 @@ jobs:
         dotnet test
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: true
+  pack:
+    runs-on: macos-latest
+    needs: [test]
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    steps:
+    - name: Setup Xamarin
+      uses: maxim-lobanov/setup-xamarin@v1
+      with:
+        mono-version: 6.12 # specify version in '<major>.<minor>' format
+        xamarin-ios-version: 14.0 # specify version in '<major>' format
+        xamarin-mac-version: latest # specify 'latest' keyword to pick up the latest available version
+        xamarin-android-version: 11.2 # specify full version; it is not recomended option because your pipeline can be broken suddenly in future
+        xcode-version: 12
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Cache
+      uses: actions/cache@v2.1.5
+      env:
+        cache-name: cache-nuget-packages
+      with:
+        path: ${{ github.workspace }}/.nuget/packages
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.csproj') }}
+    - name: Prepare
+      run: |
+        nuget restore
+    - name: Android
+      run: |
+        msbuild ./Chino.Android/Chino.Android.csproj /t:pack /p:Configuration=Release
+    - name: iOS
+      run: |
+        msbuild ./Chino.iOS/Chino.iOS.csproj /t:pack /p:Configuration=Release
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nuget_packages
+        path: ${{ github.workspace }}/**/bin/Release/*.nupkg
+        retention-days: 90
