@@ -69,42 +69,59 @@ namespace Chino.Android.Google
                 var action = intent.Action;
                 Logger.D($"Intent Action {action}");
 
-                switch (action)
+                var pendingResult = GoAsync();
+
+                try
                 {
-                    case ACTION_EXPOSURE_STATE_UPDATED:
-                        Logger.D($"ACTION_EXPOSURE_STATE_UPDATED");
-                        bool v1 = intent.HasExtra(EXTRA_EXPOSURE_SUMMARY);
+                    switch (action)
+                    {
+                        case ACTION_EXPOSURE_STATE_UPDATED:
+                            Logger.D($"ACTION_EXPOSURE_STATE_UPDATED");
+                            bool v1 = intent.HasExtra(EXTRA_EXPOSURE_SUMMARY);
 
-                        string varsionStr = v1 ? "1" : "2";
-                        Logger.D($"EN version {varsionStr}");
+                            string varsionStr = v1 ? "1" : "2";
+                            Logger.D($"EN version {varsionStr}");
 
-                        if (v1)
-                        {
-                            string token = intent.GetStringExtra(EXTRA_TOKEN);
-                            await GetExposureV1Async(enClient, token);
-                        }
-                        else
-                        {
-                            await GetExposureV2Async(enClient);
-                        }
-                        break;
-                    case ACTION_EXPOSURE_NOT_FOUND:
-                        Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
-                        Handler.ExposureNotDetected();
-                        break;
-                    case ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED:
-                        Logger.D($"ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED");
-                        IList<AndroidTemporaryExposureKey> tekList = intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
-                            .Cast<AndroidTemporaryExposureKey>()
-                            .ToList();
-                        IList<TemporaryExposureKey> temporaryExposureKeys = tekList.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
-                        Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
-                        break;
+                            if (v1)
+                            {
+                                string token = intent.GetStringExtra(EXTRA_TOKEN);
+                                var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
+                                Handler.ExposureDetected(exposureSummary, exposureInformations);
+                            }
+                            else
+                            {
+                                var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient);
+                                Handler.ExposureDetected(dailySummaries, exposureWindows);
+                            }
+                            break;
+                        case ACTION_EXPOSURE_NOT_FOUND:
+                            Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
+                            Handler.ExposureNotDetected();
+                            break;
+                        case ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED:
+                            Logger.D($"ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED");
+
+                            IList<TemporaryExposureKey> temporaryExposureKeys = await ConvertToITemporaryExposureKeyList(intent);
+                            Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
+                            break;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    Logger.E($"Exception occurred: {e}");
+                }
+                finally
+                {
+                    pendingResult.Finish();
                 }
             }
 
 #pragma warning disable CS0612,CS0618 // Type or member is obsolete
-            private async Task GetExposureV1Async(ExposureNotificationClient enClient, string token)
+            private async Task<(ExposureSummary, List<ExposureInformation> exposureInformations)> GetExposureV1Async(
+                ExposureNotificationClient enClient,
+                string token
+                )
             {
                 Logger.D($"GetExposureV1Async");
 
@@ -115,7 +132,7 @@ namespace Chino.Android.Google
                     IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
                     List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 
-                    Handler.ExposureDetected(new PlatformExposureSummary(exposureSummary), exposureInformations);
+                    return (new PlatformExposureSummary(exposureSummary), exposureInformations);
                 }
                 catch (ApiException exception)
                 {
@@ -128,7 +145,9 @@ namespace Chino.Android.Google
             }
 #pragma warning restore CS06122,CS0618 // Type or member is obsolete
 
-            private async Task GetExposureV2Async(ExposureNotificationClient enClient)
+            private async Task<(List<DailySummary> dailySummaries, List<ExposureWindow> exposureWindows)> GetExposureV2Async(
+                ExposureNotificationClient enClient
+                )
             {
                 Logger.D($"GetExposureV2Async");
 
@@ -146,7 +165,7 @@ namespace Chino.Android.Google
 
                     Logger.D(exposureWindows);
 
-                    Handler.ExposureDetected(dailySummaries, exposureWindows);
+                    return (dailySummaries, exposureWindows);
                 }
                 catch (ApiException exception)
                 {
@@ -158,17 +177,25 @@ namespace Chino.Android.Google
                 }
             }
 
-        }
-
-        private static void Print(IList<DailySummary> dailySummaries)
-        {
-            Logger.D($"dailySummaries - {dailySummaries.Count()}");
-
-            foreach (var d in dailySummaries)
+            private static void Print(IList<DailySummary> dailySummaries)
             {
-                Logger.D($"MaximumScore: {d.DaySummary.MaximumScore}");
-                Logger.D($"ScoreSum: {d.DaySummary.ScoreSum}");
-                Logger.D($"WeightedDurationSum: {d.DaySummary.WeightedDurationSum}");
+                Logger.D($"dailySummaries - {dailySummaries.Count()}");
+
+                foreach (var d in dailySummaries)
+                {
+                    Logger.D($"MaximumScore: {d.DaySummary.MaximumScore}");
+                    Logger.D($"ScoreSum: {d.DaySummary.ScoreSum}");
+                    Logger.D($"WeightedDurationSum: {d.DaySummary.WeightedDurationSum}");
+                }
+            }
+
+            private Task<List<TemporaryExposureKey>> ConvertToITemporaryExposureKeyList(Intent intent)
+            {
+                return Task.Run(() => intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
+                        .Cast<AndroidTemporaryExposureKey>()
+                        .Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek))
+                        .ToList()
+                );
             }
         }
 
