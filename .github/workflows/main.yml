@@ -124,6 +124,9 @@ jobs:
     - name: Prepare
       run: |
         nuget restore
+    - name: Common
+      run: |
+        msbuild ./Chino.Common/Chino.Common.csproj /t:pack /p:Configuration=Release
     - name: Android
       run: |
         msbuild ./Chino.Android/Chino.Android.csproj /t:pack /p:Configuration=Release
