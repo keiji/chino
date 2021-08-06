@@ -1,55 +1,48 @@
 ﻿using ExposureNotifications;
-using Newtonsoft.Json;
 
 namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposuredaysummary
-    public class DailySummary : IDailySummary
+    public class PlatformDailySummary : DailySummary
     {
-        [JsonIgnore]
-        public ENExposureDaySummary Source;
+        public PlatformDailySummary() { }
 
-        public DailySummary(ENExposureDaySummary source)
+        public PlatformDailySummary(ENExposureDaySummary source)
         {
-            Source = source;
+            DateMillisSinceEpoch = source.Date.GetDateMillisSinceEpoch();
+            DaySummary = GetExposureSummaryData(source.DaySummary);
+            ConfirmedClinicalDiagnosisSummary = GetExposureSummaryData(source.ConfirmedClinicalDiagnosisSummary);
+            ConfirmedTestSummary = GetExposureSummaryData(source.ConfirmedTestSummary);
+            RecursiveSummary = GetExposureSummaryData(source.RecursiveSummary);
+            SelfReportedSummary = GetExposureSummaryData(source.SelfReportedSummary);
         }
 
-        public long DateMillisSinceEpoch => Source.Date.GetDateMillisSinceEpoch();
-
-        public IDailySummary.IExposureSummaryData? DaySummary => GetExposureSummaryData(Source.DaySummary);
-
-        public IDailySummary.IExposureSummaryData? ConfirmedClinicalDiagnosisSummary => GetExposureSummaryData(Source.ConfirmedClinicalDiagnosisSummary);
-
-        public IDailySummary.IExposureSummaryData? ConfirmedTestSummary => GetExposureSummaryData(Source.ConfirmedTestSummary);
-
-        public IDailySummary.IExposureSummaryData? RecursiveSummary => GetExposureSummaryData(Source.RecursiveSummary);
-
-        public IDailySummary.IExposureSummaryData? SelfReportedSummary => GetExposureSummaryData(Source.SelfReportedSummary);
-
-        private static IDailySummary.IExposureSummaryData? GetExposureSummaryData(ENExposureSummaryItem? summaryItem)
+        private static PlatformExposureSummaryData? GetExposureSummaryData(ENExposureSummaryItem? summaryItem)
         {
             if (summaryItem == null)
             {
                 return null;
             }
-            return new ExposureSummaryData(summaryItem);
+            return new PlatformExposureSummaryData(summaryItem);
         }
 
-        public class ExposureSummaryData : IDailySummary.IExposureSummaryData
+        public class PlatformExposureSummaryData : ExposureSummaryData
         {
-            [JsonIgnore]
-            public ENExposureSummaryItem Source;
+            public PlatformExposureSummaryData() { }
 
-            public ExposureSummaryData(ENExposureSummaryItem source)
+            public PlatformExposureSummaryData(ENExposureSummaryItem source)
             {
-                Source = source;
+                MaximumScore = source.MaximumScore;
+                ScoreSum = source.ScoreSum;
+                WeightedDurationSum = source.WeightedDurationSum;
             }
 
-            public double MaximumScore => Source.MaximumScore;
-
-            public double ScoreSum => Source.ScoreSum;
-
-            public double WeightedDurationSum => Source.WeightedDurationSum;
+            public PlatformExposureSummaryData(Chino.ExposureSummaryData source)
+            {
+                MaximumScore = source.MaximumScore;
+                ScoreSum = source.ScoreSum;
+                WeightedDurationSum = source.WeightedDurationSum;
+            }
         }
     }
 }

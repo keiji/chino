@@ -24,7 +24,7 @@ namespace Sample.Common
         }
 
         public async Task UploadDiagnosisKeysAsync(
-            IList<ITemporaryExposureKey> temporaryExposureKeyList,
+            IList<TemporaryExposureKey> temporaryExposureKeyList,
             ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
             RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
             )
@@ -101,7 +101,7 @@ namespace Sample.Common
         public IList<Tek> temporaryExposureKeys;
 
         public RequestDiagnosisKey(
-            IList<ITemporaryExposureKey> teks,
+            IList<TemporaryExposureKey> teks,
             ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
             RiskLevel defaultTrasmissionRisk = RiskLevel.Medium)
         {
@@ -124,7 +124,7 @@ namespace Sample.Common
         public int reportType;
         public int transmissionRisk;
 
-        public Tek(ITemporaryExposureKey tek)
+        public Tek(TemporaryExposureKey tek)
         {
             key = Convert.ToBase64String(tek.KeyData);
             rollingStartNumber = tek.RollingStartIntervalNumber;

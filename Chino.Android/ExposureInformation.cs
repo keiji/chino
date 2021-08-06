@@ -1,33 +1,24 @@
 ﻿using System;
 using System.Linq;
-using Newtonsoft.Json;
 using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.ExposureInformation;
 
 namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureInformation
     [Obsolete]
-    public class ExposureInformation : IExposureInformation
+    public class PlatformExposureInformation : ExposureInformation
     {
-        [JsonIgnore]
-        public AndroidExposureInformation Source;
+        public PlatformExposureInformation() { }
 
-        public ExposureInformation(AndroidExposureInformation source)
+        public PlatformExposureInformation(AndroidExposureInformation source)
         {
-            Source = source;
+            AttenuationDurationsInMillis = ConvertToMillis(source.GetAttenuationDurationsInMinutes());
+            AttenuationValue = source.AttenuationValue;
+            DateMillisSinceEpoch = source.DateMillisSinceEpoch;
+            Duration = source.DurationMinutes;
+            TotalRiskScore = source.TotalRiskScore;
+            TransmissionRiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), source.TransmissionRiskLevel);
         }
-
-        public int[] AttenuationDurationsInMillis => ConvertToMillis(Source.GetAttenuationDurationsInMinutes());
-
-        public int AttenuationValue => Source.AttenuationValue;
-
-        public long DateMillisSinceEpoch => Source.DateMillisSinceEpoch;
-
-        public double Duration => Source.DurationMinutes;
-
-        public int TotalRiskScore => Source.TotalRiskScore;
-
-        public RiskLevel TransmissionRiskLevel => (RiskLevel)Enum.ToObject(typeof(RiskLevel), Source.TransmissionRiskLevel);
 
         private static int[] ConvertToMillis(int[] attenuationDurationsInMinutes)
             => attenuationDurationsInMinutes.Select(d => d * 60 * 1000).ToArray();

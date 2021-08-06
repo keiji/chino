@@ -70,7 +70,7 @@ namespace Sample.iOS
                 status.Text = "Show TEKs History is clicked.\n";
                 try
                 {
-                    List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
+                    List<TemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
 
                     ShowTeks(teks);
                     await SaveTeksAsync(teks);
@@ -178,7 +178,7 @@ namespace Sample.iOS
             Logger.D("UploadDiagnosisKeys");
             status.Text = "UploadDiagnosisKeys is clicked.\n";
 
-            List<ITemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
+            List<TemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
             await _enServer.UploadDiagnosisKeysAsync(teks);
 
             status.Text += $"diagnosisKeyEntryList have been uploaded.\n";
@@ -311,13 +311,13 @@ namespace Sample.iOS
             await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
         }
 
-        private void ShowTeks(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        private void ShowTeks(IList<TemporaryExposureKey> temporaryExposureKeys)
         {
             List<string> tekKeyData = temporaryExposureKeys.Select(teks => Convert.ToBase64String(teks.KeyData)).ToList();
             status.Text = string.Join("\n", tekKeyData);
         }
 
-        private async Task SaveTeksAsync(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        private async Task SaveTeksAsync(IList<TemporaryExposureKey> temporaryExposureKeys)
         {
             TemporaryExposureKeys teks = new TemporaryExposureKeys(temporaryExposureKeys, DateTime.Now)
             {

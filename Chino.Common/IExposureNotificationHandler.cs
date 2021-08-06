@@ -14,7 +14,7 @@ namespace Chino
         /// An event that TEKs are released by the Preauthorized API.
         /// </summary>
         /// <param name="temporaryExposureKeys">List of Temporary Exposure Keys</param>
-        public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        public void TemporaryExposureKeyReleased(IList<TemporaryExposureKey> temporaryExposureKeys)
         {
             throw new NotImplementedException();
         }
@@ -24,7 +24,7 @@ namespace Chino
         /// </summary>
         /// <param name="dailySummaries">Daily exposure summary to pass to client side.</param>
         /// <param name="exposureWindows">List of duration of up to 30 minutes during which beacons from a TEK were observed.</param>
-        public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
+        public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
             throw new NotImplementedException();
         }
@@ -34,7 +34,7 @@ namespace Chino
         /// </summary>
         /// <param name="exposureSummary">Summary information about recent exposures.</param>
         /// <param name="exposureInformations">List of information about an exposure.</param>
-        public void ExposureDetected(IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
             throw new NotImplementedException();
         }

@@ -29,7 +29,7 @@ namespace Sample.Common.Model
         public readonly string generatedAt;
 
         public TemporaryExposureKeys(
-            IList<ITemporaryExposureKey> teks,
+            IList<TemporaryExposureKey> teks,
             DateTime generatedAt,
             ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
             RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
@@ -72,7 +72,7 @@ namespace Sample.Common.Model
         public int reportType;
         public int transmissionRisk;
 
-        public Tek(ITemporaryExposureKey tek)
+        public Tek(TemporaryExposureKey tek)
         {
             key = Convert.ToBase64String(tek.KeyData);
             rollingStartNumber = tek.RollingStartIntervalNumber;

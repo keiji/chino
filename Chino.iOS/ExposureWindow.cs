@@ -1,48 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using ExposureNotifications;
-using Newtonsoft.Json;
 
 namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposurewindow
-    public class ExposureWindow : IExposureWindow
+    public class PlatformExposureWindow : ExposureWindow
     {
-        [JsonIgnore]
-        public readonly ENExposureWindow Source;
+        public PlatformExposureWindow() { }
 
-        public ExposureWindow(ENExposureWindow source)
+        public PlatformExposureWindow(ENExposureWindow source)
         {
-            Source = source;
+            CalibrationConfidence = (CalibrationConfidence)Enum.ToObject(typeof(CalibrationConfidence), source.CalibrationConfidence);
+            DateMillisSinceEpoch = source.Date.GetDateMillisSinceEpoch();
+            Infectiousness = (Infectiousness)Enum.ToObject(typeof(Infectiousness), source.Infectiousness);
+            ReportType = (ReportType)Enum.ToObject(typeof(ReportType), source.DiagnosisReportType);
+            ScanInstances = source.ScanInstances.Select(si => (ScanInstance)new PlatformScanInstance(si)).ToList();
         }
-
-        public CalibrationConfidence CalibrationConfidence => (CalibrationConfidence)Enum.ToObject(typeof(CalibrationConfidence), Source.CalibrationConfidence);
-
-        public long DateMillisSinceEpoch => Source.Date.GetDateMillisSinceEpoch();
-
-        public Infectiousness Infectiousness => (Infectiousness)Enum.ToObject(typeof(Infectiousness), Source.Infectiousness);
-
-        public ReportType ReportType => (ReportType)Enum.ToObject(typeof(ReportType), Source.DiagnosisReportType);
-
-        public List<IScanInstance> ScanInstances => Source.ScanInstances.Select(si => (IScanInstance)new ScanInstance(si)).ToList();
     }
 
     // https://developer.apple.com/documentation/exposurenotification/enscaninstance
-    public class ScanInstance : IScanInstance
+    public class PlatformScanInstance : ScanInstance
     {
-        [JsonIgnore]
-        public readonly ENScanInstance Source;
+        public PlatformScanInstance() { }
 
-        public ScanInstance(ENScanInstance source)
+        public PlatformScanInstance(ENScanInstance source)
         {
-            Source = source;
+            MinAttenuationDb = source.MinimumAttenuation;
+            SecondsSinceLastScan = (int)source.SecondsSinceLastScan;
+            TypicalAttenuationDb = source.TypicalAttenuation;
         }
-
-        public int MinAttenuationDb => Source.MinimumAttenuation;
-
-        public int SecondsSinceLastScan => (int)Source.SecondsSinceLastScan;
-
-        public int TypicalAttenuationDb => Source.TypicalAttenuation;
     }
 }

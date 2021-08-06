@@ -1,0 +1,142 @@
+[
+  {
+    "DateMillisSinceEpoch": -1226205184,
+    "DaySummary": {
+      "MaximumScore": 2040.0,
+      "ScoreSum": 121020.0,
+      "WeightedDurationSum": 121020.0
+    },
+    "ConfirmedClinicalDiagnosisSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "ConfirmedTestSummary": {
+      "MaximumScore": 2040.0,
+      "ScoreSum": 121020.0,
+      "WeightedDurationSum": 121020.0
+    },
+    "RecursiveSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "SelfReportedSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    }
+  },
+  {
+    "DateMillisSinceEpoch": -1139805184,
+    "DaySummary": {
+      "MaximumScore": 2040.0,
+      "ScoreSum": 28740.0,
+      "WeightedDurationSum": 28740.0
+    },
+    "ConfirmedClinicalDiagnosisSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "ConfirmedTestSummary": {
+      "MaximumScore": 2040.0,
+      "ScoreSum": 28740.0,
+      "WeightedDurationSum": 28740.0
+    },
+    "RecursiveSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "SelfReportedSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    }
+  },
+  {
+    "DateMillisSinceEpoch": -1312605184,
+    "DaySummary": {
+      "MaximumScore": 2040.0,
+      "ScoreSum": 120000.0,
+      "WeightedDurationSum": 120000.0
+    },
+    "ConfirmedClinicalDiagnosisSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "ConfirmedTestSummary": {
+      "MaximumScore": 2040.0,
+      "ScoreSum": 120000.0,
+      "WeightedDurationSum": 120000.0
+    },
+    "RecursiveSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "SelfReportedSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    }
+  },
+  {
+    "DateMillisSinceEpoch": -1485405184,
+    "DaySummary": {
+      "MaximumScore": 1980.0,
+      "ScoreSum": 97800.0,
+      "WeightedDurationSum": 97800.0
+    },
+    "ConfirmedClinicalDiagnosisSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "ConfirmedTestSummary": {
+      "MaximumScore": 1980.0,
+      "ScoreSum": 97800.0,
+      "WeightedDurationSum": 97800.0
+    },
+    "RecursiveSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "SelfReportedSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    }
+  },
+  {
+    "DateMillisSinceEpoch": -1399005184,
+    "DaySummary": {
+      "MaximumScore": 1200.0,
+      "ScoreSum": 94800.0,
+      "WeightedDurationSum": 94800.0
+    },
+    "ConfirmedClinicalDiagnosisSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "ConfirmedTestSummary": {
+      "MaximumScore": 1200.0,
+      "ScoreSum": 94800.0,
+      "WeightedDurationSum": 94800.0
+    },
+    "RecursiveSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    },
+    "SelfReportedSummary": {
+      "MaximumScore": 0.0,
+      "ScoreSum": 0.0,
+      "WeightedDurationSum": 0.0
+    }
+  }
+]

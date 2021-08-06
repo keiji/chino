@@ -5,9 +5,11 @@ using AndroidTemporaryExposureKey = Android.Gms.Nearby.ExposureNotification.Temp
 namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/TemporaryExposureKey
-    public class TemporaryExposureKey : ITemporaryExposureKey
+    public class PlatformTemporaryExposureKey : TemporaryExposureKey
     {
-        public TemporaryExposureKey(AndroidTemporaryExposureKey source)
+        public PlatformTemporaryExposureKey() { }
+
+        public PlatformTemporaryExposureKey(AndroidTemporaryExposureKey source)
         {
             DaysSinceOnsetOfSymptoms = source.DaysSinceOnsetOfSymptoms;
             KeyData = source.GetKeyData();
@@ -16,12 +18,5 @@ namespace Chino.Android.Google
             RiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), source.TransmissionRiskLevel);
             ReportType = (ReportType)Enum.ToObject(typeof(ReportType), source.ReportType);
         }
-
-        public int DaysSinceOnsetOfSymptoms { get; set; }
-        public byte[] KeyData { get; set; }
-        public int RollingPeriod { get; set; }
-        public int RollingStartIntervalNumber { get; set; }
-        public RiskLevel RiskLevel { get; set; }
-        public ReportType ReportType { get; set; }
     }
 }

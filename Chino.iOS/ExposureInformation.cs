@@ -1,32 +1,23 @@
 ﻿using System;
 using System.Linq;
 using ExposureNotifications;
-using Newtonsoft.Json;
 
 namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposureinfo
-    public class ExposureInformation : IExposureInformation
+    public class PlatformExposureInformation : ExposureInformation
     {
-        [JsonIgnore]
-        public readonly ENExposureInfo Source;
+        public PlatformExposureInformation() { }
 
-        public ExposureInformation(ENExposureInfo source)
+        public PlatformExposureInformation(ENExposureInfo source)
         {
-            Source = source;
+            AttenuationDurationsInMillis = ConvertToMillis(source.AttenuationDurations);
+            AttenuationValue = source.AttenuationValue;
+            DateMillisSinceEpoch = source.Date.GetDateMillisSinceEpoch();
+            Duration = source.Duration;
+            TotalRiskScore = source.TotalRiskScore;
+            TransmissionRiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), source.TransmissionRiskLevel);
         }
-
-        public int[] AttenuationDurationsInMillis => ConvertToMillis(Source.AttenuationDurations);
-
-        public int AttenuationValue => Source.AttenuationValue;
-
-        public long DateMillisSinceEpoch => Source.Date.GetDateMillisSinceEpoch();
-
-        public double Duration => Source.Duration;
-
-        public int TotalRiskScore => Source.TotalRiskScore;
-
-        public RiskLevel TransmissionRiskLevel => (RiskLevel)Enum.ToObject(typeof(RiskLevel), Source.TransmissionRiskLevel);
 
         private static int[] ConvertToMillis(int[] attenuationDurations)
             => attenuationDurations.Select(d => d * 1000).ToArray();

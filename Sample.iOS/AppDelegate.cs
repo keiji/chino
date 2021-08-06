@@ -69,17 +69,20 @@ namespace Sample.iOS
 
         public AbsExposureNotificationClient GetEnClient() => ExposureNotificationClientManager.Shared;
 
-        public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        public void TemporaryExposureKeyReleased(IList<TemporaryExposureKey> temporaryExposureKeys)
         {
             Logger.D("TemporaryExposureKeyReleased");
 
-            foreach (ITemporaryExposureKey tek in temporaryExposureKeys)
+            foreach (TemporaryExposureKey tek in temporaryExposureKeys)
             {
                 Logger.D(Convert.ToBase64String(tek.KeyData));
             }
         }
 
-        public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
+        public void ExposureDetected(
+            IList<DailySummary> dailySummaries,
+            IList<ExposureWindow> exposureWindows
+            )
         {
             Logger.D("ExposureDetected ExposureWindows");
             var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
@@ -89,7 +92,7 @@ namespace Sample.iOS
             Task.Run(async () => await SaveExposureResult(exposureResult));
         }
 
-        public void ExposureDetected(IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
             Logger.D("ExposureDetected ExposureInformations");
             var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,

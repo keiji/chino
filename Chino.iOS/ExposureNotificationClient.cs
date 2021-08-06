@@ -29,7 +29,7 @@ namespace Chino.iOS
                     return;
                 }
 
-                IList<ITemporaryExposureKey> temporaryExposureKeys = teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                IList<TemporaryExposureKey> temporaryExposureKeys = teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
                 Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
             })
         };
@@ -163,7 +163,7 @@ namespace Chino.iOS
             }
         }
 
-        public async override Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
+        public async override Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
         {
             CheckActivated();
 
@@ -172,12 +172,12 @@ namespace Chino.iOS
                 if (!IsTest)
                 {
                     ENTemporaryExposureKey[] teks = await EnManager.GetDiagnosisKeysAsync();
-                    return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                    return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
                 }
                 else
                 {
                     ENTemporaryExposureKey[] teks = await EnManager.GetTestDiagnosisKeysAsync();
-                    return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                    return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
                 }
             }
             catch (NSErrorException exception)
@@ -384,12 +384,12 @@ namespace Chino.iOS
         {
             Logger.D($"GetExposureV2");
 
-            List<IDailySummary> dailySummaries = summary.DaySummaries.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
+            List<DailySummary> dailySummaries = summary.DaySummaries.Select(ds => (DailySummary)new PlatformDailySummary(ds)).ToList();
 
             if (dailySummaries.Count > 0)
             {
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
-                List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
+                List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
 
                 Handler.ExposureDetected(dailySummaries, exposureWindows);
             }
@@ -406,9 +406,9 @@ namespace Chino.iOS
             if (summary.MatchedKeyCount > 0)
             {
                 ENExposureInfo[] eis = await EnManager.GetExposureInfoAsync(summary, UserExplanation);
-                List<IExposureInformation> exposureInformations = eis.Select(ei => (IExposureInformation)new ExposureInformation(ei)).ToList();
+                List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 
-                Handler.ExposureDetected(new ExposureSummary(summary), exposureInformations);
+                Handler.ExposureDetected(new PlatformExposureSummary(summary), exposureInformations);
             }
             else
             {

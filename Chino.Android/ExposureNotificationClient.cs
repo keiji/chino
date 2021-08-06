@@ -98,7 +98,7 @@ namespace Chino.Android.Google
                         IList<AndroidTemporaryExposureKey> tekList = intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
                             .Cast<AndroidTemporaryExposureKey>()
                             .ToList();
-                        IList<ITemporaryExposureKey> temporaryExposureKeys = tekList.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                        IList<TemporaryExposureKey> temporaryExposureKeys = tekList.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
                         Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
                         break;
                 }
@@ -114,9 +114,9 @@ namespace Chino.Android.Google
                     AndroidExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
 
                     IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
-                    List<IExposureInformation> exposureInformations = eis.Select(ei => (IExposureInformation)new ExposureInformation(ei)).ToList();
+                    List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 
-                    Handler.ExposureDetected(new ExposureSummary(exposureSummary), exposureInformations);
+                    Handler.ExposureDetected(new PlatformExposureSummary(exposureSummary), exposureInformations);
                 }
                 catch (ApiException exception)
                 {
@@ -138,12 +138,12 @@ namespace Chino.Android.Google
                     IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
                         enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
                         );
-                    List<IDailySummary> dailySummaries = dss.Select(ds => (IDailySummary)new DailySummary(ds)).ToList();
+                    List<DailySummary> dailySummaries = dss.Select(ds => (DailySummary)new PlatformDailySummary(ds)).ToList();
 
                     Print(dailySummaries);
 
                     IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
-                    List<IExposureWindow> exposureWindows = ews.Select(ew => (IExposureWindow)new ExposureWindow(ew)).ToList();
+                    List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
 
                     Logger.D(exposureWindows);
 
@@ -161,7 +161,7 @@ namespace Chino.Android.Google
 
         }
 
-        private static void Print(IList<IDailySummary> dailySummaries)
+        private static void Print(IList<DailySummary> dailySummaries)
         {
             Logger.D($"dailySummaries - {dailySummaries.Count()}");
 
@@ -356,12 +356,12 @@ namespace Chino.Android.Google
             }
         }
 
-        public override async Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
+        public override async Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
         {
             try
             {
                 var teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
-                return teks.Select(tek => (ITemporaryExposureKey)new TemporaryExposureKey(tek)).ToList();
+                return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
             }
             catch (ApiException exception)
             {

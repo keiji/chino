@@ -8,36 +8,36 @@
     ///
     /// The client can get the exposure information via ExposureNotificationClient.getExposureInformation(String).
     /// </summary>
-    public interface IExposureInformation
+    public class ExposureInformation
     {
         /// <summary>
         /// Array of durations in milliseconds at certain radio signal attenuations.
         /// </summary>
-        public int[] AttenuationDurationsInMillis { get; }
+        public int[] AttenuationDurationsInMillis { get; set; }
 
         /// <summary>
         /// The time-weighted signal strength attenuation value which goes into getTotalRiskScore().
         /// </summary>
-        public int AttenuationValue { get; }
+        public int AttenuationValue { get; set; }
 
         /// <summary>
         /// Day-level resolution that the exposure occurred, in milliseconds since epoch.
         /// </summary>
-        public long DateMillisSinceEpoch { get; }
+        public long DateMillisSinceEpoch { get; set; }
 
         /// <summary>
         /// Length of exposure in 5 minute increments, with a 30 minute maximum.
         /// </summary>
-        public double Duration { get; }
+        public double Duration { get; set; }
 
         /// <summary>
         /// The total risk calculated for the exposure.
         /// </summary>
-        public int TotalRiskScore { get; }
+        public int TotalRiskScore { get; set; }
 
         /// <summary>
         /// The transmission risk associated with the matched diagnosis key.
         /// </summary>
-        public RiskLevel TransmissionRiskLevel { get; }
+        public RiskLevel TransmissionRiskLevel { get; set; }
     }
 }

@@ -57,7 +57,7 @@ namespace Chino
         /// Each key returned will have an unknown transmission risk level, clients should choose an appropriate risk level for these keys before uploading them to the server.
         /// </summary>
         /// <returns></returns>
-        public abstract Task<List<ITemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync();
+        public abstract Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync();
 
         /// <summary>
         /// Provides diagnosis key files for exposure checking. The files are to be synced from the server.
