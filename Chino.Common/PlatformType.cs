@@ -1,4 +1,4 @@
-﻿namespace Chino.Common
+﻿namespace Chino
 {
     internal enum PlatformType
     {

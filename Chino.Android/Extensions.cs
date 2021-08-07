@@ -7,7 +7,6 @@ using System.Linq;
 
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
-using Chino.Common;
 using Android.Gms.Nearby.ExposureNotification;
 using System.Collections.Generic;
 

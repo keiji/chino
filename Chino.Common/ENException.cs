@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chino.Common
+namespace Chino
 {
     public class ENException : Exception
     {

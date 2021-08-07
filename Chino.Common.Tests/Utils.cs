@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
 
-namespace Chino.Common.Tests
+namespace Chino.Tests
 {
     public static class Utils
     {

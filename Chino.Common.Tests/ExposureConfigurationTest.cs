@@ -2,7 +2,7 @@ using System.IO;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Chino.Common.Tests
+namespace Chino.Tests
 {
 
     public class ExposureConfigurationTest

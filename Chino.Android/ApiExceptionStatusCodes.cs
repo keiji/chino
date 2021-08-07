@@ -1,4 +1,4 @@
-﻿namespace Chino
+﻿namespace Chino.Android.Google
 {
     public static class ApiExceptionStatusCodes
     {
