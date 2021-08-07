@@ -58,7 +58,7 @@ namespace Sample.Android
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+            Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
 
@@ -79,7 +79,7 @@ namespace Sample.Android
             {
                 Logger.D("buttonGetTekHistory clicked");
 
-                List<ITemporaryExposureKey> teks = await GetTekHistory();
+                List<TemporaryExposureKey> teks = await GetTekHistory();
 
                 ShowTekHistory(teks);
                 await SaveTekHistoryAsync(teks);
@@ -145,7 +145,7 @@ namespace Sample.Android
 
             try
             {
-                IList<ITemporaryExposureKey> teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
+                IList<TemporaryExposureKey> teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
                 await _enServer.UploadDiagnosisKeysAsync(teks);
 
                 status.Append($"diagnosisKeyEntryList have been uploaded.\n");
@@ -376,7 +376,7 @@ namespace Sample.Android
             }
         }
 
-        private void ShowTekHistory(List<ITemporaryExposureKey> temporaryExposureKeys)
+        private void ShowTekHistory(List<TemporaryExposureKey> temporaryExposureKeys)
         {
             if (buttonGetTekHistory == null)
             {
@@ -387,7 +387,7 @@ namespace Sample.Android
             status.Text = string.Join("\n", tekKeyData);
         }
 
-        private async Task SaveTekHistoryAsync(List<ITemporaryExposureKey> temporaryExposureKeys)
+        private async Task SaveTekHistoryAsync(List<TemporaryExposureKey> temporaryExposureKeys)
         {
             TemporaryExposureKeys teks = new TemporaryExposureKeys(temporaryExposureKeys, DateTime.Now)
             {
@@ -402,7 +402,7 @@ namespace Sample.Android
             await File.WriteAllTextAsync(filePath.AbsolutePath, json);
         }
 
-        private async Task<List<ITemporaryExposureKey>> GetTekHistory()
+        private async Task<List<TemporaryExposureKey>> GetTekHistory()
         {
             Logger.D("GetTekHistory");
             try
@@ -425,7 +425,7 @@ namespace Sample.Android
                 }
             }
 
-            return new List<ITemporaryExposureKey>();
+            return new List<TemporaryExposureKey>();
         }
 
         private async Task EnableEnAsync()
@@ -534,7 +534,7 @@ namespace Sample.Android
                     ShowEnEnabled();
                     break;
                 case REQUEST_GET_TEK_HISTORY:
-                    List<ITemporaryExposureKey> teks = await GetTekHistory();
+                    List<TemporaryExposureKey> teks = await GetTekHistory();
                     ShowTekHistory(teks);
                     await SaveTekHistoryAsync(teks);
                     break;

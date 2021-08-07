@@ -8,7 +8,7 @@ namespace Sample.Common
     public interface IEnServer
     {
         public Task UploadDiagnosisKeysAsync(
-            IList<ITemporaryExposureKey> temporaryExposureKeyList,
+            IList<TemporaryExposureKey> temporaryExposureKeyList,
             ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
             RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
             );

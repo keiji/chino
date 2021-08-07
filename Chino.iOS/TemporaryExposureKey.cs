@@ -4,24 +4,19 @@ using ExposureNotifications;
 namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/entemporaryexposurekey
-    public class TemporaryExposureKey : ITemporaryExposureKey
+    public class PlatformTemporaryExposureKey : TemporaryExposureKey
     {
-        public TemporaryExposureKey(ENTemporaryExposureKey source)
+        public PlatformTemporaryExposureKey() { }
+
+        public PlatformTemporaryExposureKey(ENTemporaryExposureKey source)
         {
-            //DaysSinceOnsetOfSymptoms = source.DaysSinceOnsetOfSymptoms;
+            // DaysSinceOnsetOfSymptoms = source.DaysSinceOnsetOfSymptoms;
             KeyData = GetKeyData(source.KeyData);
             RollingPeriod = (int)source.RollingPeriod;
             RollingStartIntervalNumber = (int)source.RollingStartNumber;
             RiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), source.TransmissionRiskLevel);
             ReportType = ReportType.ConfirmedTest;
         }
-
-        public int DaysSinceOnsetOfSymptoms { get; set; }
-        public byte[] KeyData { get; set; }
-        public int RollingPeriod { get; set; }
-        public int RollingStartIntervalNumber { get; set; }
-        public RiskLevel RiskLevel { get; set; }
-        public ReportType ReportType { get; set; }
 
         private static byte[] GetKeyData(Foundation.NSData keyData)
         {

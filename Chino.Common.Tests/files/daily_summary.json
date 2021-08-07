@@ -1,0 +1,28 @@
+{
+  "DateMillisSinceEpoch": -1226205184,
+  "DaySummary": {
+    "MaximumScore": 2040.0,
+    "ScoreSum": 121020.0,
+    "WeightedDurationSum": 121020.0
+  },
+  "ConfirmedClinicalDiagnosisSummary": {
+    "MaximumScore": 0.0,
+    "ScoreSum": 0.0,
+    "WeightedDurationSum": 0.0
+  },
+  "ConfirmedTestSummary": {
+    "MaximumScore": 2040.0,
+    "ScoreSum": 121020.0,
+    "WeightedDurationSum": 121020.0
+  },
+  "RecursiveSummary": {
+    "MaximumScore": 0.0,
+    "ScoreSum": 0.0,
+    "WeightedDurationSum": 0.0
+  },
+  "SelfReportedSummary": {
+    "MaximumScore": 0.0,
+    "ScoreSum": 0.0,
+    "WeightedDurationSum": 0.0
+  }
+}

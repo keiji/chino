@@ -68,7 +68,8 @@ namespace Chino.iOS
 
         public static ExposureNotificationStatus ToExposureNotificationStatus(this ENStatus status)
         {
-            int code = status switch {
+            int code = status switch
+            {
                 ENStatus.Active => ExposureNotificationStatus.Code_iOS.Active,
                 ENStatus.BluetoothOff => ExposureNotificationStatus.Code_iOS.BluetoothOff,
                 ENStatus.Disabled => ExposureNotificationStatus.Code_iOS.Disabled,

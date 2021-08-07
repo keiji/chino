@@ -1,49 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
 using AndroidScanInstance = Android.Gms.Nearby.ExposureNotification.ScanInstance;
 
 namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureWindow
-    public class ExposureWindow : IExposureWindow
+    public class PlatformExposureWindow : ExposureWindow
     {
-        [JsonIgnore]
-        public readonly AndroidExposureWindow Source;
+        public PlatformExposureWindow() { }
 
-        public ExposureWindow(AndroidExposureWindow source)
+        public PlatformExposureWindow(AndroidExposureWindow source)
         {
-            Source = source;
+            CalibrationConfidence = (CalibrationConfidence)Enum.ToObject(typeof(CalibrationConfidence), source.CalibrationConfidence);
+            DateMillisSinceEpoch = source.DateMillisSinceEpoch;
+            Infectiousness = (Infectiousness)Enum.ToObject(typeof(Infectiousness), source.Infectiousness);
+            ReportType = (ReportType)Enum.ToObject(typeof(ReportType), source.ReportType);
+            ScanInstances = source.ScanInstances.Select(si => (ScanInstance)new PlatformScanInstance(si)).ToList();
         }
-
-        public CalibrationConfidence CalibrationConfidence => (CalibrationConfidence)Enum.ToObject(typeof(CalibrationConfidence), Source.CalibrationConfidence);
-
-        public long DateMillisSinceEpoch => Source.DateMillisSinceEpoch;
-
-        public Infectiousness Infectiousness => (Infectiousness)Enum.ToObject(typeof(Infectiousness), Source.Infectiousness);
-
-        public ReportType ReportType => (ReportType)Enum.ToObject(typeof(ReportType), Source.ReportType);
-
-        public List<IScanInstance> ScanInstances => Source.ScanInstances.Select(si => (IScanInstance)new ScanInstance(si)).ToList();
     }
 
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ScanInstance
-    public class ScanInstance : IScanInstance
+    public class PlatformScanInstance : ScanInstance
     {
-        [JsonIgnore]
-        public readonly AndroidScanInstance Source;
-
-        public ScanInstance(AndroidScanInstance source)
+        public PlatformScanInstance(AndroidScanInstance source)
         {
-            Source = source;
+            MinAttenuationDb = source.MinAttenuationDb;
+            SecondsSinceLastScan = source.SecondsSinceLastScan;
+            TypicalAttenuationDb = source.TypicalAttenuationDb;
         }
-
-        public int MinAttenuationDb => Source.MinAttenuationDb;
-
-        public int SecondsSinceLastScan => Source.SecondsSinceLastScan;
-
-        public int TypicalAttenuationDb => Source.TypicalAttenuationDb;
     }
 }

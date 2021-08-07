@@ -1,0 +1,28 @@
+{
+  "CalibrationConfidence": 3,
+  "DateMillisSinceEpoch": 1626480000000,
+  "Infectiousness": 1,
+  "ReportType": 1,
+  "ScanInstances": [
+    {
+      "MinAttenuationDb": 38,
+      "SecondsSinceLastScan": 300,
+      "TypicalAttenuationDb": 39
+    },
+    {
+      "MinAttenuationDb": 39,
+      "SecondsSinceLastScan": 300,
+      "TypicalAttenuationDb": 39
+    },
+    {
+      "MinAttenuationDb": 39,
+      "SecondsSinceLastScan": 300,
+      "TypicalAttenuationDb": 40
+    },
+    {
+      "MinAttenuationDb": 38,
+      "SecondsSinceLastScan": 300,
+      "TypicalAttenuationDb": 40
+    }
+  ]
+}

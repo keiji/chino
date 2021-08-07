@@ -29,11 +29,11 @@ namespace Chino
             Debug.Print(message);
         }
 
-        public static void D(List<ITemporaryExposureKey> teks, int transmissonRisk, ReportType reportType)
+        public static void D(List<TemporaryExposureKey> teks, int transmissonRisk, ReportType reportType)
         {
             string content = "{\"temporaryExposureKeys\":[\n";
 
-            foreach (ITemporaryExposureKey tek in teks)
+            foreach (TemporaryExposureKey tek in teks)
             {
                 bool isLast = teks.IndexOf(tek) == teks.Count - 1;
 
@@ -54,7 +54,7 @@ namespace Chino
             D(content);
         }
 
-        public static void D(IList<IExposureWindow> exposureWindows)
+        public static void D(IList<ExposureWindow> exposureWindows)
         {
             D($"exposureWindows - {exposureWindows.Count()}");
 

@@ -26,16 +26,16 @@ namespace Sample.Common.Model
         public string EnVersion = null;
 
         [JsonProperty("exposure_summary")]
-        public readonly IExposureSummary? exposureSummary;
+        public readonly ExposureSummary? exposureSummary;
 
         [JsonProperty("exposure_informations")]
-        public readonly IList<IExposureInformation>? exposureInformations;
+        public readonly IList<ExposureInformation>? exposureInformations;
 
         [JsonProperty("daily_summaries")]
-        public readonly IList<IDailySummary>? dailySummaries;
+        public readonly IList<DailySummary>? dailySummaries;
 
         [JsonProperty("exposure_windows")]
-        public readonly IList<IExposureWindow>? exposureWindows;
+        public readonly IList<ExposureWindow>? exposureWindows;
 
         [JsonProperty("generated_at")]
         public readonly string generatedAt;
@@ -49,18 +49,18 @@ namespace Sample.Common.Model
 
         public ExposureResult(ExposureConfiguration exposureConfiguration,
             DateTime generatedAt,
-            IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
+            ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
             : this(exposureConfiguration, generatedAt, exposureSummary, exposureInformations, null, null) { }
 
         public ExposureResult(ExposureConfiguration exposureConfiguration,
             DateTime generatedAt,
-            IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
+            IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
             : this(exposureConfiguration, generatedAt, null, null, dailySummaries, exposureWindows) { }
 
         public ExposureResult(ExposureConfiguration exposureConfiguration,
             DateTime generatedAt,
-            IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations,
-            IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
+            ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations,
+            IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
             this.exposureConfiguration = exposureConfiguration;
 
@@ -88,10 +88,10 @@ namespace Sample.Common.Model
             return obj is ExposureResult result &&
                    _device == result._device &&
                    EnVersion == result.EnVersion &&
-                   EqualityComparer<IExposureSummary>.Default.Equals(exposureSummary, result.exposureSummary) &&
-                   EqualityComparer<IList<IExposureInformation>>.Default.Equals(exposureInformations, result.exposureInformations) &&
-                   EqualityComparer<IList<IDailySummary>>.Default.Equals(dailySummaries, result.dailySummaries) &&
-                   EqualityComparer<IList<IExposureWindow>>.Default.Equals(exposureWindows, result.exposureWindows) &&
+                   EqualityComparer<ExposureSummary>.Default.Equals(exposureSummary, result.exposureSummary) &&
+                   EqualityComparer<IList<ExposureInformation>>.Default.Equals(exposureInformations, result.exposureInformations) &&
+                   EqualityComparer<IList<DailySummary>>.Default.Equals(dailySummaries, result.dailySummaries) &&
+                   EqualityComparer<IList<ExposureWindow>>.Default.Equals(exposureWindows, result.exposureWindows) &&
                    EqualityComparer<ExposureConfiguration>.Default.Equals(exposureConfiguration, result.exposureConfiguration);
         }
 

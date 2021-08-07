@@ -5,7 +5,7 @@
     /// </summary>
     ///
     /// https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/TemporaryExposureKey
-    public interface ITemporaryExposureKey
+    public class TemporaryExposureKey
     {
         /// <summary>
         /// Number of days elapsed between symptom onset and the key being used.

@@ -6,6 +6,7 @@ using Android.Runtime;
 using Chino;
 using Chino.Android.Google;
 using Java.IO;
+using Newtonsoft.Json;
 using Sample.Common.Model;
 using Xamarin.Essentials;
 using Logger = Chino.ChinoLogger;
@@ -57,12 +58,15 @@ namespace Sample.Android
             return EnClient;
         }
 
-        public void TemporaryExposureKeyReleased(IList<ITemporaryExposureKey> temporaryExposureKeys)
+        public void TemporaryExposureKeyReleased(IList<TemporaryExposureKey> temporaryExposureKeys)
         {
             Logger.D("TemporaryExposureKeyReleased");
+
+            var serializedJson = JsonConvert.SerializeObject(temporaryExposureKeys, Formatting.Indented);
+            Logger.D(serializedJson);
         }
 
-        public void ExposureDetected(IList<IDailySummary> dailySummaries, IList<IExposureWindow> exposureWindows)
+        public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
             Logger.D("ExposureDetected ExposureWindows");
 
@@ -73,7 +77,7 @@ namespace Sample.Android
             Task.Run(async () => await SaveExposureResult(exposureResult));
         }
 
-        public void ExposureDetected(IExposureSummary exposureSummary, IList<IExposureInformation> exposureInformations)
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
             var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
                 DateTime.Now,

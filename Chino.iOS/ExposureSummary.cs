@@ -1,27 +1,19 @@
 ﻿using ExposureNotifications;
-using Newtonsoft.Json;
 
 namespace Chino.iOS
 {
     // https://developer.apple.com/documentation/exposurenotification/enexposuredetectionsummary
-    public class ExposureSummary : IExposureSummary
+    public class PlatformExposureSummary : ExposureSummary
     {
-        [JsonIgnore]
-        public ENExposureDetectionSummary Source;
+        public PlatformExposureSummary() { }
 
-        public ExposureSummary(ENExposureDetectionSummary source)
+        public PlatformExposureSummary(ENExposureDetectionSummary source)
         {
-            Source = source;
+            AttenuationDurationsInMinutes = source.AttenuationDurations;
+            DaysSinceLastExposure = (int)source.DaysSinceLastExposure;
+            MatchedKeyCount = (long)source.MatchedKeyCount;
+            MaximumRiskScore = source.MaximumRiskScore;
+            SummationRiskScore = (int)source.RiskScoreSumFullRange;
         }
-
-        public int[] AttenuationDurationsInMinutes => Source.AttenuationDurations;
-
-        public int DaysSinceLastExposure => (int)Source.DaysSinceLastExposure;
-
-        public long MatchedKeyCount => (long)Source.MatchedKeyCount;
-
-        public int MaximumRiskScore => Source.MaximumRiskScore;
-
-        public int SummationRiskScore => (int)Source.RiskScoreSumFullRange;
     }
 }
