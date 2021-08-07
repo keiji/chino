@@ -8,6 +8,8 @@ using System.Linq;
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
 using Chino.Common;
+using Android.Gms.Nearby.ExposureNotification;
+using System.Collections.Generic;
 
 namespace Chino.Android.Google
 {
@@ -182,5 +184,26 @@ namespace Chino.Android.Google
                 .Build();
         }
 #pragma warning restore CS0618 // Type or member is obsolete
+
+        public static DiagnosisKeysDataMapping ToDiagnosisKeysDataMapping(
+            this ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration googleDiagnosisKeysDataMappingConfig
+            )
+        {
+            IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms
+                = googleDiagnosisKeysDataMappingConfig.InfectiousnessForDaysSinceOnsetOfSymptoms;
+
+            IDictionary<Java.Lang.Integer, Java.Lang.Integer> daysSinceOnsetToInfectiousness = new Dictionary<Java.Lang.Integer, Java.Lang.Integer>();
+            foreach (var key in InfectiousnessForDaysSinceOnsetOfSymptoms.Keys)
+            {
+                var value = InfectiousnessForDaysSinceOnsetOfSymptoms[key];
+                daysSinceOnsetToInfectiousness.Add(new Java.Lang.Integer(key), new Java.Lang.Integer((int)value));
+            }
+
+            return new DiagnosisKeysDataMapping.DiagnosisKeysDataMappingBuilder()
+                .SetDaysSinceOnsetToInfectiousness(daysSinceOnsetToInfectiousness)
+                .SetInfectiousnessWhenDaysSinceOnsetMissing((int)googleDiagnosisKeysDataMappingConfig.InfectiousnessWhenDaysSinceOnsetMissing)
+                .SetReportTypeWhenMissing((int)googleDiagnosisKeysDataMappingConfig.ReportTypeWhenMissing)
+                .Build();
+        }
     }
 }
