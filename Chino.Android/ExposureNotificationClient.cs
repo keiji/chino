@@ -18,6 +18,9 @@ using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWi
 
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
+using Android.App.Job;
+using Newtonsoft.Json;
+using Android.OS;
 
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
@@ -33,6 +36,8 @@ namespace Chino.Android.Google
         private const string ACTION_EXPOSURE_NOT_FOUND = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_NOT_FOUND";
         private const string ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED = "com.google.android.gms.exposurenotification.ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED";
         private const string SERVICE_STATE_UPDATED = "com.google.android.gms.exposurenotification.SERVICE_STATE_UPDATED";
+
+        private const string PERMISSION_BIND_JOB_SERVICE = "android.permission.BIND_JOB_SERVICE";
 
         private const string EXTRA_TOKEN = "com.google.android.gms.exposurenotification.EXTRA_TOKEN";
         private const string EXTRA_EXPOSURE_SUMMARY = "com.google.android.gms.exposurenotification.EXTRA_EXPOSURE_SUMMARY";
@@ -69,42 +74,112 @@ namespace Chino.Android.Google
                 var action = intent.Action;
                 Logger.D($"Intent Action {action}");
 
-                switch (action)
+                var pendingResult = GoAsync();
+
+                try
                 {
-                    case ACTION_EXPOSURE_STATE_UPDATED:
-                        Logger.D($"ACTION_EXPOSURE_STATE_UPDATED");
-                        bool v1 = intent.HasExtra(EXTRA_EXPOSURE_SUMMARY);
+                    switch (action)
+                    {
+                        case ACTION_EXPOSURE_STATE_UPDATED:
+                            Logger.D($"ACTION_EXPOSURE_STATE_UPDATED");
+                            bool v1 = intent.HasExtra(EXTRA_EXPOSURE_SUMMARY);
 
-                        string varsionStr = v1 ? "1" : "2";
-                        Logger.D($"EN version {varsionStr}");
+                            string varsionStr = v1 ? "1" : "2";
+                            Logger.D($"EN version {varsionStr}");
 
-                        if (v1)
-                        {
-                            string token = intent.GetStringExtra(EXTRA_TOKEN);
-                            await GetExposureV1Async(enClient, token);
-                        }
-                        else
-                        {
-                            await GetExposureV2Async(enClient);
-                        }
-                        break;
-                    case ACTION_EXPOSURE_NOT_FOUND:
-                        Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
-                        Handler.ExposureNotDetected();
-                        break;
-                    case ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED:
-                        Logger.D($"ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED");
-                        IList<AndroidTemporaryExposureKey> tekList = intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
-                            .Cast<AndroidTemporaryExposureKey>()
-                            .ToList();
-                        IList<TemporaryExposureKey> temporaryExposureKeys = tekList.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
-                        Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
-                        break;
+                            if (v1)
+                            {
+                                string token = intent.GetStringExtra(EXTRA_TOKEN);
+                                var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
+                                ExposureDetectedV1Job.Enqueue(context, exposureSummary, exposureInformations);
+                            }
+                            else
+                            {
+                                var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient);
+                                ExposureDetectedV2Job.Enqueue(context, dailySummaries, exposureWindows);
+                            }
+                            break;
+                        case ACTION_EXPOSURE_NOT_FOUND:
+                            Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
+                            ExposureNotDetectedJob.Enqueue(context);
+                            break;
+                        case ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED:
+                            Logger.D($"ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED");
+                            IList<TemporaryExposureKey> temporaryExposureKeys = await ConvertToITemporaryExposureKeyList(intent);
+                            TemporaryExposureKeyReleasedJob.Enqueue(context, temporaryExposureKeys);
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.E($"Exception occurred: {e}");
+                }
+                finally
+                {
+                    pendingResult.Finish();
                 }
             }
 
 #pragma warning disable CS0612,CS0618 // Type or member is obsolete
-            private async Task GetExposureV1Async(ExposureNotificationClient enClient, string token)
+            [Service(Permission = PERMISSION_BIND_JOB_SERVICE)]
+            [Preserve]
+            class ExposureDetectedV1Job : JobService
+            {
+                private const int JOB_ID = 0x01;
+                private const string EXTRA_EXPOSURE_SUMMARY = "extra_exposure_sumary";
+                private const string EXTRA_EXPOSURE_INFORMATIONS = "extra_exposure_informations";
+
+                public static void Enqueue(Context context, ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
+                {
+                    var serializedJsonExposureSummary = JsonConvert.SerializeObject(exposureSummary);
+                    var serializedJsonExposureInformations = JsonConvert.SerializeObject(exposureInformations);
+
+                    PersistableBundle bundle = new PersistableBundle();
+                    bundle.PutString(EXTRA_EXPOSURE_SUMMARY, serializedJsonExposureSummary);
+                    bundle.PutString(EXTRA_EXPOSURE_INFORMATIONS, serializedJsonExposureInformations);
+
+                    JobInfo jobInfo = new JobInfo.Builder(
+                        JOB_ID,
+                        new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureDetectedV1Job))))
+                        .SetExtras(bundle)
+                        .SetOverrideDeadline(0)
+                        .Build();
+                    JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
+                    int result = jobScheduler.Schedule(jobInfo);
+                    if (result == JobScheduler.ResultSuccess)
+                    {
+                        Logger.D("ExposureDetectedV1Job scheduled");
+                    }
+                    else if (result == JobScheduler.ResultFailure)
+                    {
+                        Logger.D("ExposureDetectedV1Job schedule failed");
+                    }
+                }
+
+                public override bool OnStartJob(JobParameters @params)
+                {
+                    var serializedJsonExposureSummary = @params.Extras.GetString(EXTRA_EXPOSURE_SUMMARY);
+                    var serializedJsonExposureInformations = @params.Extras.GetString(EXTRA_EXPOSURE_INFORMATIONS);
+
+                    ExposureSummary exposureSummary = JsonConvert.DeserializeObject<ExposureSummary>(serializedJsonExposureSummary);
+                    IList<PlatformExposureInformation> exposureInformations = JsonConvert.DeserializeObject<List<PlatformExposureInformation>>(serializedJsonExposureInformations);
+
+                    Handler.ExposureDetected(
+                        exposureSummary,
+                        exposureInformations.Select(ei => (ExposureInformation)ei).ToList()
+                        );
+                    JobFinished(@params, false);
+
+                    return true;
+                }
+
+                public override bool OnStopJob(JobParameters @params) => false;
+            }
+
+            private async Task<(ExposureSummary, List<ExposureInformation> exposureInformations)> GetExposureV1Async(
+                ExposureNotificationClient enClient,
+                string token
+                )
             {
                 Logger.D($"GetExposureV1Async");
 
@@ -115,7 +190,7 @@ namespace Chino.Android.Google
                     IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
                     List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 
-                    Handler.ExposureDetected(new PlatformExposureSummary(exposureSummary), exposureInformations);
+                    return (new PlatformExposureSummary(exposureSummary), exposureInformations);
                 }
                 catch (ApiException exception)
                 {
@@ -128,7 +203,67 @@ namespace Chino.Android.Google
             }
 #pragma warning restore CS06122,CS0618 // Type or member is obsolete
 
-            private async Task GetExposureV2Async(ExposureNotificationClient enClient)
+            [Service(Permission = PERMISSION_BIND_JOB_SERVICE)]
+            [Preserve]
+            class ExposureDetectedV2Job : JobService
+            {
+                private const int JOB_ID = 0x02;
+                private const string EXTRA_DAILY_SUMMARIES = "extra_daily_summaries";
+                private const string EXTRA_EXPOSURE_WINDOWS = "extra_exposure_informations";
+
+                public static void Enqueue(Context context,
+                    IList<DailySummary> dailySummaries,
+                    IList<ExposureWindow> exposureWindows
+                    )
+                {
+                    var serializedJsonDailySummaries = JsonConvert.SerializeObject(dailySummaries);
+                    var serializedJsonExposureWindows = JsonConvert.SerializeObject(exposureWindows);
+
+                    PersistableBundle bundle = new PersistableBundle();
+                    bundle.PutString(EXTRA_DAILY_SUMMARIES, serializedJsonDailySummaries);
+                    bundle.PutString(EXTRA_EXPOSURE_WINDOWS, serializedJsonExposureWindows);
+
+                    JobInfo jobInfo = new JobInfo.Builder(
+                        JOB_ID,
+                        new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureDetectedV2Job))))
+                        .SetExtras(bundle)
+                        .SetOverrideDeadline(0)
+                        .Build();
+                    JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
+                    int result = jobScheduler.Schedule(jobInfo);
+                    if (result == JobScheduler.ResultSuccess)
+                    {
+                        Logger.D("ExposureDetectedV2Job scheduled");
+                    }
+                    else if (result == JobScheduler.ResultFailure)
+                    {
+                        Logger.D("ExposureDetectedV2Job schedule failed");
+                    }
+                }
+
+                public override bool OnStartJob(JobParameters @params)
+                {
+                    var serializedJsonDailySummaries = @params.Extras.GetString(EXTRA_DAILY_SUMMARIES);
+                    var serializedJsonExposureWindows = @params.Extras.GetString(EXTRA_EXPOSURE_WINDOWS);
+
+                    IList<DailySummary> dailySummaries = JsonConvert.DeserializeObject<List<DailySummary>>(serializedJsonDailySummaries);
+                    IList<ExposureWindow> exposureWindows = JsonConvert.DeserializeObject<List<ExposureWindow>>(serializedJsonExposureWindows);
+
+                    Handler.ExposureDetected(
+                        dailySummaries,
+                        exposureWindows
+                        );
+                    JobFinished(@params, false);
+
+                    return true;
+                }
+
+                public override bool OnStopJob(JobParameters @params) => false;
+            }
+
+            private async Task<(List<DailySummary> dailySummaries, List<ExposureWindow> exposureWindows)> GetExposureV2Async(
+                ExposureNotificationClient enClient
+                )
             {
                 Logger.D($"GetExposureV2Async");
 
@@ -146,7 +281,7 @@ namespace Chino.Android.Google
 
                     Logger.D(exposureWindows);
 
-                    Handler.ExposureDetected(dailySummaries, exposureWindows);
+                    return (dailySummaries, exposureWindows);
                 }
                 catch (ApiException exception)
                 {
@@ -158,17 +293,112 @@ namespace Chino.Android.Google
                 }
             }
 
-        }
-
-        private static void Print(IList<DailySummary> dailySummaries)
-        {
-            Logger.D($"dailySummaries - {dailySummaries.Count()}");
-
-            foreach (var d in dailySummaries)
+            private static void Print(IList<DailySummary> dailySummaries)
             {
-                Logger.D($"MaximumScore: {d.DaySummary.MaximumScore}");
-                Logger.D($"ScoreSum: {d.DaySummary.ScoreSum}");
-                Logger.D($"WeightedDurationSum: {d.DaySummary.WeightedDurationSum}");
+                Logger.D($"dailySummaries - {dailySummaries.Count()}");
+
+                foreach (var d in dailySummaries)
+                {
+                    Logger.D($"MaximumScore: {d.DaySummary.MaximumScore}");
+                    Logger.D($"ScoreSum: {d.DaySummary.ScoreSum}");
+                    Logger.D($"WeightedDurationSum: {d.DaySummary.WeightedDurationSum}");
+                }
+            }
+
+            private Task<List<TemporaryExposureKey>> ConvertToITemporaryExposureKeyList(Intent intent)
+            {
+                return Task.Run(() => intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
+                            .Cast<AndroidTemporaryExposureKey>()
+                            .Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek))
+                            .ToList()
+                            );
+            }
+
+            [Service(Permission = PERMISSION_BIND_JOB_SERVICE)]
+            [Preserve]
+            class ExposureNotDetectedJob : JobService
+            {
+                private const int JOB_ID = 0x03;
+
+                public static void Enqueue(Context context)
+                {
+                    PersistableBundle bundle = new PersistableBundle();
+
+                    JobInfo jobInfo = new JobInfo.Builder(
+                        JOB_ID,
+                        new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureNotDetectedJob))))
+                        .SetExtras(bundle)
+                        .SetOverrideDeadline(0)
+                        .Build();
+                    JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
+                    int result = jobScheduler.Schedule(jobInfo);
+                    if (result == JobScheduler.ResultSuccess)
+                    {
+                        Logger.D("ExposureNotDetectedJob scheduled");
+                    }
+                    else if (result == JobScheduler.ResultFailure)
+                    {
+                        Logger.D("ExposureNotDetectedJob schedule failed");
+                    }
+                }
+
+                public override bool OnStartJob(JobParameters @params)
+                {
+                    Handler.ExposureNotDetected();
+
+                    JobFinished(@params, false);
+
+                    return true;
+                }
+
+                public override bool OnStopJob(JobParameters @params) => false;
+            }
+
+            [Service(Permission = PERMISSION_BIND_JOB_SERVICE)]
+            [Preserve]
+            class TemporaryExposureKeyReleasedJob : JobService
+            {
+                private const int JOB_ID = 0x04;
+                private const string EXTRA_TEMPORARY_EXPOSURE_KEYS = "extra_temporary_exposure_keys";
+
+                public static void Enqueue(Context context, IList<TemporaryExposureKey> temporaryExposureKeys)
+                {
+                    var serializedJsonTemporaryExposureKeys = JsonConvert.SerializeObject(temporaryExposureKeys);
+
+                    PersistableBundle bundle = new PersistableBundle();
+                    bundle.PutString(EXTRA_TEMPORARY_EXPOSURE_KEYS, serializedJsonTemporaryExposureKeys);
+
+                    JobInfo jobInfo = new JobInfo.Builder(
+                        JOB_ID,
+                        new ComponentName(context, Java.Lang.Class.FromType(typeof(TemporaryExposureKeyReleasedJob))))
+                        .SetExtras(bundle)
+                        .SetOverrideDeadline(0)
+                        .Build();
+                    JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
+                    int result = jobScheduler.Schedule(jobInfo);
+                    if (result == JobScheduler.ResultSuccess)
+                    {
+                        Logger.D("TemporaryExposureKeyReleasedJob scheduled");
+                    }
+                    else if (result == JobScheduler.ResultFailure)
+                    {
+                        Logger.D("TemporaryExposureKeyReleasedJob schedule failed");
+                    }
+                }
+
+                public override bool OnStartJob(JobParameters @params)
+                {
+                    var serializedJsonTemporaryExposureKeys = @params.Extras.GetString(EXTRA_TEMPORARY_EXPOSURE_KEYS);
+                    IList<TemporaryExposureKey> temporaryExposureKeys = JsonConvert.DeserializeObject<List<TemporaryExposureKey>>(serializedJsonTemporaryExposureKeys);
+
+                    Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
+
+                    JobFinished(@params, false);
+
+                    return true;
+                }
+
+                public override bool OnStopJob(JobParameters @params) => false;
             }
         }
 
