@@ -25,7 +25,7 @@ namespace Chino.Android.Google
             return new PlatformExposureSummaryData(summaryItem);
         }
 
-        private static long ConvertToMillis(int daysSinceEpoch) => daysSinceEpoch * 24 * 60 * 60 * 1000;
+        private static long ConvertToMillis(long daysSinceEpoch) => daysSinceEpoch * 24 * 60 * 60 * 1000;
 
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/DailySummary.ExposureSummaryData
         public class PlatformExposureSummaryData : ExposureSummaryData
