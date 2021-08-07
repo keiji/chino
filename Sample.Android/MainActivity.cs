@@ -11,7 +11,6 @@ using Android.Runtime;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 using Chino;
-using Chino.Common;
 using Newtonsoft.Json;
 using Sample.Common;
 using Sample.Common.Model;

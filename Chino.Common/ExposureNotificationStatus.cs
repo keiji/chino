@@ -1,6 +1,4 @@
-﻿using Chino.Common;
-
-namespace Chino
+﻿namespace Chino
 {
     /// <summary>
     /// Detail status for exposure notification service.

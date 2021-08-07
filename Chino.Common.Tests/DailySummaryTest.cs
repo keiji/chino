@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace Chino.Common.Tests
+namespace Chino.Tests
 {
     public class DailySummaryTest
     {
