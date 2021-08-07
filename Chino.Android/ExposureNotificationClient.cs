@@ -90,13 +90,11 @@ namespace Chino.Android.Google
                             if (v1)
                             {
                                 string token = intent.GetStringExtra(EXTRA_TOKEN);
-                                var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
-                                ExposureDetectedV1Job.Enqueue(context, exposureSummary, exposureInformations);
+                                ExposureDetectedV1Job.Enqueue(context, token);
                             }
                             else
                             {
-                                var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient);
-                                ExposureDetectedV2Job.Enqueue(context, dailySummaries, exposureWindows);
+                                ExposureDetectedV2Job.Enqueue(context);
                             }
                             break;
                         case ACTION_EXPOSURE_NOT_FOUND:
@@ -126,17 +124,12 @@ namespace Chino.Android.Google
             class ExposureDetectedV1Job : JobService
             {
                 private const int JOB_ID = 0x01;
-                private const string EXTRA_EXPOSURE_SUMMARY = "extra_exposure_sumary";
-                private const string EXTRA_EXPOSURE_INFORMATIONS = "extra_exposure_informations";
+                private const string EXTRA_TOKEN = "extra_token";
 
-                public static void Enqueue(Context context, ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
+                public static void Enqueue(Context context, string token)
                 {
-                    var serializedJsonExposureSummary = JsonConvert.SerializeObject(exposureSummary);
-                    var serializedJsonExposureInformations = JsonConvert.SerializeObject(exposureInformations);
-
                     PersistableBundle bundle = new PersistableBundle();
-                    bundle.PutString(EXTRA_EXPOSURE_SUMMARY, serializedJsonExposureSummary);
-                    bundle.PutString(EXTRA_EXPOSURE_INFORMATIONS, serializedJsonExposureInformations);
+                    bundle.PutString(EXTRA_TOKEN, token);
 
                     JobInfo jobInfo = new JobInfo.Builder(
                         JOB_ID,
@@ -158,47 +151,54 @@ namespace Chino.Android.Google
 
                 public override bool OnStartJob(JobParameters @params)
                 {
-                    var serializedJsonExposureSummary = @params.Extras.GetString(EXTRA_EXPOSURE_SUMMARY);
-                    var serializedJsonExposureInformations = @params.Extras.GetString(EXTRA_EXPOSURE_INFORMATIONS);
+                    ExposureNotificationClient? enClient = null;
+                    if (ApplicationContext is IExposureNotificationHandler exposureNotificationHandler)
+                    {
+                        enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
+                    }
 
-                    ExposureSummary exposureSummary = JsonConvert.DeserializeObject<ExposureSummary>(serializedJsonExposureSummary);
-                    IList<PlatformExposureInformation> exposureInformations = JsonConvert.DeserializeObject<List<PlatformExposureInformation>>(serializedJsonExposureInformations);
+                    if (enClient == null)
+                    {
+                        Logger.E("ExposureStateBroadcastReceiver: enClient is null.");
+                        return false;
+                    }
 
-                    Handler.ExposureDetected(
-                        exposureSummary,
-                        exposureInformations.Select(ei => (ExposureInformation)ei).ToList()
-                        );
+                    var token = @params.Extras.GetString(EXTRA_TOKEN);
+
+                    var (exposureSummary, exposureInformations) = GetExposureV1Async(enClient, token).GetAwaiter().GetResult();
+                    Handler.ExposureDetected(exposureSummary, exposureInformations);
+
                     JobFinished(@params, false);
 
                     return true;
                 }
 
                 public override bool OnStopJob(JobParameters @params) => false;
-            }
 
-            private async Task<(ExposureSummary, List<ExposureInformation> exposureInformations)> GetExposureV1Async(
-                ExposureNotificationClient enClient,
-                string token
-                )
-            {
-                Logger.D($"GetExposureV1Async");
-
-                try
+                private async Task<(ExposureSummary, List<ExposureInformation> exposureInformations)> GetExposureV1Async(
+                    ExposureNotificationClient enClient,
+                    string token
+                    )
                 {
-                    AndroidExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
+                    Logger.D($"GetExposureV1Async");
 
-                    IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
-                    List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
-
-                    return (new PlatformExposureSummary(exposureSummary), exposureInformations);
-                }
-                catch (ApiException exception)
-                {
-                    if (exception.IsENException())
+                    try
                     {
-                        throw exception.ToENException();
+                        AndroidExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
+
+                        IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
+                        List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
+
+                        return (new PlatformExposureSummary(exposureSummary), exposureInformations);
                     }
-                    throw exception;
+                    catch (ApiException exception)
+                    {
+                        if (exception.IsENException())
+                        {
+                            throw exception.ToENException();
+                        }
+                        throw exception;
+                    }
                 }
             }
 #pragma warning restore CS06122,CS0618 // Type or member is obsolete
@@ -208,21 +208,10 @@ namespace Chino.Android.Google
             class ExposureDetectedV2Job : JobService
             {
                 private const int JOB_ID = 0x02;
-                private const string EXTRA_DAILY_SUMMARIES = "extra_daily_summaries";
-                private const string EXTRA_EXPOSURE_WINDOWS = "extra_exposure_informations";
 
-                public static void Enqueue(Context context,
-                    IList<DailySummary> dailySummaries,
-                    IList<ExposureWindow> exposureWindows
-                    )
+                public static void Enqueue(Context context)
                 {
-                    var serializedJsonDailySummaries = JsonConvert.SerializeObject(dailySummaries);
-                    var serializedJsonExposureWindows = JsonConvert.SerializeObject(exposureWindows);
-
                     PersistableBundle bundle = new PersistableBundle();
-                    bundle.PutString(EXTRA_DAILY_SUMMARIES, serializedJsonDailySummaries);
-                    bundle.PutString(EXTRA_EXPOSURE_WINDOWS, serializedJsonExposureWindows);
-
                     JobInfo jobInfo = new JobInfo.Builder(
                         JOB_ID,
                         new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureDetectedV2Job))))
@@ -243,11 +232,19 @@ namespace Chino.Android.Google
 
                 public override bool OnStartJob(JobParameters @params)
                 {
-                    var serializedJsonDailySummaries = @params.Extras.GetString(EXTRA_DAILY_SUMMARIES);
-                    var serializedJsonExposureWindows = @params.Extras.GetString(EXTRA_EXPOSURE_WINDOWS);
+                    ExposureNotificationClient? enClient = null;
+                    if (ApplicationContext is IExposureNotificationHandler exposureNotificationHandler)
+                    {
+                        enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
+                    }
 
-                    IList<DailySummary> dailySummaries = JsonConvert.DeserializeObject<List<DailySummary>>(serializedJsonDailySummaries);
-                    IList<ExposureWindow> exposureWindows = JsonConvert.DeserializeObject<List<ExposureWindow>>(serializedJsonExposureWindows);
+                    if (enClient == null)
+                    {
+                        Logger.E("ExposureStateBroadcastReceiver: enClient is null.");
+                        return false;
+                    }
+
+                    var (dailySummaries, exposureWindows) = GetExposureV2Async(enClient).GetAwaiter().GetResult();
 
                     Handler.ExposureDetected(
                         dailySummaries,
@@ -259,37 +256,37 @@ namespace Chino.Android.Google
                 }
 
                 public override bool OnStopJob(JobParameters @params) => false;
-            }
 
-            private async Task<(List<DailySummary> dailySummaries, List<ExposureWindow> exposureWindows)> GetExposureV2Async(
-                ExposureNotificationClient enClient
-                )
-            {
-                Logger.D($"GetExposureV2Async");
-
-                try
+                private async Task<(List<DailySummary> dailySummaries, List<ExposureWindow> exposureWindows)> GetExposureV2Async(
+                    ExposureNotificationClient enClient
+                    )
                 {
-                    IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
-                        enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
-                        );
-                    List<DailySummary> dailySummaries = dss.Select(ds => (DailySummary)new PlatformDailySummary(ds)).ToList();
+                    Logger.D($"GetExposureV2Async");
 
-                    Print(dailySummaries);
-
-                    IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
-                    List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
-
-                    Logger.D(exposureWindows);
-
-                    return (dailySummaries, exposureWindows);
-                }
-                catch (ApiException exception)
-                {
-                    if (exception.IsENException())
+                    try
                     {
-                        throw exception.ToENException();
+                        IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
+                            enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
+                            );
+                        List<DailySummary> dailySummaries = dss.Select(ds => (DailySummary)new PlatformDailySummary(ds)).ToList();
+
+                        Print(dailySummaries);
+
+                        IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
+                        List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
+
+                        Logger.D(exposureWindows);
+
+                        return (dailySummaries, exposureWindows);
                     }
-                    throw exception;
+                    catch (ApiException exception)
+                    {
+                        if (exception.IsENException())
+                        {
+                            throw exception.ToENException();
+                        }
+                        throw exception;
+                    }
                 }
             }
 
