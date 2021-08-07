@@ -51,7 +51,7 @@ jobs:
     - name: Common.Tests
       run: |
         cd Chino.Common.Tests
-        dotnet test
+        dotnet test -c ${{ matrix.Configuration }}
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: true
   pack:
