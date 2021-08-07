@@ -1,11 +1,9 @@
-name: CI
+name: Release
 
 on:
-  push:
-    branches: [ master, 'feature/**' ]
-    tags: [ 'v*' ]
-  pull_request:
-    branches: [ master, 'feature/**' ]
+  release:
+    types:
+      - created
 
   workflow_dispatch:
 
@@ -18,10 +16,6 @@ jobs:
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
-    - name: Select Xcode version
-      run: |
-        sudo xcode-select -s '/Applications/Xcode_12.4.app/Contents/Developer'
-        xcodebuild -version
     - name: Setup Xamarin
       uses: maxim-lobanov/setup-xamarin@v1
     - name: Checkout
@@ -60,3 +54,37 @@ jobs:
         dotnet test
       env:
         DOTNET_CLI_TELEMETRY_OPTOUT: true
+  pack:
+    runs-on: macos-latest
+    needs: [build]
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    steps:
+    - name: Setup Xamarin
+      uses: maxim-lobanov/setup-xamarin@v1
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Cache
+      uses: actions/cache@v2.1.5
+      env:
+        cache-name: cache-nuget-packages
+      with:
+        path: ${{ github.workspace }}/.nuget/packages
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/*.csproj') }}
+    - name: Prepare
+      run: |
+        nuget restore
+    - name: Common
+      run: |
+        msbuild ./Chino.Common/Chino.Common.csproj /t:pack /p:Configuration=Release
+    - name: Android
+      run: |
+        msbuild ./Chino.Android/Chino.Android.csproj /t:pack /p:Configuration=Release
+    - name: iOS
+      run: |
+        msbuild ./Chino.iOS/Chino.iOS.csproj /t:pack /p:Configuration=Release
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: nuget_packages
+        path: ${{ github.workspace }}/**/bin/Release/*.nupkg
