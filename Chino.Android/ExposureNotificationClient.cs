@@ -18,7 +18,6 @@ using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWi
 
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
-using Java.Util;
 
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]

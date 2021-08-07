@@ -79,10 +79,7 @@ namespace Sample.iOS
             }
         }
 
-        public void ExposureDetected(
-            IList<DailySummary> dailySummaries,
-            IList<ExposureWindow> exposureWindows
-            )
+        public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
             Logger.D("ExposureDetected ExposureWindows");
             var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
