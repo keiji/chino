@@ -331,26 +331,22 @@ namespace Chino.Android.Google
             }
 
             ExposureConfiguration = configuration;
-            ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration googleDiagnosisKeysDataMappingConfig = ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfig;
-            IDictionary<int, Infectiousness> InfectiousnessForDaysSinceOnsetOfSymptoms
-                = googleDiagnosisKeysDataMappingConfig.InfectiousnessForDaysSinceOnsetOfSymptoms;
-
-            IDictionary<Java.Lang.Integer, Java.Lang.Integer> daysSinceOnsetToInfectiousness = new Dictionary<Java.Lang.Integer, Java.Lang.Integer>();
-            foreach (var key in InfectiousnessForDaysSinceOnsetOfSymptoms.Keys)
-            {
-                var value = InfectiousnessForDaysSinceOnsetOfSymptoms[key];
-                daysSinceOnsetToInfectiousness.Add(new Java.Lang.Integer(key), new Java.Lang.Integer((int)value));
-            }
-
-            DiagnosisKeysDataMapping diagnosisKeysDataMapping = new DiagnosisKeysDataMapping.DiagnosisKeysDataMappingBuilder()
-                .SetDaysSinceOnsetToInfectiousness(daysSinceOnsetToInfectiousness)
-                .SetInfectiousnessWhenDaysSinceOnsetMissing((int)googleDiagnosisKeysDataMappingConfig.InfectiousnessWhenDaysSinceOnsetMissing)
-                .SetReportTypeWhenMissing((int)googleDiagnosisKeysDataMappingConfig.ReportTypeWhenMissing)
-                .Build();
+            DiagnosisKeysDataMapping diagnosisKeysDataMapping = configuration.GoogleDiagnosisKeysDataMappingConfig.ToDiagnosisKeysDataMapping();
 
             try
             {
-                await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
+                var currentDiagnosisKeysDataMapping = await EnClient.GetDiagnosisKeysDataMappingAsync();
+
+                // https://github.com/google/exposure-notifications-internals/blob/aaada6ce5cad0ea1493930591557f8053ef4f113/exposurenotification/src/main/java/com/google/samples/exposurenotification/nearby/DiagnosisKeysDataMapping.java#L113
+                if (!diagnosisKeysDataMapping.Equals(currentDiagnosisKeysDataMapping))
+                {
+                    await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
+                    Logger.I("DiagnosisKeysDataMapping have been updated.");
+                }
+                else
+                {
+                    Logger.D("DiagnosisKeysDataMapping is not updated.");
+                }
 
                 var files = keyFiles.Select(f => new File(f)).ToList();
                 DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);
