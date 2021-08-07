@@ -158,12 +158,8 @@ namespace Chino.Android.Google
                         );
                     List<DailySummary> dailySummaries = dss.Select(ds => (DailySummary)new PlatformDailySummary(ds)).ToList();
 
-                    Print(dailySummaries);
-
                     IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
                     List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
-
-                    Logger.D(exposureWindows);
 
                     return (dailySummaries, exposureWindows);
                 }
@@ -174,18 +170,6 @@ namespace Chino.Android.Google
                         throw exception.ToENException();
                     }
                     throw exception;
-                }
-            }
-
-            private static void Print(IList<DailySummary> dailySummaries)
-            {
-                Logger.D($"dailySummaries - {dailySummaries.Count()}");
-
-                foreach (var d in dailySummaries)
-                {
-                    Logger.D($"MaximumScore: {d.DaySummary.MaximumScore}");
-                    Logger.D($"ScoreSum: {d.DaySummary.ScoreSum}");
-                    Logger.D($"WeightedDurationSum: {d.DaySummary.WeightedDurationSum}");
                 }
             }
 
