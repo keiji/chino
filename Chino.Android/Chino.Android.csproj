@@ -47,6 +47,7 @@
     <Compile Include="ExposureSummary.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ApiExceptionStatusCodes.cs" />
+    <Compile Include="ExposureStateBroadcastReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
