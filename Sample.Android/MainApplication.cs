@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.App;
+using Android.App.Job;
 using Android.Runtime;
 using Chino;
 using Chino.Android.Google;
@@ -21,15 +22,25 @@ namespace Sample.Android
 #endif
     public class MainApplication : Application, IExposureNotificationHandler
     {
-        public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
-        {
-        }
+        private const long INITIAL_BACKOFF_MILLIS = 60 * 60 * 1000;
 
         private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
+
+        private readonly JobSetting _temporaryExposureKeyReleasedJobSetting
+            = new JobSetting(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear, true);
+        private readonly JobSetting _exposureDetectedV1JobSetting
+            = new JobSetting(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear, true);
+        private readonly JobSetting _exposureDetectedV2JobSetting
+            = new JobSetting(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear, true);
+        private readonly JobSetting _exposureNotDetectedJobSetting = null;
 
         private File _exposureDetectionResultDir;
 
         private ExposureNotificationClient EnClient = null;
+
+        public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
+        {
+        }
 
         public override void OnCreate()
         {
@@ -51,7 +62,13 @@ namespace Sample.Android
         {
             if (EnClient == null)
             {
-                EnClient = new ExposureNotificationClient();
+                EnClient = new ExposureNotificationClient()
+                {
+                    TemporaryExposureKeyReleasedJobSetting = _temporaryExposureKeyReleasedJobSetting,
+                    ExposureDetectedV1JobSetting = _exposureDetectedV1JobSetting,
+                    ExposureDetectedV2JobSetting = _exposureDetectedV2JobSetting,
+                    ExposureNotDetectedJobSetting = _exposureNotDetectedJobSetting
+                };
                 EnClient.Init(this);
             }
 

@@ -11,13 +11,11 @@ using System.Threading.Tasks;
 using System.Linq;
 
 using AndroidTemporaryExposureKey = Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey;
-using AndroidExposureSummary = Android.Gms.Nearby.ExposureNotification.ExposureSummary;
-using AndroidDailySummary = Android.Gms.Nearby.ExposureNotification.DailySummary;
-using AndroidExposureInformation = Android.Gms.Nearby.ExposureNotification.ExposureInformation;
-using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWindow;
 
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
+using Android.App.Job;
+using System.Threading;
 
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
@@ -28,167 +26,33 @@ namespace Chino.Android.Google
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationClient
     public class ExposureNotificationClient : AbsExposureNotificationClient
     {
-        private const string PERMISSION_EXPOSURE_CALLBACK = "com.google.android.gms.nearby.exposurenotification.EXPOSURE_CALLBACK";
-        private const string ACTION_EXPOSURE_STATE_UPDATED = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_STATE_UPDATED";
-        private const string ACTION_EXPOSURE_NOT_FOUND = "com.google.android.gms.exposurenotification.ACTION_EXPOSURE_NOT_FOUND";
         private const string ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED = "com.google.android.gms.exposurenotification.ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED";
-        private const string SERVICE_STATE_UPDATED = "com.google.android.gms.exposurenotification.SERVICE_STATE_UPDATED";
 
-        private const string EXTRA_TOKEN = "com.google.android.gms.exposurenotification.EXTRA_TOKEN";
-        private const string EXTRA_EXPOSURE_SUMMARY = "com.google.android.gms.exposurenotification.EXTRA_EXPOSURE_SUMMARY";
+        private const string PERMISSION_BIND_JOB_SERVICE = "android.permission.BIND_JOB_SERVICE";
+
         private const string EXTRA_TEMPORARY_EXPOSURE_KEY_LIST = "com.google.android.gms.exposurenotification.EXTRA_TEMPORARY_EXPOSURE_KEY_LIST";
 
-        [BroadcastReceiver(
-            Exported = true,
-            Permission = PERMISSION_EXPOSURE_CALLBACK
-            )]
-        [IntentFilter(new[] { ACTION_EXPOSURE_STATE_UPDATED, ACTION_EXPOSURE_NOT_FOUND, ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED })]
-        [Preserve]
-        public class ExposureStateBroadcastReceiver : BroadcastReceiver
-        {
-            public override async void OnReceive(Context context, Intent intent)
-            {
-                if (Handler == null)
-                {
-                    Logger.E("ExposureStateBroadcastReceiver: Handler is not set.");
-                    return;
-                }
+        private static readonly IntentFilter INTENT_FILTER_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED
+            = new IntentFilter(ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED);
 
-                ExposureNotificationClient? enClient = null;
-                if (context.ApplicationContext is IExposureNotificationHandler exposureNotificationHandler)
-                {
-                    enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
-                }
-
-                if (enClient == null)
-                {
-                    Logger.E("ExposureStateBroadcastReceiver: enClient is null.");
-                    return;
-                }
-
-                var action = intent.Action;
-                Logger.D($"Intent Action {action}");
-
-                var pendingResult = GoAsync();
-
-                try
-                {
-                    switch (action)
-                    {
-                        case ACTION_EXPOSURE_STATE_UPDATED:
-                            Logger.D($"ACTION_EXPOSURE_STATE_UPDATED");
-                            bool v1 = intent.HasExtra(EXTRA_EXPOSURE_SUMMARY);
-
-                            string varsionStr = v1 ? "1" : "2";
-                            Logger.D($"EN version {varsionStr}");
-
-                            if (v1)
-                            {
-                                string token = intent.GetStringExtra(EXTRA_TOKEN);
-                                var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
-                                Handler.ExposureDetected(exposureSummary, exposureInformations);
-                            }
-                            else
-                            {
-                                var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient);
-                                Handler.ExposureDetected(dailySummaries, exposureWindows);
-                            }
-                            break;
-                        case ACTION_EXPOSURE_NOT_FOUND:
-                            Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
-                            Handler.ExposureNotDetected();
-                            break;
-                        case ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED:
-                            Logger.D($"ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED");
-
-                            IList<TemporaryExposureKey> temporaryExposureKeys = await ConvertToITemporaryExposureKeyList(intent);
-                            Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
-                            break;
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Logger.E($"Exception occurred: {e}");
-                }
-                finally
-                {
-                    pendingResult.Finish();
-                }
-            }
-
-#pragma warning disable CS0612,CS0618 // Type or member is obsolete
-            private async Task<(ExposureSummary, List<ExposureInformation> exposureInformations)> GetExposureV1Async(
-                ExposureNotificationClient enClient,
-                string token
-                )
-            {
-                Logger.D($"GetExposureV1Async");
-
-                try
-                {
-                    AndroidExposureSummary exposureSummary = await enClient.EnClient.GetExposureSummaryAsync(token);
-
-                    IList<AndroidExposureInformation> eis = await enClient.EnClient.GetExposureInformationAsync(token);
-                    List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
-
-                    return (new PlatformExposureSummary(exposureSummary), exposureInformations);
-                }
-                catch (ApiException exception)
-                {
-                    if (exception.IsENException())
-                    {
-                        throw exception.ToENException();
-                    }
-                    throw exception;
-                }
-            }
-#pragma warning restore CS06122,CS0618 // Type or member is obsolete
-
-            private async Task<(List<DailySummary> dailySummaries, List<ExposureWindow> exposureWindows)> GetExposureV2Async(
-                ExposureNotificationClient enClient
-                )
-            {
-                Logger.D($"GetExposureV2Async");
-
-                try
-                {
-                    IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
-                        enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
-                        );
-                    List<DailySummary> dailySummaries = dss.Select(ds => (DailySummary)new PlatformDailySummary(ds)).ToList();
-
-                    IList<AndroidExposureWindow> ews = await enClient.EnClient.GetExposureWindowsAsync();
-                    List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
-
-                    return (dailySummaries, exposureWindows);
-                }
-                catch (ApiException exception)
-                {
-                    if (exception.IsENException())
-                    {
-                        throw exception.ToENException();
-                    }
-                    throw exception;
-                }
-            }
-
-            private Task<List<TemporaryExposureKey>> ConvertToITemporaryExposureKeyList(Intent intent)
-            {
-                return Task.Run(() => intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
-                        .Cast<AndroidTemporaryExposureKey>()
-                        .Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek))
-                        .ToList()
-                );
-            }
-        }
+        private const int API_TIMEOUT_MILLIS = 3 * 60 * 1000;
 
 #nullable enable
-        private IExposureNotificationClient? EnClient = null;
+        private Context? _appContext = null;
+        internal IExposureNotificationClient? EnClient = null;
+
 #nullable disable
+
+        public JobSetting TemporaryExposureKeyReleasedJobSetting { get; set; }
+
+        public JobSetting ExposureDetectedV1JobSetting { get; set; }
+        public JobSetting ExposureDetectedV2JobSetting { get; set; }
+        public JobSetting ExposureNotDetectedJobSetting { get; set; }
 
         public void Init(Context applicationContext)
         {
+            _appContext = applicationContext;
+
             try
             {
                 EnClient = Nearby.GetExposureNotificationClient(applicationContext);
@@ -316,12 +180,6 @@ namespace Chino.Android.Google
         {
             CheckInitialized();
 
-            if (Handler == null)
-            {
-                Logger.E("ExposureNotificationClient: Handler is not set.");
-                return;
-            }
-
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
             if (keyFiles.Count == 0)
@@ -335,7 +193,7 @@ namespace Chino.Android.Google
 
             try
             {
-                var currentDiagnosisKeysDataMapping = await EnClient.GetDiagnosisKeysDataMappingAsync();
+                DiagnosisKeysDataMapping currentDiagnosisKeysDataMapping = await EnClient.GetDiagnosisKeysDataMappingAsync();
 
                 // https://github.com/google/exposure-notifications-internals/blob/aaada6ce5cad0ea1493930591557f8053ef4f113/exposurenotification/src/main/java/com/google/samples/exposurenotification/nearby/DiagnosisKeysDataMapping.java#L113
                 if (!diagnosisKeysDataMapping.Equals(currentDiagnosisKeysDataMapping))
@@ -384,12 +242,6 @@ namespace Chino.Android.Google
         {
             CheckInitialized();
 
-            if (Handler == null)
-            {
-                Logger.E("ExposureNotificationClient: Handler is not set.");
-                return;
-            }
-
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
             if (keyFiles.Count == 0)
@@ -434,23 +286,151 @@ namespace Chino.Android.Google
                 throw exception;
             }
         }
-        public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
-        {
-            CheckInitialized();
 
-            try
+        class PreAuthorizeReleasePhoneUnlockedBroadcastReceiver : BroadcastReceiver
+        {
+            private readonly TaskCompletionSource<Intent> _taskCompletionSource;
+
+            public PreAuthorizeReleasePhoneUnlockedBroadcastReceiver(TaskCompletionSource<Intent> taskCompletionSource)
             {
-                await EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+                _taskCompletionSource = taskCompletionSource;
             }
-            catch (ApiException exception)
+            public override void OnReceive(Context context, Intent intent)
             {
-                if (exception.IsENException())
-                {
-                    throw exception.ToENException();
-                }
-                throw exception;
+                Logger.D($"ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED");
+                context.UnregisterReceiver(this);
+                _taskCompletionSource.SetResult(intent);
             }
         }
+
+        [Service(Permission = PERMISSION_BIND_JOB_SERVICE)]
+        [Preserve]
+        class TemporaryExposureKeyReleasedJob : JobService
+        {
+            private const int JOB_ID = 0x04;
+
+            public static void Enqueue(Context context, JobSetting jobSetting)
+            {
+                JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
+                    JOB_ID,
+                    new ComponentName(context, Java.Lang.Class.FromType(typeof(TemporaryExposureKeyReleasedJob))))
+                    .SetOverrideDeadline(0);
+
+                if (jobSetting != null)
+                {
+                    jobSetting.Apply(jobInfoBuilder);
+                }
+
+                JobInfo jobInfo = jobInfoBuilder.Build();
+
+                JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
+                int result = jobScheduler.Schedule(jobInfo);
+                if (result == JobScheduler.ResultSuccess)
+                {
+                    Logger.D("TemporaryExposureKeyReleasedJob scheduled");
+                }
+                else if (result == JobScheduler.ResultFailure)
+                {
+                    Logger.D("TemporaryExposureKeyReleasedJob schedule failed");
+                }
+            }
+
+            public override bool OnStartJob(JobParameters @params)
+            {
+                IExposureNotificationHandler? handler = null;
+                ExposureNotificationClient? enClient = null;
+                if (ApplicationContext is IExposureNotificationHandler exposureNotificationHandler)
+                {
+                    handler = exposureNotificationHandler;
+                    enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
+                }
+
+                if (enClient == null)
+                {
+                    Logger.E("TemporaryExposureKeyReleasedJob: enClient is null.");
+                    return false;
+                }
+                if (handler == null)
+                {
+                    Logger.E("TemporaryExposureKeyReleasedJob: handler is null.");
+                    return false;
+                }
+
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        IList<TemporaryExposureKey> temporaryExposureKeys = await GetReleasedTemporaryExposureKeys(enClient);
+                        handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
+                    }
+                    catch (ApiException exception)
+                    {
+                        if (exception.IsENException())
+                        {
+                            throw exception.ToENException();
+                        }
+                        throw exception;
+                    }
+                    finally
+                    {
+                        JobFinished(@params, false);
+                    }
+                });
+
+                return true;
+            }
+
+            public override bool OnStopJob(JobParameters @params)
+            {
+                Logger.E("TemporaryExposureKeyReleasedJob stopped.");
+                return false;
+            }
+
+            private async Task<IList<TemporaryExposureKey>> GetReleasedTemporaryExposureKeys(
+                ExposureNotificationClient enClient
+                )
+            {
+                TaskCompletionSource<Intent> taskCompletionSource = new TaskCompletionSource<Intent>();
+                BroadcastReceiver receiver = new PreAuthorizeReleasePhoneUnlockedBroadcastReceiver(taskCompletionSource);
+
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(API_TIMEOUT_MILLIS);
+                using (cancellationTokenSource.Token.Register(() =>
+                 {
+                     Logger.D("cancellationTokenSource canceled.");
+                     taskCompletionSource.TrySetCanceled();
+                     ApplicationContext.UnregisterReceiver(receiver);
+                 }))
+                {
+                    ApplicationContext.RegisterReceiver(
+                        receiver,
+                        INTENT_FILTER_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED
+                        );
+
+                    await enClient.EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+
+                    Intent intent = await taskCompletionSource.Task;
+
+                    IList<TemporaryExposureKey> temporaryExposureKeys = intent.GetParcelableArrayListExtra(EXTRA_TEMPORARY_EXPOSURE_KEY_LIST)
+                        .Cast<AndroidTemporaryExposureKey>()
+                        .Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek))
+                        .ToList();
+
+                    return temporaryExposureKeys;
+                }
+            }
+        }
+
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public override async Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync()
+        {
+            Logger.D("RequestPreAuthorizedTemporaryExposureKeyReleaseAsync");
+
+            CheckInitialized();
+
+            TemporaryExposureKeyReleasedJob.Enqueue(_appContext, TemporaryExposureKeyReleasedJobSetting);
+        }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+
     }
 
     class UnInitializedException : Exception
