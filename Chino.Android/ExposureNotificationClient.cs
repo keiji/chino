@@ -318,9 +318,7 @@ namespace Chino.Android.Google
 
                 if (jobSetting != null)
                 {
-                    jobInfoBuilder
-                        .SetBackoffCriteria(jobSetting.InitialBackoffTimeMillis, jobSetting.BackoffPolicy)
-                        .SetPersisted(jobSetting.Persisted);
+                    jobSetting.Apply(jobInfoBuilder);
                 }
 
                 JobInfo jobInfo = jobInfoBuilder.Build();
