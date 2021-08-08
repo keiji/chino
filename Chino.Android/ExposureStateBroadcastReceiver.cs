@@ -37,12 +37,26 @@ namespace Chino
         private const string EXTRA_TOKEN = "com.google.android.gms.exposurenotification.EXTRA_TOKEN";
         private const string EXTRA_EXPOSURE_SUMMARY = "com.google.android.gms.exposurenotification.EXTRA_EXPOSURE_SUMMARY";
 
+        private const int BASE_JOB_ID = 0x01 << 8;
+
         public override void OnReceive(Context context, Intent intent)
         {
             var action = intent.Action;
             Logger.D($"Intent Action {action}");
 
             var pendingResult = GoAsync();
+
+            ExposureNotificationClient? enClient = null;
+            if (context.ApplicationContext is IExposureNotificationHandler exposureNotificationHandler)
+            {
+                enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
+            }
+
+            if (enClient == null)
+            {
+                Logger.E("ExposureStateBroadcastReceiver: enClient is null.");
+                return;
+            }
 
             try
             {
@@ -58,16 +72,26 @@ namespace Chino
                         if (v1)
                         {
                             string token = intent.GetStringExtra(EXTRA_TOKEN);
-                            ExposureDetectedV1Job.Enqueue(context, token);
+                            ExposureDetectedV1Job.Enqueue(
+                                context,
+                                token,
+                                enClient.ExposureDetectedV1JobInfoBuildAction
+                                );
                         }
                         else
                         {
-                            ExposureDetectedV2Job.Enqueue(context);
+                            ExposureDetectedV2Job.Enqueue(
+                                context,
+                                enClient.ExposureDetectedV2JobInfoBuildAction
+                                );
                         }
                         break;
                     case ACTION_EXPOSURE_NOT_FOUND:
                         Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
-                        ExposureNotDetectedJob.Enqueue(context);
+                        ExposureNotDetectedJob.Enqueue(
+                            context,
+                            enClient.ExposureNotDetectedJobInfoBuildAction
+                            );
                         break;
                 }
             }
@@ -86,24 +110,30 @@ namespace Chino
         [Preserve]
         class ExposureDetectedV1Job : JobService
         {
-            private const int JOB_ID = 0x01;
+            private const int JOB_ID = BASE_JOB_ID | 0x01;
             private const string EXTRA_TOKEN = "extra_token";
 
-            private const long INITIAL_BACKOFF_MILLIS = 30 * 60 * 1000;
-
-            public static void Enqueue(Context context, string token)
+            public static void Enqueue(
+                Context context, string token,
+                Action<JobInfo.Builder> jobInfoBuildAction
+                )
             {
                 PersistableBundle bundle = new PersistableBundle();
                 bundle.PutString(EXTRA_TOKEN, token);
 
-                JobInfo jobInfo = new JobInfo.Builder(
+                JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
                     JOB_ID,
                     new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureDetectedV1Job))))
                     .SetExtras(bundle)
-                    .SetOverrideDeadline(0)
-                    .SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
-                    .SetPersisted(true)
-                    .Build();
+                    .SetOverrideDeadline(0);
+
+                if (jobInfoBuildAction != null)
+                {
+                    jobInfoBuildAction(jobInfoBuilder);
+                }
+
+                JobInfo jobInfo = jobInfoBuilder.Build();
+
                 JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
                 int result = jobScheduler.Schedule(jobInfo);
                 if (result == JobScheduler.ResultSuccess)
@@ -190,19 +220,25 @@ namespace Chino
         [Preserve]
         class ExposureDetectedV2Job : JobService
         {
-            private const int JOB_ID = 0x02;
+            private const int JOB_ID = BASE_JOB_ID | 0x02;
 
-            private const long INITIAL_BACKOFF_MILLIS = 30 * 60 * 1000;
-
-            public static void Enqueue(Context context)
+            public static void Enqueue(
+                Context context,
+                Action<JobInfo.Builder> jobInfoBuildAction
+                )
             {
-                JobInfo jobInfo = new JobInfo.Builder(
+                JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
                     JOB_ID,
                     new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureDetectedV2Job))))
-                    .SetOverrideDeadline(0)
-                    .SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
-                    .SetPersisted(true)
-                    .Build();
+                    .SetOverrideDeadline(0);
+
+                if (jobInfoBuildAction != null)
+                {
+                    jobInfoBuildAction(jobInfoBuilder);
+                }
+
+                JobInfo jobInfo = jobInfoBuilder.Build();
+
                 JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
                 int result = jobScheduler.Schedule(jobInfo);
                 if (result == JobScheduler.ResultSuccess)
@@ -289,16 +325,25 @@ namespace Chino
         [Preserve]
         class ExposureNotDetectedJob : JobService
         {
-            private const int JOB_ID = 0x03;
-            private const long INITIAL_BACKOFF_MILLIS = 15 * 60 * 1000;
+            private const int JOB_ID = BASE_JOB_ID | 0x03;
 
-            public static void Enqueue(Context context)
+            public static void Enqueue(
+                Context context,
+                Action<JobInfo.Builder> jobInfoBuildAction
+                )
             {
-                JobInfo jobInfo = new JobInfo.Builder(
+                JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
                     JOB_ID,
                     new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureNotDetectedJob))))
-                    .SetOverrideDeadline(0)
-                    .Build();
+                    .SetOverrideDeadline(0);
+
+                if (jobInfoBuildAction != null)
+                {
+                    jobInfoBuildAction(jobInfoBuilder);
+                }
+
+                JobInfo jobInfo = jobInfoBuilder.Build();
+
                 JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
                 int result = jobScheduler.Schedule(jobInfo);
                 if (result == JobScheduler.ResultSuccess)

@@ -20,7 +20,6 @@ using System.Threading;
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
 [assembly: UsesPermission(Android.Manifest.Permission.Bluetooth)]
-[assembly: UsesPermission(Android.Manifest.Permission.ReceiveBootCompleted)]
 
 namespace Chino.Android.Google
 {
@@ -36,10 +35,19 @@ namespace Chino.Android.Google
         private static readonly IntentFilter INTENT_FILTER_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED
             = new IntentFilter(ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED);
 
+        private const int API_TIMEOUT_MILLIS = 3 * 60 * 1000;
+
 #nullable enable
         private Context? _appContext = null;
         internal IExposureNotificationClient? EnClient = null;
+
 #nullable disable
+
+        public Action<JobInfo.Builder> TemporaryExposureKeyReleasedJobInfoBuildAction { get; set; }
+
+        public Action<JobInfo.Builder> ExposureDetectedV1JobInfoBuildAction { get; set; }
+        public Action<JobInfo.Builder> ExposureDetectedV2JobInfoBuildAction { get; set; }
+        public Action<JobInfo.Builder> ExposureNotDetectedJobInfoBuildAction { get; set; }
 
         public void Init(Context applicationContext)
         {
@@ -300,19 +308,21 @@ namespace Chino.Android.Google
         class TemporaryExposureKeyReleasedJob : JobService
         {
             private const int JOB_ID = 0x04;
-            private const long INITIAL_BACKOFF_MILLIS = 30 * 60 * 1000;
 
-            private const int API_TIMEOUT_MILLIS = 3 * 60 * 1000;
-
-            public static void Enqueue(Context context)
+            public static void Enqueue(Context context, Action<JobInfo.Builder> jobInfoBuildAction)
             {
-                JobInfo jobInfo = new JobInfo.Builder(
+                JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
                     JOB_ID,
                     new ComponentName(context, Java.Lang.Class.FromType(typeof(TemporaryExposureKeyReleasedJob))))
-                    .SetOverrideDeadline(0)
-                    .SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
-                    .SetPersisted(true)
-                    .Build();
+                    .SetOverrideDeadline(0);
+
+                if (jobInfoBuildAction != null)
+                {
+                    jobInfoBuildAction(jobInfoBuilder);
+                }
+
+                JobInfo jobInfo = jobInfoBuilder.Build();
+
                 JobScheduler jobScheduler = (JobScheduler)context.GetSystemService(JobSchedulerService);
                 int result = jobScheduler.Schedule(jobInfo);
                 if (result == JobScheduler.ResultSuccess)
@@ -417,7 +427,7 @@ namespace Chino.Android.Google
 
             CheckInitialized();
 
-            TemporaryExposureKeyReleasedJob.Enqueue(_appContext);
+            TemporaryExposureKeyReleasedJob.Enqueue(_appContext, TemporaryExposureKeyReleasedJobInfoBuildAction);
         }
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 

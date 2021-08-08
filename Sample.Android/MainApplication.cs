@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Android.App;
+using Android.App.Job;
 using Android.Runtime;
 using Chino;
 using Chino.Android.Google;
@@ -21,15 +22,36 @@ namespace Sample.Android
 #endif
     public class MainApplication : Application, IExposureNotificationHandler
     {
-        public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
-        {
-        }
+        private const long INITIAL_BACKOFF_MILLIS = 60 * 60 * 1000;
 
         private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
+
+        private readonly Action<JobInfo.Builder> _temporaryExposureKeyReleasedJobInfoBuildAction = builder =>
+        {
+            builder.SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
+                .SetPersisted(true);
+        };
+        private readonly Action<JobInfo.Builder> _exposureDetectedV1JobInfoBuildAction = builder =>
+        {
+            builder.SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
+                .SetPersisted(true);
+        };
+        private readonly Action<JobInfo.Builder> _exposureDetectedV2JobInfoBuildAction = builder =>
+        {
+            builder.SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
+                .SetPersisted(true);
+        };
+        private readonly Action<JobInfo.Builder> _exposureNotDetectedJobInfoBuildAction = builder =>
+        {
+        };
 
         private File _exposureDetectionResultDir;
 
         private ExposureNotificationClient EnClient = null;
+
+        public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
+        {
+        }
 
         public override void OnCreate()
         {
@@ -52,6 +74,10 @@ namespace Sample.Android
             if (EnClient == null)
             {
                 EnClient = new ExposureNotificationClient();
+                EnClient.TemporaryExposureKeyReleasedJobInfoBuildAction = _temporaryExposureKeyReleasedJobInfoBuildAction;
+                EnClient.ExposureDetectedV1JobInfoBuildAction = _exposureDetectedV1JobInfoBuildAction;
+                EnClient.ExposureDetectedV2JobInfoBuildAction = _exposureDetectedV2JobInfoBuildAction;
+                EnClient.ExposureNotDetectedJobInfoBuildAction = _exposureNotDetectedJobInfoBuildAction;
                 EnClient.Init(this);
             }
 
