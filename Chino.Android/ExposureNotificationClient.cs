@@ -43,11 +43,11 @@ namespace Chino.Android.Google
 
 #nullable disable
 
-        public Action<JobInfo.Builder> TemporaryExposureKeyReleasedJobInfoBuildAction { get; set; }
+        public JobSetting TemporaryExposureKeyReleasedJobSetting { get; set; }
 
-        public Action<JobInfo.Builder> ExposureDetectedV1JobInfoBuildAction { get; set; }
-        public Action<JobInfo.Builder> ExposureDetectedV2JobInfoBuildAction { get; set; }
-        public Action<JobInfo.Builder> ExposureNotDetectedJobInfoBuildAction { get; set; }
+        public JobSetting ExposureDetectedV1JobSetting { get; set; }
+        public JobSetting ExposureDetectedV2JobSetting { get; set; }
+        public JobSetting ExposureNotDetectedJobSetting { get; set; }
 
         public void Init(Context applicationContext)
         {
@@ -309,16 +309,18 @@ namespace Chino.Android.Google
         {
             private const int JOB_ID = 0x04;
 
-            public static void Enqueue(Context context, Action<JobInfo.Builder> jobInfoBuildAction)
+            public static void Enqueue(Context context, JobSetting jobSetting)
             {
                 JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
                     JOB_ID,
                     new ComponentName(context, Java.Lang.Class.FromType(typeof(TemporaryExposureKeyReleasedJob))))
                     .SetOverrideDeadline(0);
 
-                if (jobInfoBuildAction != null)
+                if (jobSetting != null)
                 {
-                    jobInfoBuildAction(jobInfoBuilder);
+                    jobInfoBuilder
+                        .SetBackoffCriteria(jobSetting.InitialBackoffTimeMillis, jobSetting.BackoffPolicy)
+                        .SetPersisted(jobSetting.Persisted);
                 }
 
                 JobInfo jobInfo = jobInfoBuilder.Build();
@@ -427,7 +429,7 @@ namespace Chino.Android.Google
 
             CheckInitialized();
 
-            TemporaryExposureKeyReleasedJob.Enqueue(_appContext, TemporaryExposureKeyReleasedJobInfoBuildAction);
+            TemporaryExposureKeyReleasedJob.Enqueue(_appContext, TemporaryExposureKeyReleasedJobSetting);
         }
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 

@@ -26,24 +26,13 @@ namespace Sample.Android
 
         private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
 
-        private readonly Action<JobInfo.Builder> _temporaryExposureKeyReleasedJobInfoBuildAction = builder =>
-        {
-            builder.SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
-                .SetPersisted(true);
-        };
-        private readonly Action<JobInfo.Builder> _exposureDetectedV1JobInfoBuildAction = builder =>
-        {
-            builder.SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
-                .SetPersisted(true);
-        };
-        private readonly Action<JobInfo.Builder> _exposureDetectedV2JobInfoBuildAction = builder =>
-        {
-            builder.SetBackoffCriteria(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear)
-                .SetPersisted(true);
-        };
-        private readonly Action<JobInfo.Builder> _exposureNotDetectedJobInfoBuildAction = builder =>
-        {
-        };
+        private readonly JobSetting _temporaryExposureKeyReleasedJobSetting
+            = new JobSetting(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear, true);
+        private readonly JobSetting _exposureDetectedV1JobSetting
+            = new JobSetting(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear, true);
+        private readonly JobSetting _exposureDetectedV2JobSetting
+            = new JobSetting(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear, true);
+        private readonly JobSetting _exposureNotDetectedJobSetting = null;
 
         private File _exposureDetectionResultDir;
 
@@ -73,11 +62,13 @@ namespace Sample.Android
         {
             if (EnClient == null)
             {
-                EnClient = new ExposureNotificationClient();
-                EnClient.TemporaryExposureKeyReleasedJobInfoBuildAction = _temporaryExposureKeyReleasedJobInfoBuildAction;
-                EnClient.ExposureDetectedV1JobInfoBuildAction = _exposureDetectedV1JobInfoBuildAction;
-                EnClient.ExposureDetectedV2JobInfoBuildAction = _exposureDetectedV2JobInfoBuildAction;
-                EnClient.ExposureNotDetectedJobInfoBuildAction = _exposureNotDetectedJobInfoBuildAction;
+                EnClient = new ExposureNotificationClient()
+                {
+                    TemporaryExposureKeyReleasedJobSetting = _temporaryExposureKeyReleasedJobSetting,
+                    ExposureDetectedV1JobSetting = _exposureDetectedV1JobSetting,
+                    ExposureDetectedV2JobSetting = _exposureDetectedV2JobSetting,
+                    ExposureNotDetectedJobSetting = _exposureNotDetectedJobSetting
+                };
                 EnClient.Init(this);
             }
 

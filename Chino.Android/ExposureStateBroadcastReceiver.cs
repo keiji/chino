@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Android.Gms.Common.Apis;
 
-namespace Chino
+namespace Chino.Android.Google
 {
     [BroadcastReceiver(
         Exported = true,
@@ -75,14 +75,14 @@ namespace Chino
                             ExposureDetectedV1Job.Enqueue(
                                 context,
                                 token,
-                                enClient.ExposureDetectedV1JobInfoBuildAction
+                                enClient.ExposureDetectedV1JobSetting
                                 );
                         }
                         else
                         {
                             ExposureDetectedV2Job.Enqueue(
                                 context,
-                                enClient.ExposureDetectedV2JobInfoBuildAction
+                                enClient.ExposureDetectedV2JobSetting
                                 );
                         }
                         break;
@@ -90,7 +90,7 @@ namespace Chino
                         Logger.D($"ACTION_EXPOSURE_NOT_FOUND");
                         ExposureNotDetectedJob.Enqueue(
                             context,
-                            enClient.ExposureNotDetectedJobInfoBuildAction
+                            enClient.ExposureNotDetectedJobSetting
                             );
                         break;
                 }
@@ -115,7 +115,7 @@ namespace Chino
 
             public static void Enqueue(
                 Context context, string token,
-                Action<JobInfo.Builder> jobInfoBuildAction
+                JobSetting jobSetting
                 )
             {
                 PersistableBundle bundle = new PersistableBundle();
@@ -127,9 +127,11 @@ namespace Chino
                     .SetExtras(bundle)
                     .SetOverrideDeadline(0);
 
-                if (jobInfoBuildAction != null)
+                if (jobSetting != null)
                 {
-                    jobInfoBuildAction(jobInfoBuilder);
+                    jobInfoBuilder
+                        .SetBackoffCriteria(jobSetting.InitialBackoffTimeMillis, jobSetting.BackoffPolicy)
+                        .SetPersisted(jobSetting.Persisted);
                 }
 
                 JobInfo jobInfo = jobInfoBuilder.Build();
@@ -224,7 +226,7 @@ namespace Chino
 
             public static void Enqueue(
                 Context context,
-                Action<JobInfo.Builder> jobInfoBuildAction
+                JobSetting jobSetting
                 )
             {
                 JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
@@ -232,9 +234,11 @@ namespace Chino
                     new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureDetectedV2Job))))
                     .SetOverrideDeadline(0);
 
-                if (jobInfoBuildAction != null)
+                if (jobSetting != null)
                 {
-                    jobInfoBuildAction(jobInfoBuilder);
+                    jobInfoBuilder
+                        .SetBackoffCriteria(jobSetting.InitialBackoffTimeMillis, jobSetting.BackoffPolicy)
+                        .SetPersisted(jobSetting.Persisted);
                 }
 
                 JobInfo jobInfo = jobInfoBuilder.Build();
@@ -329,7 +333,7 @@ namespace Chino
 
             public static void Enqueue(
                 Context context,
-                Action<JobInfo.Builder> jobInfoBuildAction
+                JobSetting jobSetting
                 )
             {
                 JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(
@@ -337,9 +341,11 @@ namespace Chino
                     new ComponentName(context, Java.Lang.Class.FromType(typeof(ExposureNotDetectedJob))))
                     .SetOverrideDeadline(0);
 
-                if (jobInfoBuildAction != null)
+                if (jobSetting != null)
                 {
-                    jobInfoBuildAction(jobInfoBuilder);
+                    jobInfoBuilder
+                        .SetBackoffCriteria(jobSetting.InitialBackoffTimeMillis, jobSetting.BackoffPolicy)
+                        .SetPersisted(jobSetting.Persisted);
                 }
 
                 JobInfo jobInfo = jobInfoBuilder.Build();
