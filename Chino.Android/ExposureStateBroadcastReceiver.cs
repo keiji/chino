@@ -11,7 +11,6 @@ using AndroidExposureWindow = Android.Gms.Nearby.ExposureNotification.ExposureWi
 using Logger = Chino.ChinoLogger;
 using Android.App.Job;
 using Android.OS;
-using Chino.Android.Google;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,8 +42,6 @@ namespace Chino.Android.Google
         {
             var action = intent.Action;
             Logger.D($"Intent Action {action}");
-
-            var pendingResult = GoAsync();
 
             ExposureNotificationClient? enClient = null;
             if (context.ApplicationContext is IExposureNotificationHandler exposureNotificationHandler)
@@ -98,10 +95,6 @@ namespace Chino.Android.Google
             catch (Exception e)
             {
                 Logger.E($"Exception occurred: {e}");
-            }
-            finally
-            {
-                pendingResult.Finish();
             }
         }
 
