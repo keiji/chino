@@ -166,6 +166,8 @@ namespace Chino.Android.Google
                 {
                     try
                     {
+                        handler.PreExposureDetected();
+
                         var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
                         handler.ExposureDetected(exposureSummary, exposureInformations);
                     }
@@ -269,6 +271,8 @@ namespace Chino.Android.Google
                 {
                     try
                     {
+                        handler.PreExposureDetected();
+
                         var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient);
 
                         handler.ExposureDetected(dailySummaries, exposureWindows);

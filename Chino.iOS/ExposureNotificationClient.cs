@@ -329,34 +329,6 @@ namespace Chino.iOS
             }
         }
 
-        private void Print(ENExposureDetectionSummary summary)
-        {
-            Logger.D("ExposureDetectionSummary");
-            Logger.D($"AttenuationDurations: {summary.AttenuationDurations}");
-            Logger.D($"DaysSinceLastExposure: {summary.DaysSinceLastExposure}");
-            Logger.D($"MatchedKeyCount: {summary.MatchedKeyCount}");
-            Logger.D($"MaximumRiskScore: {summary.MaximumRiskScore}");
-            Logger.D($"MaximumRiskScoreFullRange: {summary.MaximumRiskScoreFullRange}");
-            Logger.D($"RiskScoreSumFullRange: {summary.RiskScoreSumFullRange}");
-            Logger.D($"Metadata: {summary.Metadata}");
-
-            if (summary.DaySummaries == null)
-            {
-                Logger.D($"DaySummaries are null.");
-                return;
-            }
-
-            foreach (var daySummary in summary.DaySummaries)
-            {
-                Logger.D($"Date: {daySummary.Date}");
-                Print(daySummary.ConfirmedClinicalDiagnosisSummary);
-                Print(daySummary.ConfirmedTestSummary);
-                Print(daySummary.RecursiveSummary);
-                Print(daySummary.SelfReportedSummary);
-                Print(daySummary.DaySummary);
-            }
-        }
-
         private void Print(ENExposureSummaryItem daySummary)
         {
             if (daySummary == null)
@@ -388,6 +360,8 @@ namespace Chino.iOS
 
             if (dailySummaries.Count > 0)
             {
+                Handler.PreExposureDetected();
+
                 ENExposureWindow[] ews = await EnManager.GetExposureWindowsAsync(summary);
                 List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
 
@@ -405,6 +379,8 @@ namespace Chino.iOS
 
             if (summary.MatchedKeyCount > 0)
             {
+                Handler.PreExposureDetected();
+
                 ENExposureInfo[] eis = await EnManager.GetExposureInfoAsync(summary, UserExplanation);
                 List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 

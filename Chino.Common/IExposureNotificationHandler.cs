@@ -20,6 +20,14 @@ namespace Chino
         }
 
         /// <summary>
+        /// A pre-event of Exposure is detected, before retrieving Exposure infomations.
+        /// </summary>
+        public void PreExposureDetected()
+        {
+            // do nothing
+        }
+
+        /// <summary>
         /// An event of Exposure is detected for EN API v2.
         /// </summary>
         /// <param name="dailySummaries">Daily exposure summary to pass to client side.</param>

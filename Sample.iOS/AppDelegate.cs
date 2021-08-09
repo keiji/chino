@@ -79,9 +79,15 @@ namespace Sample.iOS
             }
         }
 
+        public void PreExposureDetected()
+        {
+            Logger.D($"PreExposureDetected: {DateTime.UtcNow}");
+        }
+
         public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
-            Logger.D("ExposureDetected ExposureWindows");
+            Logger.D($"ExposureDetected V2: {DateTime.UtcNow}");
+
             var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
                 DateTime.Now,
                 dailySummaries, exposureWindows);
@@ -91,7 +97,8 @@ namespace Sample.iOS
 
         public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
-            Logger.D("ExposureDetected ExposureInformations");
+            Logger.D($"ExposureDetected V1: {DateTime.UtcNow}");
+
             var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
                 DateTime.Now,
                 exposureSummary, exposureInformations);
@@ -101,7 +108,8 @@ namespace Sample.iOS
 
         public void ExposureNotDetected()
         {
-            Logger.D("ExposureNotDetected");
+            Logger.D($"ExposureNotDetected: {DateTime.UtcNow}");
+
             var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
                 DateTime.Now);
 
