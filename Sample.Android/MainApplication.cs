@@ -83,9 +83,14 @@ namespace Sample.Android
             Logger.D(serializedJson);
         }
 
+        public void PreExposureDetected()
+        {
+            Logger.D($"PreExposureDetected: {DateTime.UtcNow}");
+        }
+
         public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
-            Logger.D("ExposureDetected ExposureWindows");
+            Logger.D($"ExposureDetected ExposureWindows: {DateTime.UtcNow}");
 
             var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
                 DateTime.Now,
@@ -96,6 +101,8 @@ namespace Sample.Android
 
         public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
+            Logger.D($"ExposureDetected Legacy-v1: {DateTime.UtcNow}");
+
             var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
                 DateTime.Now,
                 exposureSummary, exposureInformations);
@@ -105,6 +112,8 @@ namespace Sample.Android
 
         public void ExposureNotDetected()
         {
+            Logger.D($"ExposureNotDetected: {DateTime.UtcNow}");
+
             var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
                 DateTime.Now);
 
