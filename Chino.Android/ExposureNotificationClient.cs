@@ -41,8 +41,6 @@ namespace Chino.Android.Google
 
 #nullable disable
 
-        public JobSetting TemporaryExposureKeyReleasedJobSetting { get; set; }
-
         public JobSetting ExposureDetectedV1JobSetting { get; set; }
         public JobSetting ExposureDetectedV2JobSetting { get; set; }
         public JobSetting ExposureNotDetectedJobSetting { get; set; }

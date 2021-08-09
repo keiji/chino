@@ -64,7 +64,6 @@ namespace Sample.Android
             {
                 EnClient = new ExposureNotificationClient()
                 {
-                    TemporaryExposureKeyReleasedJobSetting = _temporaryExposureKeyReleasedJobSetting,
                     ExposureDetectedV1JobSetting = _exposureDetectedV1JobSetting,
                     ExposureDetectedV2JobSetting = _exposureDetectedV2JobSetting,
                     ExposureNotDetectedJobSetting = _exposureNotDetectedJobSetting
