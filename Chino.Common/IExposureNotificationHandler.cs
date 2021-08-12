@@ -16,7 +16,7 @@ namespace Chino
         /// <param name="temporaryExposureKeys">List of Temporary Exposure Keys</param>
         public void TemporaryExposureKeyReleased(IList<TemporaryExposureKey> temporaryExposureKeys)
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Chino
         /// <param name="exposureWindows">List of duration of up to 30 minutes during which beacons from a TEK were observed.</param>
         public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         /// <summary>
@@ -44,12 +44,33 @@ namespace Chino
         /// <param name="exposureInformations">List of information about an exposure.</param>
         public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         /// <summary>
         /// An event of Exposure is not detected.
         /// </summary>
-        public void ExposureNotDetected();
+        public void ExposureNotDetected()
+        {
+            // do nothing
+        }
+
+        /// <summary>
+        /// An event of Exception is occurred.
+        /// </summary>
+        /// <param name="exception">Exception of Exposure Notifications API</param>
+        public void ExceptionOccurred(ENException exception)
+        {
+            // do nothing
+        }
+
+        /// <summary>
+        /// An event of Exception is occurred.
+        /// </summary>
+        /// <param name="exception">General exception</param>
+        public void ExceptionOccurred(Exception exception)
+        {
+            // do nothing
+        }
     }
 }

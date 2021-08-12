@@ -306,9 +306,15 @@ namespace Chino.iOS
             {
                 if (exception.IsENException())
                 {
-                    throw exception.ToENException();
+                    var enException = exception.ToENException();
+                    Handler.ExceptionOccurred(enException);
+                    throw enException;
                 }
-                throw exception;
+                else
+                {
+                    Handler.ExceptionOccurred(exception);
+                    throw exception;
+                }
             }
             finally
             {
@@ -327,19 +333,6 @@ namespace Chino.iOS
                     }
                 }
             }
-        }
-
-        private void Print(ENExposureSummaryItem daySummary)
-        {
-            if (daySummary == null)
-            {
-                return;
-            }
-
-            Logger.D($"ENExposureSummaryItem");
-            Logger.D($"MaximumScore: {daySummary.MaximumScore}");
-            Logger.D($"ScoreSum: {daySummary.ScoreSum}");
-            Logger.D($"WeightedDurationSum: {daySummary.WeightedDurationSum}");
         }
 
         [Obsolete]
