@@ -175,9 +175,15 @@ namespace Chino.Android.Google
                     {
                         if (exception.IsENException())
                         {
-                            throw exception.ToENException();
+                            var enException = exception.ToENException();
+                            handler.ExceptionOccurred(enException);
+                            throw enException;
                         }
-                        throw exception;
+                        else
+                        {
+                            handler.ExceptionOccurred(exception);
+                            throw exception;
+                        }
                     }
                     finally
                     {
@@ -281,9 +287,14 @@ namespace Chino.Android.Google
                     {
                         if (exception.IsENException())
                         {
-                            throw exception.ToENException();
+                            var enException = exception.ToENException();
+                            handler.ExceptionOccurred(enException);
+                            throw enException;
+                        } else
+                        {
+                            handler.ExceptionOccurred(exception);
+                            throw exception;
                         }
-                        throw exception;
                     }
                     finally
                     {
