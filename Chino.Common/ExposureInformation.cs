@@ -26,9 +26,9 @@
         public long DateMillisSinceEpoch { get; set; }
 
         /// <summary>
-        /// Length of exposure in 5 minute increments, with a 30 minute maximum.
+        /// Length of exposure in milliseconds, with a 30 minute maximum.
         /// </summary>
-        public double Duration { get; set; }
+        public double DurationInMillis { get; set; }
 
         /// <summary>
         /// The total risk calculated for the exposure.
