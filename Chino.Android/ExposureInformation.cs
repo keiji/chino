@@ -8,6 +8,8 @@ namespace Chino.Android.Google
     [Obsolete]
     public class PlatformExposureInformation : ExposureInformation
     {
+        private const int MINUTE_IN_MILLIS = 60 * 1000;
+
         public PlatformExposureInformation() { }
 
         public PlatformExposureInformation(AndroidExposureInformation source)
@@ -15,7 +17,7 @@ namespace Chino.Android.Google
             AttenuationDurationsInMillis = ConvertToMillis(source.GetAttenuationDurationsInMinutes());
             AttenuationValue = source.AttenuationValue;
             DateMillisSinceEpoch = source.DateMillisSinceEpoch;
-            Duration = source.DurationMinutes;
+            DurationInMillis = source.DurationMinutes * MINUTE_IN_MILLIS;
             TotalRiskScore = source.TotalRiskScore;
             TransmissionRiskLevel = (RiskLevel)Enum.ToObject(typeof(RiskLevel), source.TransmissionRiskLevel);
         }
