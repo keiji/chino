@@ -361,6 +361,7 @@ namespace Chino.iOS
                 List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
 
                 Handler.ExposureDetected(dailySummaries, exposureWindows);
+                Handler.ExposureDetected(new PlatformExposureSummary(summary), dailySummaries, exposureWindows);
             }
             else
             {
