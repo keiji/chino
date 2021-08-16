@@ -38,6 +38,17 @@ namespace Chino
         }
 
         /// <summary>
+        /// An event of Exposure is detected for EN API v2.
+        /// </summary>
+        /// <param name="exposureSummary">Summary information about recent exposures.</param>
+        /// <param name="dailySummaries">Daily exposure summary to pass to client side.</param>
+        /// <param name="exposureWindows">List of duration of up to 30 minutes during which beacons from a TEK were observed.</param>
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
+        {
+            // do nothing
+        }
+
+        /// <summary>
         /// An event of Exposure is detected for EN API v1.
         /// </summary>
         /// <param name="exposureSummary">Summary information about recent exposures.</param>

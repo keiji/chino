@@ -84,12 +84,14 @@ namespace Sample.iOS
             Logger.D($"PreExposureDetected: {DateTime.UtcNow}");
         }
 
-        public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
         {
             Logger.D($"ExposureDetected V2: {DateTime.UtcNow}");
 
             var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
                 DateTime.Now,
+                exposureSummary,
+                null,
                 dailySummaries, exposureWindows);
 
             Task.Run(async () => await SaveExposureResult(exposureResult));
