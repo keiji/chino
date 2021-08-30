@@ -32,7 +32,8 @@ namespace Sample.Common.Model
             IList<TemporaryExposureKey> teks,
             DateTime generatedAt,
             ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
-            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
+            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium,
+            int defaultdaysSinceOnsetOfSymptoms = 0
             )
         {
             temporaryExposureKeys = teks.Select(tek => {
@@ -40,6 +41,7 @@ namespace Sample.Common.Model
                 {
                     reportType = (int)defaultRportType,
                     transmissionRisk = (int)defaultTrasmissionRisk,
+                    daysSinceOnsetOfSymptoms = defaultdaysSinceOnsetOfSymptoms
                 };
             }).ToList();
 
@@ -71,6 +73,7 @@ namespace Sample.Common.Model
         public readonly long rollingPeriod;
         public int reportType;
         public int transmissionRisk;
+        public int daysSinceOnsetOfSymptoms;
 
         public Tek(TemporaryExposureKey tek)
         {

@@ -103,17 +103,33 @@ namespace Sample.Common
         public RequestDiagnosisKey(
             IList<TemporaryExposureKey> teks,
             ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
-            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium)
+            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
+            )
         {
             temporaryExposureKeys = teks.Select(tek =>
             {
                 return new Tek(tek)
                 {
                     reportType = (int)defaultRportType,
-                    transmissionRisk = (int)defaultTrasmissionRisk,
+                    transmissionRisk = (int)defaultTrasmissionRisk
                 };
             }).ToList();
+
+            AssignDaysSinceOnsetOfSymptoms(temporaryExposureKeys);
         }
+
+        private static void AssignDaysSinceOnsetOfSymptoms(IList<Tek> temporaryExposureKeys)
+        {
+            int zeroDayIndex = (int)Math.Floor(temporaryExposureKeys.Count / 2.0);
+            int preDaysSinceOnsetOfSymptoms = -zeroDayIndex;
+
+            for (int i = 0; i < temporaryExposureKeys.Count; i++)
+            {
+                int daysSinceOnsetOfSymptoms = preDaysSinceOnsetOfSymptoms + i;
+                temporaryExposureKeys[i].daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
+            }
+        }
+
     }
 
     public class Tek
@@ -123,6 +139,7 @@ namespace Sample.Common
         public readonly long rollingPeriod;
         public int reportType;
         public int transmissionRisk;
+        public int daysSinceOnsetOfSymptoms;
 
         public Tek(TemporaryExposureKey tek)
         {
