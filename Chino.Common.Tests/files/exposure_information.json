@@ -1,0 +1,13 @@
+{
+  "AttenuationDurationsInMillis": [
+    1800000,
+    0,
+    0,
+    0
+  ],
+  "AttenuationValue": 4,
+  "DateMillisSinceEpoch": 1629331200000,
+  "DurationInMillis": 1800000.0,
+  "TotalRiskScore": 255,
+  "TransmissionRiskLevel": 4
+}

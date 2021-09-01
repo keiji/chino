@@ -1,4 +1,7 @@
-﻿namespace Chino
+﻿using System;
+using System.Linq;
+
+namespace Chino
 {
     /// <summary>
     /// Information about an exposure, meaning a single diagnosis key over a contiguous period of time specified by durationMinutes.
@@ -39,5 +42,41 @@
         /// The transmission risk associated with the matched diagnosis key.
         /// </summary>
         public RiskLevel TransmissionRiskLevel { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is ExposureInformation information))
+            {
+                return false;
+            }
+
+            bool attenuationDurationsInMillisEqual;
+            if (AttenuationDurationsInMillis == information.AttenuationDurationsInMillis)
+            {
+                attenuationDurationsInMillisEqual = true;
+            }
+            else if (AttenuationDurationsInMillis == null || information.AttenuationDurationsInMillis == null)
+            {
+                attenuationDurationsInMillisEqual = false;
+            }
+            else
+            {
+                attenuationDurationsInMillisEqual = AttenuationDurationsInMillis.SequenceEqual(information.AttenuationDurationsInMillis);
+            }
+
+
+            return
+                   attenuationDurationsInMillisEqual &&
+                   AttenuationValue == information.AttenuationValue &&
+                   DateMillisSinceEpoch == information.DateMillisSinceEpoch &&
+                   DurationInMillis == information.DurationInMillis &&
+                   TotalRiskScore == information.TotalRiskScore &&
+                   TransmissionRiskLevel == information.TransmissionRiskLevel;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(AttenuationDurationsInMillis, AttenuationValue, DateMillisSinceEpoch, DurationInMillis, TotalRiskScore, TransmissionRiskLevel);
+        }
     }
 }

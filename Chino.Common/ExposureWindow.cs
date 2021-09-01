@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Chino
 {
@@ -38,6 +40,40 @@ namespace Chino
         /// Sightings of this ExposureWindow, time-ordered.
         /// </summary>
         public IList<ScanInstance> ScanInstances { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is ExposureWindow window))
+            {
+                return false;
+            }
+
+            bool scanInstanceEqual;
+            if (ScanInstances == window.ScanInstances)
+            {
+                scanInstanceEqual = true;
+            }
+            else if (ScanInstances == null || window.ScanInstances == null)
+            {
+                scanInstanceEqual = false;
+            }
+            else
+            {
+                scanInstanceEqual = ScanInstances.SequenceEqual(window.ScanInstances);
+            }
+
+            return
+                   CalibrationConfidence == window.CalibrationConfidence &&
+                   DateMillisSinceEpoch == window.DateMillisSinceEpoch &&
+                   Infectiousness == window.Infectiousness &&
+                   ReportType == window.ReportType &&
+                   scanInstanceEqual;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(CalibrationConfidence, DateMillisSinceEpoch, Infectiousness, ReportType, ScanInstances);
+        }
     }
 
     /// <summary>
@@ -91,6 +127,19 @@ namespace Chino
         /// Aggregation of the attenuations of all of this TEK's beacons received during the scan, in dB.
         /// </summary>
         public int TypicalAttenuationDb { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ScanInstance instance &&
+                   MinAttenuationDb == instance.MinAttenuationDb &&
+                   SecondsSinceLastScan == instance.SecondsSinceLastScan &&
+                   TypicalAttenuationDb == instance.TypicalAttenuationDb;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(MinAttenuationDb, SecondsSinceLastScan, TypicalAttenuationDb);
+        }
     }
 
     /// <summary>

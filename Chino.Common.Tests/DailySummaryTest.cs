@@ -54,5 +54,130 @@ namespace Chino.Tests
             var dailySummaries = Utils.ReadObjectFromJsonPath<List<DailySummary>>(PATH_LIST_JSON);
             Assert.AreEqual(5, dailySummaries.Count);
         }
+
+        private DailySummary CreateDailySummary()
+            => new DailySummary()
+            {
+                DateMillisSinceEpoch = 123456,
+            };
+
+        private ExposureSummaryData CreateExposureSummaryData()
+            => new ExposureSummaryData()
+            {
+                MaximumScore = 50,
+                ScoreSum = 200,
+                WeightedDurationSum = 45.0,
+            };
+
+        [Test]
+        public void EaualsTest1()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            Assert.True(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest2()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries2.DateMillisSinceEpoch = 500;
+            Assert.False(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest3()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.ConfirmedClinicalDiagnosisSummary = CreateExposureSummaryData();
+            dailySummaries2.ConfirmedClinicalDiagnosisSummary = CreateExposureSummaryData();
+            Assert.True(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest4()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.ConfirmedClinicalDiagnosisSummary = CreateExposureSummaryData();
+            dailySummaries2.ConfirmedClinicalDiagnosisSummary = CreateExposureSummaryData();
+            dailySummaries2.ConfirmedClinicalDiagnosisSummary.MaximumScore = 60;
+            Assert.False(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest5()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.ConfirmedTestSummary = CreateExposureSummaryData();
+            dailySummaries2.ConfirmedTestSummary = CreateExposureSummaryData();
+            Assert.True(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest6()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.ConfirmedTestSummary = CreateExposureSummaryData();
+            dailySummaries2.ConfirmedTestSummary = CreateExposureSummaryData();
+            dailySummaries2.ConfirmedTestSummary.MaximumScore = 60;
+            Assert.False(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest7()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.RecursiveSummary = CreateExposureSummaryData();
+            dailySummaries2.RecursiveSummary = CreateExposureSummaryData();
+            Assert.True(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest8()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.RecursiveSummary = CreateExposureSummaryData();
+            dailySummaries2.RecursiveSummary = CreateExposureSummaryData();
+            dailySummaries2.RecursiveSummary.MaximumScore = 60;
+            Assert.False(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest9()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.SelfReportedSummary = CreateExposureSummaryData();
+            dailySummaries2.SelfReportedSummary = CreateExposureSummaryData();
+            Assert.True(dailySummaries1.Equals(dailySummaries2));
+        }
+
+        [Test]
+        public void EaualsTest10()
+        {
+            var dailySummaries1 = CreateDailySummary();
+            var dailySummaries2 = CreateDailySummary();
+
+            dailySummaries1.SelfReportedSummary = CreateExposureSummaryData();
+            dailySummaries2.SelfReportedSummary = CreateExposureSummaryData();
+            dailySummaries2.SelfReportedSummary.MaximumScore = 60;
+            Assert.False(dailySummaries1.Equals(dailySummaries2));
+        }
     }
 }

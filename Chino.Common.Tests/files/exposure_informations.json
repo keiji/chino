@@ -1,0 +1,145 @@
+[
+  {
+    "AttenuationDurationsInMillis": [
+      1800000,
+      0,
+      0,
+      0
+    ],
+    "AttenuationValue": 4,
+    "DateMillisSinceEpoch": 1629331200000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1800000,
+      0,
+      0,
+      0
+    ],
+    "AttenuationValue": 5,
+    "DateMillisSinceEpoch": 1630281600000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1800000,
+      0,
+      0,
+      0
+    ],
+    "AttenuationValue": 4,
+    "DateMillisSinceEpoch": 1629244800000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1800000,
+      600000,
+      0,
+      0
+    ],
+    "AttenuationValue": 4,
+    "DateMillisSinceEpoch": 1629158400000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1800000,
+      180000,
+      0,
+      0
+    ],
+    "AttenuationValue": 4,
+    "DateMillisSinceEpoch": 1629072000000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 160,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1800000,
+      0,
+      0,
+      0
+    ],
+    "AttenuationValue": 5,
+    "DateMillisSinceEpoch": 1630195200000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1800000,
+      0,
+      0,
+      0
+    ],
+    "AttenuationValue": 5,
+    "DateMillisSinceEpoch": 1630108800000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1560000,
+      360000,
+      0,
+      0
+    ],
+    "AttenuationValue": 4,
+    "DateMillisSinceEpoch": 1630281600000,
+    "DurationInMillis": 1800000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1260000,
+      0,
+      0,
+      0
+    ],
+    "AttenuationValue": 4,
+    "DateMillisSinceEpoch": 1630281600000,
+    "DurationInMillis": 1260000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      1260000,
+      0,
+      0,
+      0
+    ],
+    "AttenuationValue": 5,
+    "DateMillisSinceEpoch": 1630281600000,
+    "DurationInMillis": 1260000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  },
+  {
+    "AttenuationDurationsInMillis": [
+      780000,
+      480000,
+      0,
+      0
+    ],
+    "AttenuationValue": 4,
+    "DateMillisSinceEpoch": 1630281600000,
+    "DurationInMillis": 1260000.0,
+    "TotalRiskScore": 255,
+    "TransmissionRiskLevel": 4
+  }
+]
