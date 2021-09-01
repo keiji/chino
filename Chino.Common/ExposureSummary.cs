@@ -1,4 +1,7 @@
-﻿namespace Chino
+﻿using System;
+using System.Linq;
+
+namespace Chino
 {
     /// <summary>
     /// Summary information about recent exposures.
@@ -36,5 +39,38 @@
         /// </summary>
         public int SummationRiskScore { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is ExposureSummary summary))
+            {
+                return false;
+            }
+
+            bool attenuationDurationsInMinutesEqual;
+            if (AttenuationDurationsInMinutes == summary.AttenuationDurationsInMinutes)
+            {
+                attenuationDurationsInMinutesEqual = true;
+            }
+            else if (AttenuationDurationsInMinutes == null || summary.AttenuationDurationsInMinutes == null)
+            {
+                attenuationDurationsInMinutesEqual = false;
+            }
+            else
+            {
+                attenuationDurationsInMinutesEqual = AttenuationDurationsInMinutes.SequenceEqual(summary.AttenuationDurationsInMinutes);
+            }
+
+            return
+                   attenuationDurationsInMinutesEqual &&
+                   DaysSinceLastExposure == summary.DaysSinceLastExposure &&
+                   MatchedKeyCount == summary.MatchedKeyCount &&
+                   MaximumRiskScore == summary.MaximumRiskScore &&
+                   SummationRiskScore == summary.SummationRiskScore;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(AttenuationDurationsInMinutes, DaysSinceLastExposure, MatchedKeyCount, MaximumRiskScore, SummationRiskScore);
+        }
     }
 }

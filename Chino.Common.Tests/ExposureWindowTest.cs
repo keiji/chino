@@ -56,6 +56,159 @@ namespace Chino.Tests
             Assert.AreEqual(345, exposureWindows.Count);
         }
 
+        private ScanInstance CreateScanInstance()
+            => new ScanInstance()
+                {
+                    MinAttenuationDb = 45,
+                    SecondsSinceLastScan = 300,
+                    TypicalAttenuationDb = 37,
+                };
 
+        private ExposureWindow CreateExposureWindow()
+            => new ExposureWindow() {
+                CalibrationConfidence = CalibrationConfidence.Medium,
+                DateMillisSinceEpoch = 152345000,
+                Infectiousness = Infectiousness.Standard,
+                ReportType = ReportType.ConfirmedTest,
+                ScanInstances = new List<ScanInstance>() { CreateScanInstance() },
+            };
+
+        [Test]
+        public void EaualsTest1()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+            Assert.True(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest2()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.CalibrationConfidence = CalibrationConfidence.High;
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest3()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.DateMillisSinceEpoch = 167545000;
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest4()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.Infectiousness = Infectiousness.High;
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest5()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.ReportType = ReportType.ConfirmedClinicalDiagnosis;
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest6()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.ScanInstances = new List<ScanInstance>() { CreateScanInstance() };
+            Assert.True(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest7()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.ScanInstances = new List<ScanInstance>() { CreateScanInstance() };
+            Assert.True(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest8()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.ScanInstances = new List<ScanInstance>() { CreateScanInstance(), CreateScanInstance() };
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest9()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            var scanInstance = CreateScanInstance();
+            scanInstance.MinAttenuationDb = 22;
+            exposureWindow2.ScanInstances = new List<ScanInstance>() { scanInstance };
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest10()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow1.ScanInstances = null;
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+
+            exposureWindow1 = CreateExposureWindow();
+            exposureWindow2 = CreateExposureWindow();
+            exposureWindow2.ScanInstances = null;
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+
+            exposureWindow1 = CreateExposureWindow();
+            exposureWindow2 = CreateExposureWindow();
+            exposureWindow1.ScanInstances = null;
+            exposureWindow2.ScanInstances = null;
+            Assert.True(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest11()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow2.ScanInstances = null;
+            Assert.False(exposureWindow1.Equals(exposureWindow2));
+
+            exposureWindow1 = CreateExposureWindow();
+            exposureWindow2 = CreateExposureWindow();
+            exposureWindow1.ScanInstances = null;
+            exposureWindow2.ScanInstances = null;
+            Assert.True(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void EaualsTest12()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+
+            exposureWindow1.ScanInstances = null;
+            exposureWindow2.ScanInstances = null;
+            Assert.True(exposureWindow1.Equals(exposureWindow2));
+        }
     }
 }
