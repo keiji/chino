@@ -11,7 +11,7 @@ namespace Chino.iOS
         {
             AttenuationDurationsInMinutes = source.AttenuationDurations;
             DaysSinceLastExposure = (int)source.DaysSinceLastExposure;
-            MatchedKeyCount = (long)source.MatchedKeyCount;
+            MatchedKeyCount = source.MatchedKeyCount;
             MaximumRiskScore = source.MaximumRiskScore;
             SummationRiskScore = (int)source.RiskScoreSumFullRange;
         }

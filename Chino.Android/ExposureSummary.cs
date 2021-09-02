@@ -13,7 +13,7 @@ namespace Chino.Android.Google
         {
             AttenuationDurationsInMinutes = source.GetAttenuationDurationsInMinutes();
             DaysSinceLastExposure = source.DaysSinceLastExposure;
-            MatchedKeyCount = source.MatchedKeyCount;
+            MatchedKeyCount = (ulong)source.MatchedKeyCount;
             MaximumRiskScore = source.MaximumRiskScore;
             SummationRiskScore = source.SummationRiskScore;
         }
