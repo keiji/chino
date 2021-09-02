@@ -24,7 +24,7 @@
         /// <summary>
         /// Number of matched diagnosis keys.
         /// </summary>
-        public long MatchedKeyCount { get; set; }
+        public ulong MatchedKeyCount { get; set; }
 
         /// <summary>
         /// The highest risk score of all exposure incidents, it will be a value 0-4096.
