@@ -13,9 +13,10 @@ namespace Sample.Common
     public interface IDiagnosisKeyServer
     {
         public Task UploadDiagnosisKeysAsync(
+            DateTime symptomOnsetDate,
             IList<TemporaryExposureKey> temporaryExposureKeyList,
-            ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
-            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
+            string idempotencyKey,
+            ReportType defaultRportType = ReportType.ConfirmedTest
             );
 
         public Task<IList<DiagnosisKeyEntry>> GetDiagnosisKeysListAsync();
