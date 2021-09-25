@@ -32,7 +32,7 @@ namespace Sample.Android
 
         private AbsExposureNotificationClient? EnClient = null;
 
-        private IEnServer _enServer;
+        private IDiagnosisKeyServer _diagnosisKeyServer;
 
         private Button? buttonEn = null;
         private Button? buttonGetTekHistory = null;
@@ -51,7 +51,7 @@ namespace Sample.Android
         private AndroidFile _configurationDir;
         private AndroidFile _exposureDetectionDir;
 
-        private ServerConfiguration _serverConfiguration;
+        private DiagnosisKeyServerConfiguration _diagnosisKeyServerConfiguration;
         private ExposureConfiguration _exposureConfiguration;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -145,11 +145,10 @@ namespace Sample.Android
             try
             {
                 IList<TemporaryExposureKey> teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
-
                 DateTime symptomOnsetDate = DateTime.UtcNow.Date - TimeSpan.FromDays(teks.Count / 2);
                 string idempotencyKey = Guid.NewGuid().ToString();
 
-                await _enServer.UploadDiagnosisKeysAsync(symptomOnsetDate, teks, idempotencyKey);
+                await _diagnosisKeyServer.UploadDiagnosisKeysAsync(symptomOnsetDate, teks, idempotencyKey);
 
                 status.Append($"diagnosisKeyEntryList have been uploaded.\n");
 
@@ -176,10 +175,10 @@ namespace Sample.Android
             Logger.D("DownloadDiagnosisKeys");
             status.Text = "DownloadDiagnosisKeys is clicked.\n";
 
-            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync();
+            var diagnosisKeyEntryList = await _diagnosisKeyServer.GetDiagnosisKeysListAsync();
             foreach(var diagnosisKeyEntry in diagnosisKeyEntryList)
             {
-                await _enServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir.AbsolutePath);
+                await _diagnosisKeyServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir.AbsolutePath);
 
                 status.Append($"{diagnosisKeyEntry.Url} has been downloaded.\n");
             }
@@ -192,11 +191,11 @@ namespace Sample.Android
             buttonProvideDiagnosisKeys.Enabled = false;
             buttonProvideDiagnosisKeysV1.Enabled = false;
 
-            _serverConfiguration = await LoadServerConfiguration();
-            serverInfo.Text = $"Endpoint: {_serverConfiguration.ApiEndpoint}\n";
-            serverInfo.Append($"Cluster ID: {_serverConfiguration.ClusterId}");
+            _diagnosisKeyServerConfiguration = await LoadDiagnosisKeyServerConfiguration();
+            serverInfo.Text = $"Endpoint: {_diagnosisKeyServerConfiguration.ApiEndpoint}\n";
+            serverInfo.Append($"Cluster ID: {_diagnosisKeyServerConfiguration.ClusterId}");
 
-            _enServer = new EnServer(_serverConfiguration);
+            _diagnosisKeyServer = new DiagnosisKeyServer(_diagnosisKeyServerConfiguration);
 
             _exposureConfiguration = await LoadExposureConfiguration();
 
@@ -261,20 +260,20 @@ namespace Sample.Android
             return exposureConfiguration;
         }
 
-        private async Task<ServerConfiguration> LoadServerConfiguration()
+        private async Task<DiagnosisKeyServerConfiguration> LoadDiagnosisKeyServerConfiguration()
         {
-            var serverConfigurationPath = new AndroidFile(_configurationDir, Constants.SERVER_CONFIGURATION_FILENAME);
-            if (serverConfigurationPath.Exists())
+            var diagnosisKeyserverConfigurationPath = new AndroidFile(_configurationDir, Constants.DIAGNOSIS_KEY_SERVER_CONFIGURATION_FILENAME);
+            if (diagnosisKeyserverConfigurationPath.Exists())
             {
-                var content = await File.ReadAllTextAsync(serverConfigurationPath.AbsolutePath);
-                return JsonConvert.DeserializeObject<ServerConfiguration>(content);
+                var content = await File.ReadAllTextAsync(diagnosisKeyserverConfigurationPath.AbsolutePath);
+                return JsonConvert.DeserializeObject<DiagnosisKeyServerConfiguration>(content);
             }
 
-            var serverConfiguration = new ServerConfiguration();
-            var json = JsonConvert.SerializeObject(serverConfiguration, Formatting.Indented);
-            await File.WriteAllTextAsync(serverConfigurationPath.AbsolutePath, json);
+            var diagnosisKeyServerConfiguration = new DiagnosisKeyServerConfiguration();
+            var json = JsonConvert.SerializeObject(diagnosisKeyServerConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(diagnosisKeyserverConfigurationPath.AbsolutePath, json);
 
-            return serverConfiguration;
+            return diagnosisKeyServerConfiguration;
         }
 
         private async Task RequestReleaseKeys()

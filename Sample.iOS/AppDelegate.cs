@@ -25,8 +25,6 @@ namespace Sample.iOS
 
         private string _configurationDir;
 
-        private ExposureDataServerConfiguration _exposureDataServerConfiguration;
-
         [Export("window")]
         public UIWindow Window { get; set; }
 
@@ -71,10 +69,10 @@ namespace Sample.iOS
                     );
             }
 
-            var serverConfiguration = new ExposureDataServerConfiguration();
-            var json = JsonConvert.SerializeObject(serverConfiguration, Formatting.Indented);
+            var exposureDataServerConfiguration = new ExposureDataServerConfiguration();
+            var json = JsonConvert.SerializeObject(exposureDataServerConfiguration, Formatting.Indented);
             await File.WriteAllTextAsync(serverConfigurationPath, json);
-            return serverConfiguration;
+            return exposureDataServerConfiguration;
         }
 
         // UISceneSession Lifecycle

@@ -3,7 +3,7 @@
 namespace Sample.Common
 {
     [JsonObject]
-    public class ServerConfiguration
+    public class DiagnosisKeyServerConfiguration
     {
         [JsonProperty("api_endpoint")]
         public string ApiEndpoint = "https://en.keiji.dev/diagnosis_keys";
