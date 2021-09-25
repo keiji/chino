@@ -363,7 +363,7 @@ namespace Chino.iOS
             List<string> keyFiles,
             ExposureConfiguration configuration,
             string token,
-            CancellationTokenSource cancellationTokenSource = default
+            CancellationTokenSource cancellationTokenSource = null
             )
         {
             CheckActivated();

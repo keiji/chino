@@ -66,7 +66,10 @@ namespace Chino
         /// </summary>
         /// <param name="keyFiles"></param>
         /// <param name="cancellationTokenSource"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, CancellationTokenSource cancellationTokenSource = default);
+        public abstract Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            CancellationTokenSource cancellationTokenSource = null
+            );
 
         /// <summary>
         /// Provides diagnosis key files for exposure checking. The files are to be synced from the server.
@@ -75,7 +78,11 @@ namespace Chino
         /// <param name="keyFiles"></param>
         /// <param name="configuration"></param>
         /// <param name="cancellationTokenSource"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, CancellationTokenSource cancellationTokenSource = default);
+        public abstract Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            ExposureConfiguration configuration,
+            CancellationTokenSource cancellationTokenSource = null
+            );
 
         /// <summary>
         /// Provides diagnosis key files for exposure checking. The files are to be synced from the server.
@@ -87,7 +94,12 @@ namespace Chino
         /// <param name="configuration"></param>
         /// <param name="token"></param>
         /// <param name="cancellationTokenSource"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token, CancellationTokenSource cancellationTokenSource = default);
+        public abstract Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            ExposureConfiguration configuration,
+            string token,
+            CancellationTokenSource cancellationTokenSource = null
+            );
 
         /// <summary>
         /// Shows a dialog to the user asking for authorization to get TemporaryExposureKeys in the background.
