@@ -9,5 +9,6 @@ namespace Sample.Common
         public const string CONFIGURATION_DIR = "config";
         public const string EXPOSURE_CONFIGURATION_FILENAME = "exposure_configuration.json";
         public const string SERVER_CONFIGURATION_FILENAME = "server_configuration.json";
+        public const string EXPOSURE_DATA_SERVER_CONFIGURATION_FILENAME = "exposure_data_server_configuration.json";
     }
 }

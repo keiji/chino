@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Android.App;
 using Android.App.Job;
 using Android.Runtime;
 using Chino;
 using Chino.Android.Google;
-using Java.IO;
 using Newtonsoft.Json;
+using Sample.Common;
 using Sample.Common.Model;
 using Xamarin.Essentials;
 using Logger = Chino.ChinoLogger;
@@ -34,7 +35,9 @@ namespace Sample.Android
             = new JobSetting(INITIAL_BACKOFF_MILLIS, BackoffPolicy.Linear, true);
         private readonly JobSetting _exposureNotDetectedJobSetting = null;
 
-        private File _exposureDetectionResultDir;
+        private string _exposureDetectionResultDir;
+
+        private string _configurationDir;
 
         private ExposureNotificationClient EnClient = null;
 
@@ -51,11 +54,33 @@ namespace Sample.Android
 
         private void InitializeDirs()
         {
-            _exposureDetectionResultDir = new File(FilesDir, EXPOSURE_DETECTION_RESULT_DIR);
-            if (!_exposureDetectionResultDir.Exists())
+            _exposureDetectionResultDir = Path.Combine(FilesDir.AbsolutePath, EXPOSURE_DETECTION_RESULT_DIR);
+            if (!Directory.Exists(_exposureDetectionResultDir))
             {
-                _exposureDetectionResultDir.Mkdirs();
+                Directory.CreateDirectory(_exposureDetectionResultDir);
             }
+
+            _configurationDir = Path.Combine(FilesDir.AbsolutePath, Constants.CONFIGURATION_DIR);
+            if (!Directory.Exists(_configurationDir))
+            {
+                Directory.CreateDirectory(_configurationDir);
+            }
+        }
+
+        private async Task<ExposureDataServerConfiguration> LoadExposureDataServerConfiguration()
+        {
+            var serverConfigurationPath = Path.Combine(_configurationDir, Constants.EXPOSURE_DATA_SERVER_CONFIGURATION_FILENAME);
+            if (File.Exists(serverConfigurationPath))
+            {
+                return JsonConvert.DeserializeObject<ExposureDataServerConfiguration>(
+                    await System.IO.File.ReadAllTextAsync(serverConfigurationPath)
+                    );
+            }
+
+            var serverConfiguration = new ExposureDataServerConfiguration();
+            var json = JsonConvert.SerializeObject(serverConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(serverConfigurationPath, json);
+            return serverConfiguration;
         }
 
         public AbsExposureNotificationClient GetEnClient()
@@ -91,47 +116,129 @@ namespace Sample.Android
         {
             Logger.D($"ExposureDetected ExposureWindows: {DateTime.UtcNow}");
 
-            var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
-                DateTime.Now,
-                dailySummaries, exposureWindows);
+            Task.Run(async () =>
+            {
+                var enVersion = (await EnClient.GetVersionAsync()).ToString();
 
-            Task.Run(async () => await SaveExposureResult(exposureResult));
+                var exposureResult = new ExposureResult(
+                    EnClient.ExposureConfiguration,
+                    DateTime.Now,
+                    dailySummaries, exposureWindows
+                    )
+                {
+                    Device = DeviceInfo.Model,
+                    EnVersion = enVersion
+                };
+                var filePath = await SaveExposureResult(exposureResult);
+
+                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+
+                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                    EnClient.ExposureConfiguration,
+                    DeviceInfo.Model,
+                    enVersion,
+                    dailySummaries, exposureWindows
+                    );
+
+                if (exposureDataResponse != null)
+                {
+                    await SaveExposureResult(exposureDataResponse);
+                    File.Delete(filePath);
+                }
+            });
         }
 
         public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
             Logger.D($"ExposureDetected Legacy-v1: {DateTime.UtcNow}");
 
-            var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
-                DateTime.Now,
-                exposureSummary, exposureInformations);
+            Task.Run(async () =>
+            {
+                var enVersion = (await EnClient.GetVersionAsync()).ToString();
 
-            Task.Run(async () => await SaveExposureResult(exposureResult));
+                var exposureResult = new ExposureResult(
+                    EnClient.ExposureConfiguration,
+                    DateTime.Now,
+                    exposureSummary, exposureInformations
+                    )
+                {
+                    Device = DeviceInfo.Model,
+                    EnVersion = enVersion
+                };
+                var filePath = await SaveExposureResult(exposureResult);
+
+                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+
+                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                    EnClient.ExposureConfiguration,
+                    DeviceInfo.Model,
+                    enVersion,
+                    exposureSummary, exposureInformations
+                    );
+
+                if (exposureDataResponse != null)
+                {
+                    await SaveExposureResult(exposureDataResponse);
+                    File.Delete(filePath);
+                }
+            });
         }
 
         public void ExposureNotDetected()
         {
             Logger.D($"ExposureNotDetected: {DateTime.UtcNow}");
 
-            var exposureResult = new ExposureResult(EnClient.ExposureConfiguration,
-                DateTime.Now);
+            Task.Run(async () =>
+            {
+                var enVersion = (await EnClient.GetVersionAsync()).ToString();
 
-            Task.Run(async () => await SaveExposureResult(exposureResult));
+                var exposureResult = new ExposureResult(
+                    EnClient.ExposureConfiguration,
+                    DateTime.Now
+                    )
+                {
+                    Device = DeviceInfo.Model,
+                    EnVersion = enVersion
+                };
+                var filePath = await SaveExposureResult(exposureResult);
+
+                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+
+                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                    EnClient.ExposureConfiguration,
+                    DeviceInfo.Model,
+                    enVersion
+                    );
+
+                if (exposureDataResponse != null)
+                {
+                    await SaveExposureResult(exposureDataResponse);
+                    File.Delete(filePath);
+                }
+            });
+
         }
 
-        private async Task SaveExposureResult(ExposureResult exposureResult)
+        private async Task<string> SaveExposureResult(ExposureResult exposureResult)
         {
-            exposureResult.Device = DeviceInfo.Model;
-            exposureResult.EnVersion = (await EnClient.GetVersionAsync()).ToString();
-
-            string fileName = $"{exposureResult.Id}.json";
+            string fileName = $"exposuredata-{exposureResult.GetHashCode()}.json";
             string json = exposureResult.ToJsonString();
 
-            var filePath = new File(_exposureDetectionResultDir, fileName);
+            var filePath = Path.Combine(_exposureDetectionResultDir, fileName);
+            await File.WriteAllTextAsync(filePath, json);
 
-            using BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
-            await bw.WriteAsync(json);
-            await bw.FlushAsync();
+            return filePath;
+        }
+
+        private async Task SaveExposureResult(ExposureDataResponse exposureDataResponse)
+        {
+            string fileName = exposureDataResponse.FileName;
+            var filePath = Path.Combine(_exposureDetectionResultDir, fileName);
+
+            await File.WriteAllTextAsync(
+                filePath,
+                JsonConvert.SerializeObject(exposureDataResponse, Formatting.Indented)
+                );
         }
     }
 }
