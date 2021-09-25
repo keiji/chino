@@ -219,6 +219,11 @@ namespace Sample.iOS
             });
         }
 
+        public void ExceptionOccurred(Exception exception)
+        {
+            Logger.E(exception);
+        }
+
         private async Task<string> SaveExposureResult(ExposureResult exposureResult)
         {
             string fileName = $"exposuredata-{exposureResult.GetHashCode()}.json";

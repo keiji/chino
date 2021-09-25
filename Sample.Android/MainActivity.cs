@@ -345,6 +345,10 @@ namespace Sample.Android
                     Guid.NewGuid().ToString()
                     );
             }
+            catch (TaskCanceledException exception)
+            {
+                Logger.E(exception);
+            }
             catch (ENException enException)
             {
                 ShowENException(enException);
@@ -367,6 +371,10 @@ namespace Sample.Android
             try
             {
                 await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
+            }
+            catch (TaskCanceledException exception)
+            {
+                Logger.E(exception);
             }
             catch (ENException enException)
             {

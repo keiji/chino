@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ExposureNotifications;
 using Foundation;
@@ -10,6 +11,8 @@ using ObjCRuntime;
 using UIKit;
 
 using Logger = Chino.ChinoLogger;
+
+#nullable enable
 
 namespace Chino.iOS
 {
@@ -192,7 +195,11 @@ namespace Chino.iOS
             }
         }
 
-        public override Task ProvideDiagnosisKeysAsync(List<string> keyFiles) => ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration());
+        public override Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            CancellationTokenSource? cancellationTokenSource = null
+            )
+            => ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration(), cancellationTokenSource);
 
         // https://developer.apple.com/documentation/exposurenotification/enmanager/3586331-detectexposures
         private async Task<(string?, string?)> DecompressZip(string zipFilePath)
@@ -240,11 +247,17 @@ namespace Chino.iOS
             return (binFilePath, sigFilePath);
         }
 
-        public async override Task ProvideDiagnosisKeysAsync(List<string> zippedKeyFiles, ExposureConfiguration configuration)
+        public async override Task ProvideDiagnosisKeysAsync(
+            List<string> zippedKeyFiles,
+            ExposureConfiguration configuration,
+            CancellationTokenSource? cancellationTokenSource = null
+            )
         {
             CheckActivated();
 
             long enAPiVersion = await GetVersionAsync();
+
+            cancellationTokenSource ??= new CancellationTokenSource();
 
             ExposureConfiguration = configuration;
 
@@ -285,7 +298,14 @@ namespace Chino.iOS
 
             try
             {
-                ENExposureDetectionSummary summary = await EnManager.Value.DetectExposuresAsync(exposureConfiguration, urls);
+                var detectExposuresTask = EnManager.Value.DetectExposuresAsync(
+                    exposureConfiguration,
+                    urls,
+                    out NSProgress result
+                    );
+                cancellationTokenSource.Token.Register(result.Cancel);
+
+                ENExposureDetectionSummary summary = await detectExposuresTask;
 
                 if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
                 {
@@ -339,11 +359,16 @@ namespace Chino.iOS
 
         [Obsolete]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
-        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token)
+        public override async Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            ExposureConfiguration configuration,
+            string token,
+            CancellationTokenSource cancellationTokenSource = default
+            )
         {
             CheckActivated();
 
-            await ProvideDiagnosisKeysAsync(keyFiles, configuration);
+            await ProvideDiagnosisKeysAsync(keyFiles, configuration, cancellationTokenSource);
         }
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 

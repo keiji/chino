@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Chino
@@ -64,7 +65,8 @@ namespace Chino
         /// Old diagnosis keys (for example older than 14 days), will be ignored.
         /// </summary>
         /// <param name="keyFiles"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles);
+        /// <param name="cancellationTokenSource"></param>
+        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, CancellationTokenSource cancellationTokenSource = default);
 
         /// <summary>
         /// Provides diagnosis key files for exposure checking. The files are to be synced from the server.
@@ -72,7 +74,8 @@ namespace Chino
         /// </summary>
         /// <param name="keyFiles"></param>
         /// <param name="configuration"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration);
+        /// <param name="cancellationTokenSource"></param>
+        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, CancellationTokenSource cancellationTokenSource = default);
 
         /// <summary>
         /// Provides diagnosis key files for exposure checking. The files are to be synced from the server.
@@ -83,7 +86,8 @@ namespace Chino
         /// <param name="keyFiles"></param>
         /// <param name="configuration"></param>
         /// <param name="token"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token);
+        /// <param name="cancellationTokenSource"></param>
+        public abstract Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token, CancellationTokenSource cancellationTokenSource = default);
 
         /// <summary>
         /// Shows a dialog to the user asking for authorization to get TemporaryExposureKeys in the background.

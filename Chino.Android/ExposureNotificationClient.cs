@@ -19,6 +19,8 @@ using System.Threading;
 [assembly: UsesFeature("android.hardware.bluetooth")]
 [assembly: UsesPermission(Android.Manifest.Permission.Bluetooth)]
 
+#nullable enable
+
 namespace Chino.Android.Google
 {
     // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationClient
@@ -26,20 +28,17 @@ namespace Chino.Android.Google
     {
         private const string ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED = "com.google.android.gms.exposurenotification.ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED";
 
-        private const string PERMISSION_BIND_JOB_SERVICE = "android.permission.BIND_JOB_SERVICE";
-
         private const string EXTRA_TEMPORARY_EXPOSURE_KEY_LIST = "com.google.android.gms.exposurenotification.EXTRA_TEMPORARY_EXPOSURE_KEY_LIST";
 
         private static readonly IntentFilter INTENT_FILTER_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED
             = new IntentFilter(ACTION_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED);
 
         private const int API_TIMEOUT_MILLIS = 3 * 60 * 1000;
+        private const int API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS = 55 * 60 * 1000;
 
-#nullable enable
         private Context? _appContext = null;
         internal IExposureNotificationClient? EnClient = null;
-
-#nullable disable
+        internal TaskCompletionSource<bool>? ExposureStateBroadcastReceiveTaskCompletionSource = null;
 
         public JobSetting ExposureDetectedV1JobSetting { get; set; }
         public JobSetting ExposureDetectedV2JobSetting { get; set; }
@@ -163,18 +162,31 @@ namespace Chino.Android.Google
             }
         }
 
-        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles)
+        public override async Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            CancellationTokenSource? cancellationTokenSource = null
+            )
         {
             await ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration()
             {
                 GoogleExposureConfig = new ExposureConfiguration.GoogleExposureConfiguration(),
                 GoogleDailySummariesConfig = new DailySummariesConfig()
-            });
+            }, cancellationTokenSource);
         }
 
-        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration)
+        public override async Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            ExposureConfiguration configuration,
+            CancellationTokenSource? cancellationTokenSource = null
+            )
         {
             CheckInitialized();
+
+            if (ExposureStateBroadcastReceiveTaskCompletionSource != null)
+            {
+                Logger.E($"Task ProvideDiagnosisKeysAsync is ongoing.");
+                return;
+            }
 
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
@@ -183,6 +195,8 @@ namespace Chino.Android.Google
                 Logger.D($"No DiagnosisKey found.");
                 return;
             }
+
+            cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
 
             ExposureConfiguration = configuration;
             DiagnosisKeysDataMapping diagnosisKeysDataMapping = configuration.GoogleDiagnosisKeysDataMappingConfig.ToDiagnosisKeysDataMapping();
@@ -204,7 +218,20 @@ namespace Chino.Android.Google
 
                 var files = keyFiles.Select(f => new File(f)).ToList();
                 DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);
+
                 await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
+
+                ExposureStateBroadcastReceiveTaskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                using (cancellationTokenSource.Token.Register(() =>
+                {
+                    Logger.D("ProvideDiagnosisKeysAsync cancellationTokenSource canceled.");
+                    ExposureStateBroadcastReceiveTaskCompletionSource.TrySetCanceled();
+                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                }))
+                _ = await ExposureStateBroadcastReceiveTaskCompletionSource.Task;
+                ExposureStateBroadcastReceiveTaskCompletionSource = null;
+
+                Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
             }
             catch (ApiException exception)
             {
@@ -234,9 +261,20 @@ namespace Chino.Android.Google
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public override async Task ProvideDiagnosisKeysAsync(List<string> keyFiles, ExposureConfiguration configuration, string token)
+        public override async Task ProvideDiagnosisKeysAsync(
+            List<string> keyFiles,
+            ExposureConfiguration configuration,
+            string token,
+            CancellationTokenSource? cancellationTokenSource = null
+            )
         {
             CheckInitialized();
+
+            if (ExposureStateBroadcastReceiveTaskCompletionSource != null)
+            {
+                Logger.E($"Task ProvideDiagnosisKeysAsync is ongoing.");
+                return;
+            }
 
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
@@ -246,6 +284,8 @@ namespace Chino.Android.Google
                 return;
             }
 
+            cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
+
             ExposureConfiguration = configuration;
 
             var files = keyFiles.Select(f => new File(f)).ToList();
@@ -253,6 +293,18 @@ namespace Chino.Android.Google
             try
             {
                 await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
+
+                ExposureStateBroadcastReceiveTaskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                using (cancellationTokenSource.Token.Register(() =>
+                {
+                    Logger.D("ProvideDiagnosisKeysAsync cancellationTokenSource canceled.");
+                    ExposureStateBroadcastReceiveTaskCompletionSource.TrySetCanceled();
+                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                }))
+                _ = await ExposureStateBroadcastReceiveTaskCompletionSource.Task;
+                ExposureStateBroadcastReceiveTaskCompletionSource = null;
+
+                Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
             }
             catch (ApiException exception)
             {
@@ -346,7 +398,7 @@ namespace Chino.Android.Google
             ExposureNotificationClient enClient
             )
         {
-            TaskCompletionSource<Intent> taskCompletionSource = new TaskCompletionSource<Intent>();
+            TaskCompletionSource<Intent> taskCompletionSource = new TaskCompletionSource<Intent>(TaskCreationOptions.RunContinuationsAsynchronously);
             BroadcastReceiver receiver = new PreAuthorizeReleasePhoneUnlockedBroadcastReceiver(taskCompletionSource);
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource(API_TIMEOUT_MILLIS);

@@ -55,6 +55,11 @@ namespace Chino.Android.Google
                 return;
             }
 
+            if (enClient.ExposureStateBroadcastReceiveTaskCompletionSource != null)
+            {
+                enClient.ExposureStateBroadcastReceiveTaskCompletionSource.SetResult(true);
+            }
+
             try
             {
                 switch (action)

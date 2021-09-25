@@ -89,6 +89,10 @@ namespace Sample.iOS
                 {
                     await DetectExposure();
                 }
+                catch (TaskCanceledException exception)
+                {
+                    Logger.E(exception);
+                }
                 catch (ENException enException)
                 {
                     ShowENException(enException);
