@@ -178,7 +178,11 @@ namespace Sample.iOS
             status.Text = "UploadDiagnosisKeys is clicked.\n";
 
             List<TemporaryExposureKey> teks = await ExposureNotificationClientManager.Shared.GetTemporaryExposureKeyHistoryAsync();
-            await _enServer.UploadDiagnosisKeysAsync(teks);
+
+            DateTime symptomOnsetDate = DateTime.UtcNow.Date - TimeSpan.FromDays(teks.Count / 2);
+            string idempotencyKey = Guid.NewGuid().ToString();
+
+            await _enServer.UploadDiagnosisKeysAsync(symptomOnsetDate, teks, idempotencyKey);
 
             status.Text += $"diagnosisKeyEntryList have been uploaded.\n";
         }
