@@ -4,6 +4,8 @@ using System.IO;
 using System.Threading.Tasks;
 using Chino;
 using Foundation;
+using Newtonsoft.Json;
+using Sample.Common;
 using Sample.Common.Model;
 using UIKit;
 using Xamarin.Essentials;
@@ -20,6 +22,8 @@ namespace Sample.iOS
         private const string EXPOSURE_DETECTION_RESULT_DIR = "exposure_detection_result";
 
         private string _exposureDetectionResultDir;
+
+        private string _configurationDir;
 
         [Export("window")]
         public UIWindow Window { get; set; }
@@ -47,6 +51,28 @@ namespace Sample.iOS
             {
                 Directory.CreateDirectory(_exposureDetectionResultDir);
             }
+
+            _configurationDir = Path.Combine(documents, Constants.CONFIGURATION_DIR);
+            if (!Directory.Exists(_configurationDir))
+            {
+                Directory.CreateDirectory(_configurationDir);
+            }
+        }
+
+        private async Task<ExposureDataServerConfiguration> LoadExposureDataServerConfiguration()
+        {
+            var serverConfigurationPath = Path.Combine(_configurationDir, Constants.EXPOSURE_DATA_SERVER_CONFIGURATION_FILENAME);
+            if (File.Exists(serverConfigurationPath))
+            {
+                return JsonConvert.DeserializeObject<ExposureDataServerConfiguration>(
+                    await File.ReadAllTextAsync(serverConfigurationPath)
+                    );
+            }
+
+            var exposureDataServerConfiguration = new ExposureDataServerConfiguration();
+            var json = JsonConvert.SerializeObject(exposureDataServerConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(serverConfigurationPath, json);
+            return exposureDataServerConfiguration;
         }
 
         // UISceneSession Lifecycle
@@ -88,47 +114,131 @@ namespace Sample.iOS
         {
             Logger.D($"ExposureDetected V2: {DateTime.UtcNow}");
 
-            var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
-                DateTime.Now,
-                exposureSummary,
-                null,
-                dailySummaries, exposureWindows);
+            Task.Run(async () =>
+            {
+                var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
 
-            Task.Run(async () => await SaveExposureResult(exposureResult));
+                var exposureResult = new ExposureResult(
+                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    DateTime.Now,
+                    exposureSummary,
+                    null,
+                    dailySummaries, exposureWindows
+                    )
+                {
+                    Device = DeviceInfo.Model,
+                    EnVersion = enVersion
+                };
+                var filePath = await SaveExposureResult(exposureResult);
+
+                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+
+                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    DeviceInfo.Model,
+                    enVersion,
+                    exposureSummary,
+                    dailySummaries, exposureWindows
+                    );
+
+                if (exposureDataResponse != null)
+                {
+                    await SaveExposureResult(exposureDataResponse);
+                    File.Delete(filePath);
+                }
+            });
         }
 
         public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
         {
             Logger.D($"ExposureDetected V1: {DateTime.UtcNow}");
 
-            var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
-                DateTime.Now,
-                exposureSummary, exposureInformations);
+            Task.Run(async () =>
+            {
+                var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
 
-            Task.Run(async () => await SaveExposureResult(exposureResult));
+                var exposureResult = new ExposureResult(
+                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    DateTime.Now,
+                    exposureSummary, exposureInformations
+                    )
+                {
+                    Device = DeviceInfo.Model,
+                    EnVersion = enVersion
+                };
+                var filePath = await SaveExposureResult(exposureResult);
+
+                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+
+                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    DeviceInfo.Model,
+                    enVersion,
+                    exposureSummary, exposureInformations
+                    );
+
+                if (exposureDataResponse != null)
+                {
+                    await SaveExposureResult(exposureDataResponse);
+                    File.Delete(filePath);
+                }
+            });
         }
 
         public void ExposureNotDetected()
         {
             Logger.D($"ExposureNotDetected: {DateTime.UtcNow}");
 
-            var exposureResult = new ExposureResult(ExposureNotificationClientManager.Shared.ExposureConfiguration,
-                DateTime.Now);
+            Task.Run(async () =>
+            {
+                var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
 
-            Task.Run(async () => await SaveExposureResult(exposureResult));
+                var exposureResult = new ExposureResult(
+                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    DateTime.Now
+                )
+                {
+                    Device = DeviceInfo.Model,
+                    EnVersion = enVersion
+                };
+                var filePath = await SaveExposureResult(exposureResult);
+
+                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+
+                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    DeviceInfo.Model,
+                    enVersion
+                    );
+
+                if (exposureDataResponse != null)
+                {
+                    await SaveExposureResult(exposureDataResponse);
+                    File.Delete(filePath);
+                }
+            });
         }
 
-        private async Task SaveExposureResult(ExposureResult exposureResult)
+        private async Task<string> SaveExposureResult(ExposureResult exposureResult)
         {
-            exposureResult.Device = DeviceInfo.Model;
-            exposureResult.EnVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
-
-            string fileName = $"{exposureResult.Id}.json";
+            string fileName = $"exposuredata-{exposureResult.GetHashCode()}.json";
             string json = exposureResult.ToJsonString();
 
             var filePath = Path.Combine(_exposureDetectionResultDir, fileName);
-
             await File.WriteAllTextAsync(filePath, json);
+
+            return filePath;
+        }
+
+        private async Task SaveExposureResult(ExposureDataResponse exposureDataResponse)
+        {
+            string fileName = exposureDataResponse.FileName;
+            var filePath = Path.Combine(_exposureDetectionResultDir, fileName);
+
+            await File.WriteAllTextAsync(
+                filePath,
+                JsonConvert.SerializeObject(exposureDataResponse, Formatting.Indented)
+                );
         }
     }
 }

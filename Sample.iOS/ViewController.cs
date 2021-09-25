@@ -18,13 +18,13 @@ namespace Sample.iOS
 {
     public partial class ViewController : UIViewController
     {
-        private IEnServer _enServer;
+        private IDiagnosisKeyServer _diagnosisKeyServer;
 
         private string _teksDir;
         private string _configurationDir;
         private string _exposureDetectionDir;
 
-        private ServerConfiguration _serverConfiguration;
+        private DiagnosisKeyServerConfiguration _diagnosisKeyServerConfiguration;
         private ExposureConfiguration _exposureConfiguration;
 
         public ViewController(IntPtr handle) : base(handle)
@@ -160,13 +160,13 @@ namespace Sample.iOS
             };
 
             _exposureConfiguration = await LoadExposureConfiguration();
-            _serverConfiguration = await LoadServerConfiguration();
+            _diagnosisKeyServerConfiguration = await LoadDiagnosisKeyServerConfiguration();
 
-            _enServer = new EnServer(_serverConfiguration);
-            ShowServerConfiguration(_serverConfiguration);
+            _diagnosisKeyServer = new DiagnosisKeyServer(_diagnosisKeyServerConfiguration);
+            ShowServerConfiguration(_diagnosisKeyServerConfiguration);
         }
 
-        private void ShowServerConfiguration(ServerConfiguration serverConfiguration)
+        private void ShowServerConfiguration(DiagnosisKeyServerConfiguration serverConfiguration)
         {
             serverInfo.Text = $"Endpoint: {serverConfiguration.ApiEndpoint}\n";
             serverInfo.Text += $"Cluster ID: {serverConfiguration.ClusterId}";
@@ -182,7 +182,7 @@ namespace Sample.iOS
             DateTime symptomOnsetDate = DateTime.UtcNow.Date - TimeSpan.FromDays(teks.Count / 2);
             string idempotencyKey = Guid.NewGuid().ToString();
 
-            await _enServer.UploadDiagnosisKeysAsync(symptomOnsetDate, teks, idempotencyKey);
+            await _diagnosisKeyServer.UploadDiagnosisKeysAsync(symptomOnsetDate, teks, idempotencyKey);
 
             status.Text += $"diagnosisKeyEntryList have been uploaded.\n";
         }
@@ -192,10 +192,10 @@ namespace Sample.iOS
             Logger.D("DownloadDiagnosisKeys");
             status.Text = "DownloadDiagnosisKeys is clicked.\n";
 
-            var diagnosisKeyEntryList = await _enServer.GetDiagnosisKeysListAsync();
+            var diagnosisKeyEntryList = await _diagnosisKeyServer.GetDiagnosisKeysListAsync();
             foreach (var diagnosisKeyEntry in diagnosisKeyEntryList)
             {
-                await _enServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir);
+                await _diagnosisKeyServer.DownloadDiagnosisKeysAsync(diagnosisKeyEntry, _exposureDetectionDir);
                 status.Text += $"{diagnosisKeyEntry.Url} has been downloaded.\n";
             }
         }
@@ -268,20 +268,20 @@ namespace Sample.iOS
             return _exposureConfiguration;
         }
 
-        private async Task<ServerConfiguration> LoadServerConfiguration()
+        private async Task<DiagnosisKeyServerConfiguration> LoadDiagnosisKeyServerConfiguration()
         {
-            var serverConfigurationPath = Path.Combine(_configurationDir, Constants.SERVER_CONFIGURATION_FILENAME);
+            var serverConfigurationPath = Path.Combine(_configurationDir, Constants.DIAGNOSIS_KEY_SERVER_CONFIGURATION_FILENAME);
             if (File.Exists(serverConfigurationPath))
             {
-                return JsonConvert.DeserializeObject<ServerConfiguration>(
+                return JsonConvert.DeserializeObject<DiagnosisKeyServerConfiguration>(
                     await File.ReadAllTextAsync(serverConfigurationPath)
                     );
             }
 
-            var serverConfiguration = new ServerConfiguration();
-            var json = JsonConvert.SerializeObject(serverConfiguration, Formatting.Indented);
+            var diagnosisKeyServerConfiguration = new DiagnosisKeyServerConfiguration();
+            var json = JsonConvert.SerializeObject(diagnosisKeyServerConfiguration, Formatting.Indented);
             await File.WriteAllTextAsync(serverConfigurationPath, json);
-            return serverConfiguration;
+            return diagnosisKeyServerConfiguration;
         }
 
         private async Task RequestPreauthorizedKeys()

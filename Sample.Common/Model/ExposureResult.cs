@@ -7,9 +7,6 @@ namespace Sample.Common.Model
 {
     public class ExposureResult
     {
-        [JsonProperty("id")]
-        public string Id;
-
         private string _device = "unknown_device";
         public string Device
         {
@@ -17,8 +14,6 @@ namespace Sample.Common.Model
             {
                 string device = value.Replace(" ", "_");
                 _device = device;
-
-                UpdateId();
             }
         }
 
@@ -71,14 +66,6 @@ namespace Sample.Common.Model
             this.exposureInformations = exposureInformations;
             this.dailySummaries = dailySummaries;
             this.exposureWindows = exposureWindows;
-
-            UpdateId();
-        }
-
-        private void UpdateId()
-        {
-            var hashCode = GetHashCode();
-            Id = $"{_device}-{hashCode}";
         }
 
         public string ToJsonString() => JsonConvert.SerializeObject(this, Formatting.Indented);

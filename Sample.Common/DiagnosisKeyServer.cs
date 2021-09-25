@@ -10,15 +10,30 @@ using Newtonsoft.Json;
 
 namespace Sample.Common
 {
-    public class EnServer : IEnServer
+    public interface IDiagnosisKeyServer
+    {
+        public Task UploadDiagnosisKeysAsync(
+            DateTime symptomOnsetDate,
+            IList<TemporaryExposureKey> temporaryExposureKeyList,
+            string idempotencyKey,
+            ReportType defaultRportType = ReportType.ConfirmedTest
+            );
+
+        public Task<IList<DiagnosisKeyEntry>> GetDiagnosisKeysListAsync();
+
+        public Task DownloadDiagnosisKeysAsync(DiagnosisKeyEntry diagnosisKeyEntry, string path);
+
+    }
+
+    public class DiagnosisKeyServer : IDiagnosisKeyServer
     {
         private const long BUFFER_LENGTH = 4 * 1024 * 1024;
         private const string FORMAT_SYMPTOM_ONSET_DATE = "yyyy-MM-dd'T'HH:mm:ss.fffzzz";
 
-        private readonly ServerConfiguration _serverConfiguration;
+        private readonly DiagnosisKeyServerConfiguration _serverConfiguration;
         private readonly HttpClient _client;
 
-        public EnServer(ServerConfiguration serverConfiguration)
+        public DiagnosisKeyServer(DiagnosisKeyServerConfiguration serverConfiguration)
         {
             _serverConfiguration = serverConfiguration;
             _client = new HttpClient();
@@ -131,6 +146,20 @@ namespace Sample.Common
             IdempotencyKey = idempotencyKey;
         }
     }
+
+    [JsonObject]
+    public class DiagnosisKeyEntry
+    {
+        [JsonProperty("region")]
+        public int Region;
+
+        [JsonProperty("url")]
+        public string Url;
+
+        [JsonProperty("created")]
+        public long Created;
+    }
+
 
     public class Tek
     {
