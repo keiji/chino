@@ -28,7 +28,7 @@ namespace Sample.Common
             DateTime symptomOnsetDate,
             IList<TemporaryExposureKey> temporaryExposureKeyList,
             string idempotencyKey,
-            ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis
+            ReportType defaultRportType = ReportType.ConfirmedTest
             )
         {
             var request = new RequestDiagnosisKey(
@@ -117,7 +117,7 @@ namespace Sample.Common
             string symptomOnsetDate,
             IList<TemporaryExposureKey> teks,
             string idempotencyKey,
-            ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis
+            ReportType defaultRportType = ReportType.ConfirmedTest
             )
         {
             SymptomOnsetDate = symptomOnsetDate;
