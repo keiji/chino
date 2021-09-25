@@ -13,6 +13,7 @@ namespace Sample.Common
     public class EnServer : IEnServer
     {
         private const long BUFFER_LENGTH = 4 * 1024 * 1024;
+        private const string FORMAT_SYMPTOM_ONSET_DATE = "yyyy-MM-dd'T'HH:mm:ss.fffzzz";
 
         private readonly ServerConfiguration _serverConfiguration;
         private readonly HttpClient _client;
@@ -24,12 +25,18 @@ namespace Sample.Common
         }
 
         public async Task UploadDiagnosisKeysAsync(
+            DateTime symptomOnsetDate,
             IList<TemporaryExposureKey> temporaryExposureKeyList,
-            ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
-            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
+            string idempotencyKey,
+            ReportType defaultRportType = ReportType.ConfirmedTest
             )
         {
-            var request = new RequestDiagnosisKey(temporaryExposureKeyList, defaultRportType, defaultTrasmissionRisk);
+            var request = new RequestDiagnosisKey(
+                symptomOnsetDate.ToString(FORMAT_SYMPTOM_ONSET_DATE),
+                temporaryExposureKeyList,
+                idempotencyKey,
+                defaultRportType
+                );
             var requestJson = JsonConvert.SerializeObject(request);
             Debug.Print(requestJson);
 
@@ -97,39 +104,32 @@ namespace Sample.Common
     [JsonObject]
     public class RequestDiagnosisKey
     {
+        [JsonProperty("symptomOnsetDate")]
+        public string SymptomOnsetDate { get; set; }
+
         [JsonProperty("temporaryExposureKeys")]
         public IList<Tek> temporaryExposureKeys;
 
+        [JsonProperty("idempotencyKey")]
+        public string IdempotencyKey { get; set; }
+
         public RequestDiagnosisKey(
+            string symptomOnsetDate,
             IList<TemporaryExposureKey> teks,
-            ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
-            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
+            string idempotencyKey,
+            ReportType defaultRportType = ReportType.ConfirmedTest
             )
         {
+            SymptomOnsetDate = symptomOnsetDate;
             temporaryExposureKeys = teks.Select(tek =>
             {
                 return new Tek(tek)
                 {
                     reportType = (int)defaultRportType,
-                    transmissionRisk = (int)defaultTrasmissionRisk
                 };
             }).ToList();
-
-            AssignDaysSinceOnsetOfSymptoms(temporaryExposureKeys);
+            IdempotencyKey = idempotencyKey;
         }
-
-        private static void AssignDaysSinceOnsetOfSymptoms(IList<Tek> temporaryExposureKeys)
-        {
-            int zeroDayIndex = (int)Math.Floor(temporaryExposureKeys.Count / 2.0);
-            int preDaysSinceOnsetOfSymptoms = -zeroDayIndex;
-
-            for (int i = 0; i < temporaryExposureKeys.Count; i++)
-            {
-                int daysSinceOnsetOfSymptoms = preDaysSinceOnsetOfSymptoms + i;
-                temporaryExposureKeys[i].daysSinceOnsetOfSymptoms = daysSinceOnsetOfSymptoms;
-            }
-        }
-
     }
 
     public class Tek

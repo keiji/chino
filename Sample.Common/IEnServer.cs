@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Chino;
 using Newtonsoft.Json;
@@ -8,10 +9,10 @@ namespace Sample.Common
     public interface IEnServer
     {
         public Task UploadDiagnosisKeysAsync(
+            DateTime symptomOnsetDate,
             IList<TemporaryExposureKey> temporaryExposureKeyList,
-            ReportType defaultRportType = ReportType.ConfirmedClinicalDiagnosis,
-            RiskLevel defaultTrasmissionRisk = RiskLevel.Medium
-            );
+            string idempotencyKey,
+            ReportType defaultRportType = ReportType.ConfirmedTest);
 
         public Task<IList<DiagnosisKeyEntry>> GetDiagnosisKeysListAsync();
 

@@ -145,7 +145,11 @@ namespace Sample.Android
             try
             {
                 IList<TemporaryExposureKey> teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
-                await _enServer.UploadDiagnosisKeysAsync(teks);
+
+                DateTime symptomOnsetDate = DateTime.UtcNow.Date - TimeSpan.FromDays(teks.Count / 2);
+                string idempotencyKey = Guid.NewGuid().ToString();
+
+                await _enServer.UploadDiagnosisKeysAsync(symptomOnsetDate, teks, idempotencyKey);
 
                 status.Append($"diagnosisKeyEntryList have been uploaded.\n");
 
