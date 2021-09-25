@@ -38,7 +38,25 @@ namespace Chino.Android.Google
 
         private Context? _appContext = null;
         internal IExposureNotificationClient? EnClient = null;
-        internal TaskCompletionSource<bool>? ExposureStateBroadcastReceiveTaskCompletionSource = null;
+
+        private TaskCompletionSource<bool>? _exposureStateBroadcastReceiveTaskCompletionSource;
+        internal TaskCompletionSource<bool>? ExposureStateBroadcastReceiveTaskCompletionSource
+        {
+            set
+            {
+                lock (this)
+                {
+                    _exposureStateBroadcastReceiveTaskCompletionSource = value;
+                }
+            }
+            get
+            {
+                lock (this)
+                {
+                    return _exposureStateBroadcastReceiveTaskCompletionSource;
+                }
+            }
+        }
 
         public JobSetting ExposureDetectedV1JobSetting { get; set; }
         public JobSetting ExposureDetectedV2JobSetting { get; set; }
