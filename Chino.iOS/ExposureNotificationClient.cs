@@ -195,7 +195,7 @@ namespace Chino.iOS
             }
         }
 
-        public override Task ProvideDiagnosisKeysAsync(
+        public override Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             CancellationTokenSource? cancellationTokenSource = null
             )
@@ -247,12 +247,17 @@ namespace Chino.iOS
             return (binFilePath, sigFilePath);
         }
 
-        public async override Task ProvideDiagnosisKeysAsync(
+        public async override Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> zippedKeyFiles,
             ExposureConfiguration configuration,
             CancellationTokenSource? cancellationTokenSource = null
             )
         {
+            if (zippedKeyFiles.Count == 0)
+            {
+                return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
+            }
+
             CheckActivated();
 
             long enAPiVersion = await GetVersionAsync();
@@ -323,6 +328,8 @@ namespace Chino.iOS
                 {
                     Logger.I("Exposure Notifications not supported on this version of iOS.");
                 }
+
+                return ProvideDiagnosisKeysResult.Completed;
             }
             catch (NSErrorException exception)
             {
@@ -359,17 +366,13 @@ namespace Chino.iOS
 
         [Obsolete]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
-        public override async Task ProvideDiagnosisKeysAsync(
+        public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             ExposureConfiguration configuration,
             string token,
             CancellationTokenSource cancellationTokenSource = null
             )
-        {
-            CheckActivated();
-
-            await ProvideDiagnosisKeysAsync(keyFiles, configuration, cancellationTokenSource);
-        }
+            => await ProvideDiagnosisKeysAsync(keyFiles, configuration, cancellationTokenSource);
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
         private async Task GetExposureV2(ENExposureDetectionSummary summary)

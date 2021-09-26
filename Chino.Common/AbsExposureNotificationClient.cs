@@ -66,7 +66,8 @@ namespace Chino
         /// </summary>
         /// <param name="keyFiles"></param>
         /// <param name="cancellationTokenSource"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(
+        /// <returns>ProvideDiagnosisKeysResult</returns>
+        public abstract Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             CancellationTokenSource cancellationTokenSource = null
             );
@@ -78,7 +79,8 @@ namespace Chino
         /// <param name="keyFiles"></param>
         /// <param name="configuration"></param>
         /// <param name="cancellationTokenSource"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(
+        /// <returns>ProvideDiagnosisKeysResult</returns>
+        public abstract Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             ExposureConfiguration configuration,
             CancellationTokenSource cancellationTokenSource = null
@@ -94,7 +96,8 @@ namespace Chino
         /// <param name="configuration"></param>
         /// <param name="token"></param>
         /// <param name="cancellationTokenSource"></param>
-        public abstract Task ProvideDiagnosisKeysAsync(
+        /// <returns>ProvideDiagnosisKeysResult</returns>
+        public abstract Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             ExposureConfiguration configuration,
             string token,
@@ -113,5 +116,15 @@ namespace Chino
         /// then this method will cause keys to be released to the client application after the screen is unlocked by the user.
         /// </summary>
         public abstract Task RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+
+        /// <summary>
+        /// Result of ProvideDiagnosisKeys operation.
+        /// </summary>
+        public enum ProvideDiagnosisKeysResult
+        {
+            Completed,
+            NoDiagnosisKeyFound,
+            Busy,
+        }
     }
 }

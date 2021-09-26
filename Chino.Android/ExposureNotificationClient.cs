@@ -180,19 +180,19 @@ namespace Chino.Android.Google
             }
         }
 
-        public override async Task ProvideDiagnosisKeysAsync(
+        public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             CancellationTokenSource? cancellationTokenSource = null
             )
         {
-            await ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration()
+            return await ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration()
             {
                 GoogleExposureConfig = new ExposureConfiguration.GoogleExposureConfiguration(),
                 GoogleDailySummariesConfig = new DailySummariesConfig()
             }, cancellationTokenSource);
         }
 
-        public override async Task ProvideDiagnosisKeysAsync(
+        public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             ExposureConfiguration configuration,
             CancellationTokenSource? cancellationTokenSource = null
@@ -203,7 +203,7 @@ namespace Chino.Android.Google
             if (ExposureStateBroadcastReceiveTaskCompletionSource != null)
             {
                 Logger.E($"Task ProvideDiagnosisKeysAsync is ongoing.");
-                return;
+                return ProvideDiagnosisKeysResult.Completed;
             }
 
             Logger.D($"DiagnosisKey {keyFiles.Count}");
@@ -211,7 +211,7 @@ namespace Chino.Android.Google
             if (keyFiles.Count == 0)
             {
                 Logger.D($"No DiagnosisKey found.");
-                return;
+                return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
             }
 
             cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
@@ -250,6 +250,7 @@ namespace Chino.Android.Google
                 ExposureStateBroadcastReceiveTaskCompletionSource = null;
 
                 Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
+                return ProvideDiagnosisKeysResult.Completed;
             }
             catch (ApiException exception)
             {
@@ -279,7 +280,7 @@ namespace Chino.Android.Google
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public override async Task ProvideDiagnosisKeysAsync(
+        public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
             ExposureConfiguration configuration,
             string token,
@@ -291,7 +292,7 @@ namespace Chino.Android.Google
             if (ExposureStateBroadcastReceiveTaskCompletionSource != null)
             {
                 Logger.E($"Task ProvideDiagnosisKeysAsync is ongoing.");
-                return;
+                return ProvideDiagnosisKeysResult.Busy;
             }
 
             Logger.D($"DiagnosisKey {keyFiles.Count}");
@@ -299,7 +300,7 @@ namespace Chino.Android.Google
             if (keyFiles.Count == 0)
             {
                 Logger.D($"No DiagnosisKey found.");
-                return;
+                return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
             }
 
             cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
@@ -323,6 +324,7 @@ namespace Chino.Android.Google
                 ExposureStateBroadcastReceiveTaskCompletionSource = null;
 
                 Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
+                return ProvideDiagnosisKeysResult.Completed;
             }
             catch (ApiException exception)
             {
