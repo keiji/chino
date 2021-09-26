@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq;
 
 using AndroidTemporaryExposureKey = Android.Gms.Nearby.ExposureNotification.TemporaryExposureKey;
+using JavaTimeoutException = Java.Util.Concurrent.TimeoutException;
 
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
@@ -184,13 +185,11 @@ namespace Chino.Android.Google
             List<string> keyFiles,
             CancellationTokenSource? cancellationTokenSource = null
             )
-        {
-            return await ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration()
+            => await ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration()
             {
                 GoogleExposureConfig = new ExposureConfiguration.GoogleExposureConfiguration(),
                 GoogleDailySummariesConfig = new DailySummariesConfig()
             }, cancellationTokenSource);
-        }
 
         public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
@@ -237,20 +236,31 @@ namespace Chino.Android.Google
                 var files = keyFiles.Select(f => new File(f)).ToList();
                 DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);
 
-                await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
-
-                ExposureStateBroadcastReceiveTaskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                var taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 using (cancellationTokenSource.Token.Register(() =>
                 {
                     Logger.D("ProvideDiagnosisKeysAsync cancellationTokenSource canceled.");
-                    ExposureStateBroadcastReceiveTaskCompletionSource.TrySetCanceled();
+                    taskCompletionSource?.TrySetException(
+                        new TimeoutException($"ExposureStateBroadcastReceiver was not called in {API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS} millis.")
+                        );
                     ExposureStateBroadcastReceiveTaskCompletionSource = null;
                 }))
-                _ = await ExposureStateBroadcastReceiveTaskCompletionSource.Task;
-                ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                {
+                    ExposureStateBroadcastReceiveTaskCompletionSource = taskCompletionSource;
+
+                    await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
+                    _ = await taskCompletionSource.Task;
+
+                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                }
 
                 Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
                 return ProvideDiagnosisKeysResult.Completed;
+            }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
             }
             catch (ApiException exception)
             {
@@ -311,20 +321,31 @@ namespace Chino.Android.Google
 
             try
             {
-                await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
-
-                ExposureStateBroadcastReceiveTaskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                var taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 using (cancellationTokenSource.Token.Register(() =>
                 {
                     Logger.D("ProvideDiagnosisKeysAsync cancellationTokenSource canceled.");
-                    ExposureStateBroadcastReceiveTaskCompletionSource.TrySetCanceled();
+                    taskCompletionSource?.TrySetException(
+                        new TimeoutException($"ExposureStateBroadcastReceiver was not called in {API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS} millis.")
+                        );
                     ExposureStateBroadcastReceiveTaskCompletionSource = null;
                 }))
-                _ = await ExposureStateBroadcastReceiveTaskCompletionSource.Task;
-                ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                {
+                    ExposureStateBroadcastReceiveTaskCompletionSource = taskCompletionSource;
+
+                    await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
+                    _ = await taskCompletionSource.Task;
+
+                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                }
 
                 Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
                 return ProvideDiagnosisKeysResult.Completed;
+            }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
             }
             catch (ApiException exception)
             {

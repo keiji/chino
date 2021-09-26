@@ -345,7 +345,7 @@ namespace Sample.Android
                     Guid.NewGuid().ToString()
                     );
             }
-            catch (TaskCanceledException exception)
+            catch (TimeoutException exception)
             {
                 Logger.E(exception);
             }
@@ -372,7 +372,7 @@ namespace Sample.Android
             {
                 await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
             }
-            catch (TaskCanceledException exception)
+            catch (TimeoutException exception)
             {
                 Logger.E(exception);
             }
