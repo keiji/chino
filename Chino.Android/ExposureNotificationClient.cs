@@ -98,6 +98,11 @@ namespace Chino.Android.Google
             {
                 await EnClient.StartAsync();
             }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
+            }
             catch (ApiException exception)
             {
                 if (exception.IsENException())
@@ -115,6 +120,11 @@ namespace Chino.Android.Google
             try
             {
                 await EnClient.StopAsync();
+            }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
             }
             catch (ApiException exception)
             {
@@ -134,6 +144,11 @@ namespace Chino.Android.Google
             {
                 return await EnClient.IsEnabledAsync();
             }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
+            }
             catch (ApiException exception)
             {
                 if (exception.IsENException())
@@ -151,6 +166,11 @@ namespace Chino.Android.Google
             try
             {
                 return await EnClient.GetVersionAsync();
+            }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
             }
             catch (ApiException exception)
             {
@@ -170,6 +190,11 @@ namespace Chino.Android.Google
             {
                 var statuses = await EnClient.GetStatusAsync();
                 return statuses.Select(status => status.ToExposureNotificationStatus()).ToList();
+            }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
             }
             catch (ApiException exception)
             {
@@ -279,6 +304,11 @@ namespace Chino.Android.Google
                 var teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
                 return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
             }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
+            }
             catch (ApiException exception)
             {
                 if (exception.IsENException())
@@ -366,6 +396,11 @@ namespace Chino.Android.Google
             {
                 await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
             }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
+            }
             catch (ApiException exception)
             {
                 if (exception.IsENException())
@@ -421,6 +456,11 @@ namespace Chino.Android.Google
             {
                 IList<TemporaryExposureKey> temporaryExposureKeys = await GetReleasedTemporaryExposureKeys(enClient);
                 handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
+            }
+            catch (JavaTimeoutException exception)
+            {
+                // Wrap exception
+                throw new TimeoutException(exception.Message);
             }
             catch (ApiException exception)
             {
