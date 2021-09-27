@@ -308,25 +308,27 @@ namespace Chino.iOS
                     urls,
                     out NSProgress result
                     );
-                cancellationTokenSource.Token.Register(result.Cancel);
 
-                ENExposureDetectionSummary summary = await detectExposuresTask;
+                using (cancellationTokenSource.Token.Register(result.Cancel))
+                {
+                    ENExposureDetectionSummary summary = await detectExposuresTask;
 
-                if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
-                {
-                    await GetExposureV2(summary);
-                }
-                else if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
-                {
-                    await GetExposureV1(summary);
-                }
-                else if (ObjCRuntime.Class.GetHandle("ENManager") != null)
-                {
-                    await GetExposureV2(summary);
-                }
-                else
-                {
-                    Logger.I("Exposure Notifications not supported on this version of iOS.");
+                    if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
+                    {
+                        await GetExposureV2(summary);
+                    }
+                    else if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
+                    {
+                        await GetExposureV1(summary);
+                    }
+                    else if (Class.GetHandle("ENManager") != null)
+                    {
+                        await GetExposureV2(summary);
+                    }
+                    else
+                    {
+                        Logger.I("Exposure Notifications not supported on this version of iOS.");
+                    }
                 }
 
                 return ProvideDiagnosisKeysResult.Completed;

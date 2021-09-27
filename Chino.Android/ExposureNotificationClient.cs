@@ -15,6 +15,7 @@ using JavaTimeoutException = Java.Util.Concurrent.TimeoutException;
 using Logger = Chino.ChinoLogger;
 using Android.Gms.Common.Apis;
 using System.Threading;
+using System.Collections.Concurrent;
 
 [assembly: UsesFeature("android.hardware.bluetooth_le", Required = true)]
 [assembly: UsesFeature("android.hardware.bluetooth")]
@@ -40,24 +41,8 @@ namespace Chino.Android.Google
         private Context? _appContext = null;
         internal IExposureNotificationClient? EnClient = null;
 
-        private TaskCompletionSource<bool>? _exposureStateBroadcastReceiveTaskCompletionSource;
-        internal TaskCompletionSource<bool>? ExposureStateBroadcastReceiveTaskCompletionSource
-        {
-            set
-            {
-                lock (this)
-                {
-                    _exposureStateBroadcastReceiveTaskCompletionSource = value;
-                }
-            }
-            get
-            {
-                lock (this)
-                {
-                    return _exposureStateBroadcastReceiveTaskCompletionSource;
-                }
-            }
-        }
+        internal readonly IDictionary<string, TaskCompletionSource<bool>> ExposureStateBroadcastReceiveTaskCompletionSourceDict
+            = new ConcurrentDictionary<string, TaskCompletionSource<bool>>();
 
         public JobSetting ExposureDetectedV1JobSetting { get; set; }
         public JobSetting ExposureDetectedV2JobSetting { get; set; }
@@ -224,12 +209,6 @@ namespace Chino.Android.Google
         {
             CheckInitialized();
 
-            if (ExposureStateBroadcastReceiveTaskCompletionSource != null)
-            {
-                Logger.E($"Task ProvideDiagnosisKeysAsync is ongoing.");
-                return ProvideDiagnosisKeysResult.Completed;
-            }
-
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
             if (keyFiles.Count == 0)
@@ -238,9 +217,26 @@ namespace Chino.Android.Google
                 return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
             }
 
+            string token = Guid.NewGuid().ToString();
+            TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            // Check and add taskCompletionSource for prevent multiple starts.
+            lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
+            {
+                Logger.D($"ExposureStateBroadcastReceiveTaskCompletionSourceDict count {ExposureStateBroadcastReceiveTaskCompletionSourceDict.Count}");
+                if (ExposureStateBroadcastReceiveTaskCompletionSourceDict.Count > 0)
+                {
+                    Logger.E($"Task ProvideDiagnosisKeysAsync(ExposureWindow mode) is already started.");
+                    return ProvideDiagnosisKeysResult.Completed;
+                }
+
+                ExposureStateBroadcastReceiveTaskCompletionSourceDict.Add(token, taskCompletionSource);
+            }
+
             cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
 
             ExposureConfiguration = configuration;
+
             DiagnosisKeysDataMapping diagnosisKeysDataMapping = configuration.GoogleDiagnosisKeysDataMappingConfig.ToDiagnosisKeysDataMapping();
 
             try
@@ -261,22 +257,26 @@ namespace Chino.Android.Google
                 var files = keyFiles.Select(f => new File(f)).ToList();
                 DiagnosisKeyFileProvider diagnosisKeyFileProvider = new DiagnosisKeyFileProvider(files);
 
-                var taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 using (cancellationTokenSource.Token.Register(() =>
                 {
                     Logger.D("ProvideDiagnosisKeysAsync cancellationTokenSource canceled.");
                     taskCompletionSource?.TrySetException(
                         new TimeoutException($"ExposureStateBroadcastReceiver was not called in {API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS} millis.")
                         );
-                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                    lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
+                    {
+                        ExposureStateBroadcastReceiveTaskCompletionSourceDict.Remove(token);
+                    }
                 }))
                 {
-                    ExposureStateBroadcastReceiveTaskCompletionSource = taskCompletionSource;
 
                     await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
                     _ = await taskCompletionSource.Task;
 
-                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                    lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
+                    {
+                        ExposureStateBroadcastReceiveTaskCompletionSourceDict.Remove(token);
+                    }
                 }
 
                 Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
@@ -329,18 +329,27 @@ namespace Chino.Android.Google
         {
             CheckInitialized();
 
-            if (ExposureStateBroadcastReceiveTaskCompletionSource != null)
-            {
-                Logger.E($"Task ProvideDiagnosisKeysAsync is ongoing.");
-                return ProvideDiagnosisKeysResult.Busy;
-            }
-
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
             if (keyFiles.Count == 0)
             {
                 Logger.D($"No DiagnosisKey found.");
                 return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
+            }
+
+            TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            // Check and add taskCompletionSource for prevent multiple starts.
+            lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
+            {
+                Logger.D($"ExposureStateBroadcastReceiveTaskCompletionSourceDict count {ExposureStateBroadcastReceiveTaskCompletionSourceDict.Count}");
+                if (ExposureStateBroadcastReceiveTaskCompletionSourceDict.ContainsKey(token))
+                {
+                    Logger.E($"Task ProvideDiagnosisKeysAsync(Legacy-V1 mode) token {token} is already started.");
+                    return ProvideDiagnosisKeysResult.Completed;
+                }
+
+                ExposureStateBroadcastReceiveTaskCompletionSourceDict.Add(token, taskCompletionSource);
             }
 
             cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
@@ -351,22 +360,25 @@ namespace Chino.Android.Google
 
             try
             {
-                var taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 using (cancellationTokenSource.Token.Register(() =>
                 {
                     Logger.D("ProvideDiagnosisKeysAsync cancellationTokenSource canceled.");
                     taskCompletionSource?.TrySetException(
                         new TimeoutException($"ExposureStateBroadcastReceiver was not called in {API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS} millis.")
                         );
-                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                    lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
+                    {
+                        ExposureStateBroadcastReceiveTaskCompletionSourceDict.Remove(token);
+                    }
                 }))
                 {
-                    ExposureStateBroadcastReceiveTaskCompletionSource = taskCompletionSource;
-
                     await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
                     _ = await taskCompletionSource.Task;
 
-                    ExposureStateBroadcastReceiveTaskCompletionSource = null;
+                    lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
+                    {
+                        ExposureStateBroadcastReceiveTaskCompletionSourceDict.Remove(token);
+                    }
                 }
 
                 Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");

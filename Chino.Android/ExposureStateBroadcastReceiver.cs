@@ -98,14 +98,15 @@ namespace Chino.Android.Google
             }
             finally
             {
-                var taskCompletionSource = enClient.ExposureStateBroadcastReceiveTaskCompletionSource;
-                if (taskCompletionSource == null)
+                var exposureStateBroadcastReceiveTaskCompletionSourceDict = enClient.ExposureStateBroadcastReceiveTaskCompletionSourceDict;
+
+                lock (exposureStateBroadcastReceiveTaskCompletionSourceDict)
                 {
-                    Logger.E("ExposureStateBroadcastReceiver: ExposureStateBroadcastReceiveTaskCompletionSource is null, Task might be canceled.");
-                }
-                else
-                {
-                    taskCompletionSource.SetResult(true);
+                    foreach (var key in exposureStateBroadcastReceiveTaskCompletionSourceDict.Keys)
+                    {
+                        exposureStateBroadcastReceiveTaskCompletionSourceDict.TryGetValue(key, out var value);
+                        value?.TrySetResult(true);
+                    }
                 }
             }
         }
@@ -302,7 +303,8 @@ namespace Chino.Android.Google
                             var enException = exception.ToENException();
                             handler.ExceptionOccurred(enException);
                             throw enException;
-                        } else
+                        }
+                        else
                         {
                             handler.ExceptionOccurred(exception);
                             throw exception;
