@@ -96,6 +96,19 @@ namespace Chino.Android.Google
             {
                 Logger.E($"Exception occurred: {e}");
             }
+            finally
+            {
+                var exposureStateBroadcastReceiveTaskCompletionSourceDict = enClient.ExposureStateBroadcastReceiveTaskCompletionSourceDict;
+
+                lock (exposureStateBroadcastReceiveTaskCompletionSourceDict)
+                {
+                    foreach (var key in exposureStateBroadcastReceiveTaskCompletionSourceDict.Keys)
+                    {
+                        exposureStateBroadcastReceiveTaskCompletionSourceDict.TryGetValue(key, out var value);
+                        value?.TrySetResult(true);
+                    }
+                }
+            }
         }
 
 #pragma warning disable CS0612, CS0618 // Type or member is obsolete
@@ -290,7 +303,8 @@ namespace Chino.Android.Google
                             var enException = exception.ToENException();
                             handler.ExceptionOccurred(enException);
                             throw enException;
-                        } else
+                        }
+                        else
                         {
                             handler.ExceptionOccurred(exception);
                             throw exception;

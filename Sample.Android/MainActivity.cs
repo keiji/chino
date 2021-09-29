@@ -31,6 +31,7 @@ namespace Sample.Android
         private const int REQUEST_PREAUTHORIZE_KEYS = 0x12;
 
         private AbsExposureNotificationClient? EnClient = null;
+        private readonly string _token = Guid.NewGuid().ToString();
 
         private IDiagnosisKeyServer _diagnosisKeyServer;
 
@@ -342,8 +343,12 @@ namespace Sample.Android
                 await EnClient.ProvideDiagnosisKeysAsync(
                     diagnosisKeyPaths,
                     _exposureConfiguration,
-                    Guid.NewGuid().ToString()
+                    _token
                     );
+            }
+            catch (TimeoutException exception)
+            {
+                Logger.E(exception);
             }
             catch (ENException enException)
             {
@@ -367,6 +372,10 @@ namespace Sample.Android
             try
             {
                 await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
+            }
+            catch (TimeoutException exception)
+            {
+                Logger.E(exception);
             }
             catch (ENException enException)
             {
