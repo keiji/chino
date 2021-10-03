@@ -71,7 +71,7 @@
       <Version>1.6.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby.ExposureNotification">
-      <Version>19.7.2-eap-alpha03</Version>
+      <Version>19.7.2-eap-alpha04</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
