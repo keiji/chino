@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Chino
@@ -50,6 +51,13 @@ namespace Chino
         /// </summary>
         /// <returns></returns>
         public abstract Task<IList<ExposureNotificationStatus>> GetStatusesAsync();
+
+        /// <summary>
+        /// Gets the list of current Exposure Notification status code.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IList<int>> GetStatusCodesAsync()
+            => (await GetStatusesAsync()).Select(status => status.Code).ToList();
 
         /// <summary>
         /// Gets TemporaryExposureKey history to be stored on the server.
