@@ -56,7 +56,7 @@ namespace Chino
         /// Gets the list of current Exposure Notification status code.
         /// </summary>
         /// <returns></returns>
-        public async Task<IList<int>> GetStatusCodesAsync()
+        public virtual async Task<IList<int>> GetStatusCodesAsync()
             => (await GetStatusesAsync()).Select(status => status.Code).ToList();
 
         /// <summary>
