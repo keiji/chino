@@ -45,8 +45,11 @@ namespace Chino.iOS
 
         private bool IsActivated = false;
 
+        private readonly SemaphoreSlim ActivateSemaphore = new SemaphoreSlim(1, 1);
+
         public async Task ActivateAsync()
         {
+            await ActivateSemaphore.WaitAsync();
             if (IsActivated)
             {
                 return;
@@ -64,6 +67,10 @@ namespace Chino.iOS
                     throw exception.ToENException();
                 }
                 throw exception;
+            }
+            finally
+            {
+                ActivateSemaphore.Release();
             }
         }
 
