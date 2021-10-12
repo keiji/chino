@@ -50,13 +50,13 @@ namespace Chino.iOS
         public async Task ActivateAsync()
         {
             await ActivateSemaphore.WaitAsync();
-            if (IsActivated)
-            {
-                return;
-            }
-
             try
             {
+                if (IsActivated)
+                {
+                    return;
+                }
+
                 await EnManager.Value.ActivateAsync();
                 IsActivated = true;
             }
