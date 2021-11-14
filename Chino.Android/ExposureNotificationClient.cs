@@ -221,7 +221,7 @@ namespace Chino.Android.Google
 
             if (Handler is null)
             {
-                throw new IllegalStateException();
+                throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
             string token = Guid.NewGuid().ToString();
@@ -459,7 +459,7 @@ namespace Chino.Android.Google
 
             if (_appContext is null)
             {
-                throw new IllegalStateException();
+                throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
             if (_appContext is IExposureNotificationHandler exposureNotificationHandler)

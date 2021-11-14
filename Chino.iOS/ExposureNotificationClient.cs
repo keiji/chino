@@ -269,7 +269,7 @@ namespace Chino.iOS
 
             if (Handler is null)
             {
-                throw new IllegalStateException();
+                throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
             long enAPiVersion = await GetVersionAsync();
