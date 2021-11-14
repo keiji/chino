@@ -44,9 +44,9 @@ namespace Chino.Android.Google
         internal readonly IDictionary<string, TaskCompletionSource<bool>> ExposureStateBroadcastReceiveTaskCompletionSourceDict
             = new ConcurrentDictionary<string, TaskCompletionSource<bool>>();
 
-        public JobSetting ExposureDetectedV1JobSetting { get; set; }
-        public JobSetting ExposureDetectedV2JobSetting { get; set; }
-        public JobSetting ExposureNotDetectedJobSetting { get; set; }
+        public JobSetting? ExposureDetectedV1JobSetting { get; set; }
+        public JobSetting? ExposureDetectedV2JobSetting { get; set; }
+        public JobSetting? ExposureNotDetectedJobSetting { get; set; }
 
         public void Init(Context applicationContext)
         {
@@ -66,22 +66,24 @@ namespace Chino.Android.Google
             }
         }
 
-        private void CheckInitialized()
+        private IExposureNotificationClient GetEnClient()
         {
-            if (EnClient == null)
+            if (EnClient is null)
             {
                 Logger.E("Init method must be called first.");
                 throw new UnInitializedException("Init method must be called first.");
             }
+
+            return EnClient;
         }
 
         public override async Task StartAsync()
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             try
             {
-                await EnClient.StartAsync();
+                await enClient.StartAsync();
             }
             catch (JavaTimeoutException exception)
             {
@@ -100,11 +102,11 @@ namespace Chino.Android.Google
 
         public override async Task StopAsync()
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             try
             {
-                await EnClient.StopAsync();
+                await enClient.StopAsync();
             }
             catch (JavaTimeoutException exception)
             {
@@ -123,11 +125,11 @@ namespace Chino.Android.Google
 
         public override async Task<bool> IsEnabledAsync()
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             try
             {
-                return await EnClient.IsEnabledAsync();
+                return await enClient.IsEnabledAsync();
             }
             catch (JavaTimeoutException exception)
             {
@@ -146,11 +148,11 @@ namespace Chino.Android.Google
 
         public override async Task<long> GetVersionAsync()
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             try
             {
-                return await EnClient.GetVersionAsync();
+                return await enClient.GetVersionAsync();
             }
             catch (JavaTimeoutException exception)
             {
@@ -169,11 +171,11 @@ namespace Chino.Android.Google
 
         public override async Task<IList<ExposureNotificationStatus>> GetStatusesAsync()
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             try
             {
-                var statuses = await EnClient.GetStatusAsync();
+                var statuses = await enClient.GetStatusAsync();
                 return statuses.Select(status => status.ToExposureNotificationStatus()).ToList();
             }
             catch (JavaTimeoutException exception)
@@ -207,7 +209,7 @@ namespace Chino.Android.Google
             CancellationTokenSource? cancellationTokenSource = null
             )
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
@@ -215,6 +217,11 @@ namespace Chino.Android.Google
             {
                 Logger.D($"No DiagnosisKey found.");
                 return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
+            }
+
+            if (Handler is null)
+            {
+                throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
             string token = Guid.NewGuid().ToString();
@@ -241,12 +248,12 @@ namespace Chino.Android.Google
 
             try
             {
-                DiagnosisKeysDataMapping currentDiagnosisKeysDataMapping = await EnClient.GetDiagnosisKeysDataMappingAsync();
+                DiagnosisKeysDataMapping currentDiagnosisKeysDataMapping = await enClient.GetDiagnosisKeysDataMappingAsync();
 
                 // https://github.com/google/exposure-notifications-internals/blob/aaada6ce5cad0ea1493930591557f8053ef4f113/exposurenotification/src/main/java/com/google/samples/exposurenotification/nearby/DiagnosisKeysDataMapping.java#L113
                 if (!diagnosisKeysDataMapping.Equals(currentDiagnosisKeysDataMapping))
                 {
-                    await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
+                    await enClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
                     Handler.DiagnosisKeysDataMappingApplied();
 
                     Logger.I("DiagnosisKeysDataMapping have been updated.");
@@ -272,7 +279,7 @@ namespace Chino.Android.Google
                 }))
                 {
 
-                    await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
+                    await enClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
                     _ = await taskCompletionSource.Task;
 
                     lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
@@ -301,9 +308,11 @@ namespace Chino.Android.Google
 
         public override async Task<List<TemporaryExposureKey>> GetTemporaryExposureKeyHistoryAsync()
         {
+            var enClient = GetEnClient();
+
             try
             {
-                var teks = await EnClient.GetTemporaryExposureKeyHistoryAsync();
+                var teks = await enClient.GetTemporaryExposureKeyHistoryAsync();
                 return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
             }
             catch (JavaTimeoutException exception)
@@ -329,7 +338,7 @@ namespace Chino.Android.Google
             CancellationTokenSource? cancellationTokenSource = null
             )
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             Logger.D($"DiagnosisKey {keyFiles.Count}");
 
@@ -374,7 +383,7 @@ namespace Chino.Android.Google
                     }
                 }))
                 {
-                    await EnClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
+                    await enClient.ProvideDiagnosisKeysAsync(files, configuration.ToAndroidExposureConfiguration(), token);
                     _ = await taskCompletionSource.Task;
 
                     lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
@@ -404,11 +413,11 @@ namespace Chino.Android.Google
 
         public override async Task RequestPreAuthorizedTemporaryExposureKeyHistoryAsync()
         {
-            CheckInitialized();
+            var enClient = GetEnClient();
 
             try
             {
-                await EnClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
+                await enClient.RequestPreAuthorizedTemporaryExposureKeyHistoryAsync();
             }
             catch (JavaTimeoutException exception)
             {
@@ -445,22 +454,26 @@ namespace Chino.Android.Google
         {
             Logger.D("RequestPreAuthorizedTemporaryExposureKeyReleaseAsync");
 
-            CheckInitialized();
-
             IExposureNotificationHandler? handler = null;
             ExposureNotificationClient? enClient = null;
+
+            if (_appContext is null)
+            {
+                throw new IllegalStateException("IExposureNotificationHandler is not set.");
+            }
+
             if (_appContext is IExposureNotificationHandler exposureNotificationHandler)
             {
                 handler = exposureNotificationHandler;
                 enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
             }
 
-            if (handler == null)
+            if (handler is null)
             {
                 Logger.E("TemporaryExposureKeyReleasedJob: handler is null.");
                 return;
             }
-            if (enClient == null)
+            if (enClient is null)
             {
                 Logger.E("TemporaryExposureKeyReleasedJob: enClient is null.");
                 return;
@@ -468,7 +481,7 @@ namespace Chino.Android.Google
 
             try
             {
-                IList<TemporaryExposureKey> temporaryExposureKeys = await GetReleasedTemporaryExposureKeys(enClient);
+                IList<TemporaryExposureKey> temporaryExposureKeys = await GetReleasedTemporaryExposureKeys(enClient, _appContext);
                 handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
             }
             catch (JavaTimeoutException exception)
@@ -490,7 +503,8 @@ namespace Chino.Android.Google
         }
 
         private async Task<IList<TemporaryExposureKey>> GetReleasedTemporaryExposureKeys(
-            ExposureNotificationClient enClient
+            ExposureNotificationClient enClient,
+            Context appContext
             )
         {
             TaskCompletionSource<Intent> taskCompletionSource = new TaskCompletionSource<Intent>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -501,15 +515,15 @@ namespace Chino.Android.Google
             {
                 Logger.D("cancellationTokenSource canceled.");
                 taskCompletionSource.TrySetCanceled();
-                _appContext.UnregisterReceiver(receiver);
+                appContext.UnregisterReceiver(receiver);
             }))
             {
-                _appContext.RegisterReceiver(
+                appContext.RegisterReceiver(
                     receiver,
                     INTENT_FILTER_PRE_AUTHORIZE_RELEASE_PHONE_UNLOCKED
                     );
 
-                await enClient.EnClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
+                await enClient.RequestPreAuthorizedTemporaryExposureKeyReleaseAsync();
 
                 Intent intent = await taskCompletionSource.Task;
 
@@ -520,13 +534,6 @@ namespace Chino.Android.Google
 
                 return temporaryExposureKeys;
             }
-        }
-    }
-
-    class UnInitializedException : Exception
-    {
-        public UnInitializedException(string message) : base(message)
-        {
         }
     }
 }

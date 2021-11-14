@@ -28,7 +28,7 @@ namespace Chino.iOS
         {
             DiagnosisKeysAvailableHandler = new ENDiagnosisKeysAvailableHandler(teks =>
             {
-                if (Handler == null)
+                if (Handler is null)
                 {
                     Logger.E("ENDiagnosisKeysAvailableHandler is called but ENDiagnosisKeysAvailableHandler is not set.");
                     return;
@@ -267,6 +267,11 @@ namespace Chino.iOS
 
             CheckActivated();
 
+            if (Handler is null)
+            {
+                throw new IllegalStateException("IExposureNotificationHandler is not set.");
+            }
+
             long enAPiVersion = await GetVersionAsync();
 
             cancellationTokenSource ??= new CancellationTokenSource();
@@ -324,15 +329,15 @@ namespace Chino.iOS
 
                     if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
                     {
-                        await GetExposureV2(summary);
+                        await GetExposureV2(summary, Handler);
                     }
                     else if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
                     {
-                        await GetExposureV1(summary);
+                        await GetExposureV1(summary, Handler);
                     }
                     else if (Class.GetHandle("ENManager") != null)
                     {
-                        await GetExposureV2(summary);
+                        await GetExposureV2(summary, Handler);
                     }
                     else
                     {
@@ -381,12 +386,12 @@ namespace Chino.iOS
             List<string> keyFiles,
             ExposureConfiguration configuration,
             string token,
-            CancellationTokenSource cancellationTokenSource = null
+            CancellationTokenSource? cancellationTokenSource = null
             )
             => await ProvideDiagnosisKeysAsync(keyFiles, configuration, cancellationTokenSource);
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
-        private async Task GetExposureV2(ENExposureDetectionSummary summary)
+        private async Task GetExposureV2(ENExposureDetectionSummary summary, IExposureNotificationHandler handler)
         {
             Logger.D($"GetExposureV2");
 
@@ -394,36 +399,36 @@ namespace Chino.iOS
 
             if (dailySummaries.Count > 0)
             {
-                Handler.PreExposureDetected();
+                handler.PreExposureDetected();
 
                 ENExposureWindow[] ews = await EnManager.Value.GetExposureWindowsAsync(summary);
                 List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
 
-                Handler.ExposureDetected(dailySummaries, exposureWindows);
-                Handler.ExposureDetected(new PlatformExposureSummary(summary), dailySummaries, exposureWindows);
+                handler.ExposureDetected(dailySummaries, exposureWindows);
+                handler.ExposureDetected(new PlatformExposureSummary(summary), dailySummaries, exposureWindows);
             }
             else
             {
-                Handler.ExposureNotDetected();
+                handler.ExposureNotDetected();
             }
         }
 
-        private async Task GetExposureV1(ENExposureDetectionSummary summary)
+        private async Task GetExposureV1(ENExposureDetectionSummary summary, IExposureNotificationHandler handler)
         {
             Logger.D($"GetExposureV1");
 
             if (summary.MatchedKeyCount > 0)
             {
-                Handler.PreExposureDetected();
+                handler.PreExposureDetected();
 
                 ENExposureInfo[] eis = await EnManager.Value.GetExposureInfoAsync(summary, UserExplanation);
                 List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 
-                Handler.ExposureDetected(new PlatformExposureSummary(summary), exposureInformations);
+                handler.ExposureDetected(new PlatformExposureSummary(summary), exposureInformations);
             }
             else
             {
-                Handler.ExposureNotDetected();
+                handler.ExposureNotDetected();
             }
         }
 
