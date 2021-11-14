@@ -320,6 +320,8 @@ namespace Chino.iOS
                 {
                     ENExposureDetectionSummary summary = await detectExposuresTask;
 
+                    Handler.DiagnosisKeysDataMappingApplied();
+
                     if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
                     {
                         await GetExposureV2(summary);
