@@ -20,6 +20,14 @@ namespace Chino
         }
 
         /// <summary>
+        /// An event of DiagnosisKeysDataMappingConfiguration(or InfectiousnessForDaysSinceOnsetOfSymptoms) is applied.
+        /// </summary>
+        public void DiagnosisKeysDataMappingApplied()
+        {
+            // do nothing
+        }
+
+        /// <summary>
         /// A pre-event of Exposure is detected, before retrieving Exposure infomations.
         /// </summary>
         public void PreExposureDetected()

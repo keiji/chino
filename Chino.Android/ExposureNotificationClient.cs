@@ -247,6 +247,8 @@ namespace Chino.Android.Google
                 if (!diagnosisKeysDataMapping.Equals(currentDiagnosisKeysDataMapping))
                 {
                     await EnClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
+                    Handler.DiagnosisKeysDataMappingApplied();
+
                     Logger.I("DiagnosisKeysDataMapping have been updated.");
                 }
                 else
