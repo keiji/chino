@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Chino
 {
@@ -134,5 +135,16 @@ namespace Chino
             NoDiagnosisKeyFound,
             Busy,
         }
+    }
+
+    public class UnInitializedException : Exception
+    {
+        public UnInitializedException(string message) : base(message)
+        {
+        }
+    }
+
+    public class IllegalStateException : Exception
+    {
     }
 }
