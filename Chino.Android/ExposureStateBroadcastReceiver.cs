@@ -49,7 +49,7 @@ namespace Chino.Android.Google
                 enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
             }
 
-            if (enClient == null)
+            if (enClient is null)
             {
                 Logger.E("ExposureStateBroadcastReceiver: enClient is null.");
                 return;
@@ -162,12 +162,12 @@ namespace Chino.Android.Google
                     enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
                 }
 
-                if (enClient == null)
+                if (enClient is null)
                 {
                     Logger.E("ExposureDetectedV1Job: enClient is null.");
                     return false;
                 }
-                if (handler == null)
+                if (handler is null)
                 {
                     Logger.E("ExposureDetectedV1Job: handler is null.");
                     return false;
@@ -275,12 +275,12 @@ namespace Chino.Android.Google
                     enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
                 }
 
-                if (enClient == null)
+                if (enClient is null)
                 {
                     Logger.E("ExposureDetectedV2Job: enClient is null.");
                     return false;
                 }
-                if (handler == null)
+                if (handler is null)
                 {
                     Logger.E("ExposureDetectedV2Job: handler is null.");
                     return false;
@@ -386,7 +386,7 @@ namespace Chino.Android.Google
                     handler = exposureNotificationHandler;
                 }
 
-                if (handler == null)
+                if (handler is null)
                 {
                     Logger.E("ExposureDetectedV2Job: handler is null.");
                     return false;

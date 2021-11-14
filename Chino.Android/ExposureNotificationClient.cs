@@ -68,7 +68,7 @@ namespace Chino.Android.Google
 
         private IExposureNotificationClient GetEnClient()
         {
-            if (EnClient == null)
+            if (EnClient is null)
             {
                 Logger.E("Init method must be called first.");
                 throw new UnInitializedException("Init method must be called first.");
@@ -219,7 +219,7 @@ namespace Chino.Android.Google
                 return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
             }
 
-            if (Handler == null)
+            if (Handler is null)
             {
                 throw new IllegalStateException();
             }
@@ -468,12 +468,12 @@ namespace Chino.Android.Google
                 enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
             }
 
-            if (handler == null)
+            if (handler is null)
             {
                 Logger.E("TemporaryExposureKeyReleasedJob: handler is null.");
                 return;
             }
-            if (enClient == null)
+            if (enClient is null)
             {
                 Logger.E("TemporaryExposureKeyReleasedJob: enClient is null.");
                 return;

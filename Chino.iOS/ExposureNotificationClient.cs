@@ -28,7 +28,7 @@ namespace Chino.iOS
         {
             DiagnosisKeysAvailableHandler = new ENDiagnosisKeysAvailableHandler(teks =>
             {
-                if (Handler == null)
+                if (Handler is null)
                 {
                     Logger.E("ENDiagnosisKeysAvailableHandler is called but ENDiagnosisKeysAvailableHandler is not set.");
                     return;
@@ -267,7 +267,7 @@ namespace Chino.iOS
 
             CheckActivated();
 
-            if (Handler == null)
+            if (Handler is null)
             {
                 throw new IllegalStateException();
             }
