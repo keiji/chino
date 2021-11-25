@@ -195,7 +195,7 @@ namespace Chino.Android.Google
                         else
                         {
                             handler.ExceptionOccurred(exception);
-                            throw exception;
+                            throw;
                         }
                     }
                     finally
@@ -307,7 +307,7 @@ namespace Chino.Android.Google
                         else
                         {
                             handler.ExceptionOccurred(exception);
-                            throw exception;
+                            throw;
                         }
                     }
                     finally

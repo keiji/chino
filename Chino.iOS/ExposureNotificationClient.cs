@@ -66,7 +66,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
             finally
             {
@@ -108,7 +108,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -126,7 +126,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -144,7 +144,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -171,7 +171,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -198,7 +198,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -358,7 +358,7 @@ namespace Chino.iOS
                 else
                 {
                     Handler.ExceptionOccurred(exception);
-                    throw exception;
+                    throw;
                 }
             }
             finally
@@ -452,7 +452,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -476,7 +476,7 @@ namespace Chino.iOS
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
     }
