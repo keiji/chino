@@ -62,7 +62,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -96,7 +96,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -119,7 +119,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -142,7 +142,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -165,7 +165,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -189,7 +189,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -302,7 +302,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -326,7 +326,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -406,7 +406,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -430,7 +430,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
         }
 
@@ -495,7 +495,7 @@ namespace Chino.Android.Google
                 {
                     throw exception.ToENException();
                 }
-                throw exception;
+                throw;
             }
             finally
             {
