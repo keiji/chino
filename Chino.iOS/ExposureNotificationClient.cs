@@ -307,8 +307,8 @@ namespace Chino.iOS
 
             ENExposureConfiguration exposureConfiguration = enAPiVersion switch
             {
-                2 => ExposureConfiguration.AppleExposureConfigV2.ToENExposureConfiguration(),
-                _ => ExposureConfiguration.AppleExposureConfigV1.ToENExposureConfiguration(),
+                2 => configuration.AppleExposureConfigV2.ToENExposureConfiguration(),
+                _ => configuration.AppleExposureConfigV1.ToENExposureConfiguration(),
 
             };
             Logger.D(exposureConfiguration.ToString());
@@ -329,15 +329,15 @@ namespace Chino.iOS
 
                     if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
                     {
-                        await GetExposureV2(summary, Handler);
+                        await GetExposureV2(summary, configuration, Handler);
                     }
                     else if (UIDevice.CurrentDevice.CheckSystemVersion(13, 5))
                     {
-                        await GetExposureV1(summary, Handler);
+                        await GetExposureV1(summary, configuration, Handler);
                     }
                     else if (Class.GetHandle("ENManager") != null)
                     {
-                        await GetExposureV2(summary, Handler);
+                        await GetExposureV2(summary, configuration, Handler);
                     }
                     else
                     {
@@ -391,7 +391,7 @@ namespace Chino.iOS
             => await ProvideDiagnosisKeysAsync(keyFiles, configuration, cancellationTokenSource);
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
-        private async Task GetExposureV2(ENExposureDetectionSummary summary, IExposureNotificationHandler handler)
+        private async Task GetExposureV2(ENExposureDetectionSummary summary, ExposureConfiguration exposureConfiguration, IExposureNotificationHandler handler)
         {
             Logger.D($"GetExposureV2");
 
@@ -399,36 +399,36 @@ namespace Chino.iOS
 
             if (dailySummaries.Count > 0)
             {
-                handler.PreExposureDetected();
+                handler.PreExposureDetected(exposureConfiguration);
 
                 ENExposureWindow[] ews = await EnManager.Value.GetExposureWindowsAsync(summary);
                 List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
 
-                handler.ExposureDetected(dailySummaries, exposureWindows);
-                handler.ExposureDetected(new PlatformExposureSummary(summary), dailySummaries, exposureWindows);
+                handler.ExposureDetected(dailySummaries, exposureWindows, exposureConfiguration);
+                handler.ExposureDetected(new PlatformExposureSummary(summary), dailySummaries, exposureWindows, exposureConfiguration);
             }
             else
             {
-                handler.ExposureNotDetected();
+                handler.ExposureNotDetected(exposureConfiguration);
             }
         }
 
-        private async Task GetExposureV1(ENExposureDetectionSummary summary, IExposureNotificationHandler handler)
+        private async Task GetExposureV1(ENExposureDetectionSummary summary, ExposureConfiguration exposureConfiguration, IExposureNotificationHandler handler)
         {
             Logger.D($"GetExposureV1");
 
             if (summary.MatchedKeyCount > 0)
             {
-                handler.PreExposureDetected();
+                handler.PreExposureDetected(exposureConfiguration);
 
                 ENExposureInfo[] eis = await EnManager.Value.GetExposureInfoAsync(summary, UserExplanation);
                 List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 
-                handler.ExposureDetected(new PlatformExposureSummary(summary), exposureInformations);
+                handler.ExposureDetected(new PlatformExposureSummary(summary), exposureInformations, exposureConfiguration);
             }
             else
             {
-                handler.ExposureNotDetected();
+                handler.ExposureNotDetected(exposureConfiguration);
             }
         }
 

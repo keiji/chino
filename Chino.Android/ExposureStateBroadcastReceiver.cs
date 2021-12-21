@@ -179,10 +179,10 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        handler.PreExposureDetected();
+                        handler.PreExposureDetected(enClient.ExposureConfiguration);
 
                         var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
-                        handler.ExposureDetected(exposureSummary, exposureInformations);
+                        handler.ExposureDetected(exposureSummary, exposureInformations, enClient.ExposureConfiguration);
                     }
                     catch (ApiException exception)
                     {
@@ -290,11 +290,11 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        handler.PreExposureDetected();
+                        handler.PreExposureDetected(enClient.ExposureConfiguration);
 
                         var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient);
 
-                        handler.ExposureDetected(dailySummaries, exposureWindows);
+                        handler.ExposureDetected(dailySummaries, exposureWindows, enClient.ExposureConfiguration);
                     }
                     catch (ApiException exception)
                     {
@@ -381,11 +381,18 @@ namespace Chino.Android.Google
             public override bool OnStartJob(JobParameters @params)
             {
                 IExposureNotificationHandler? handler = null;
+                ExposureNotificationClient? enClient = null;
                 if (ApplicationContext is IExposureNotificationHandler exposureNotificationHandler)
                 {
                     handler = exposureNotificationHandler;
+                    enClient = (ExposureNotificationClient)exposureNotificationHandler.GetEnClient();
                 }
 
+                if (enClient is null)
+                {
+                    Logger.E("ExposureDetectedV2Job: enClient is null.");
+                    return false;
+                }
                 if (handler is null)
                 {
                     Logger.E("ExposureDetectedV2Job: handler is null.");
@@ -396,7 +403,7 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        handler.ExposureNotDetected();
+                        handler.ExposureNotDetected(enClient.ExposureConfiguration);
                     }
                     finally
                     {

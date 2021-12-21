@@ -107,12 +107,12 @@ namespace Sample.Android
             Logger.D(serializedJson);
         }
 
-        public void PreExposureDetected()
+        public void PreExposureDetected(ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"PreExposureDetected: {DateTime.UtcNow}");
         }
 
-        public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
+        public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows, ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureDetected ExposureWindows: {DateTime.UtcNow}");
 
@@ -121,7 +121,7 @@ namespace Sample.Android
                 var enVersion = (await EnClient.GetVersionAsync()).ToString();
 
                 var exposureResult = new ExposureResult(
-                    EnClient.ExposureConfiguration,
+                    exposureConfiguration,
                     DateTime.Now,
                     dailySummaries, exposureWindows
                     )
@@ -134,7 +134,7 @@ namespace Sample.Android
                 var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
                 var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    EnClient.ExposureConfiguration,
+                    exposureConfiguration,
                     DeviceInfo.Model,
                     enVersion,
                     dailySummaries, exposureWindows
@@ -148,7 +148,7 @@ namespace Sample.Android
             });
         }
 
-        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations, ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureDetected Legacy-v1: {DateTime.UtcNow}");
 
@@ -157,7 +157,7 @@ namespace Sample.Android
                 var enVersion = (await EnClient.GetVersionAsync()).ToString();
 
                 var exposureResult = new ExposureResult(
-                    EnClient.ExposureConfiguration,
+                    exposureConfiguration,
                     DateTime.Now,
                     exposureSummary, exposureInformations
                     )
@@ -184,7 +184,7 @@ namespace Sample.Android
             });
         }
 
-        public void ExposureNotDetected()
+        public void ExposureNotDetected(ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureNotDetected: {DateTime.UtcNow}");
 
@@ -193,7 +193,7 @@ namespace Sample.Android
                 var enVersion = (await EnClient.GetVersionAsync()).ToString();
 
                 var exposureResult = new ExposureResult(
-                    EnClient.ExposureConfiguration,
+                    exposureConfiguration,
                     DateTime.Now
                     )
                 {

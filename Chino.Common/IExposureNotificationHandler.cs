@@ -30,7 +30,8 @@ namespace Chino
         /// <summary>
         /// A pre-event of Exposure is detected, before retrieving Exposure infomations.
         /// </summary>
-        public void PreExposureDetected()
+        /// <param name="exposureConfiguration">Exposure configuration parameters that can be provided when detecting exposure.</param>
+        public void PreExposureDetected(ExposureConfiguration exposureConfiguration)
         {
             // do nothing
         }
@@ -40,7 +41,12 @@ namespace Chino
         /// </summary>
         /// <param name="dailySummaries">Daily exposure summary to pass to client side.</param>
         /// <param name="exposureWindows">List of duration of up to 30 minutes during which beacons from a TEK were observed.</param>
-        public void ExposureDetected(IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
+        /// <param name="exposureConfiguration">Exposure configuration parameters that can be provided when detecting exposure.</param>
+        public void ExposureDetected(
+            IList<DailySummary> dailySummaries,
+            IList<ExposureWindow> exposureWindows,
+            ExposureConfiguration exposureConfiguration
+            )
         {
             // do nothing
         }
@@ -51,7 +57,13 @@ namespace Chino
         /// <param name="exposureSummary">Summary information about recent exposures.</param>
         /// <param name="dailySummaries">Daily exposure summary to pass to client side.</param>
         /// <param name="exposureWindows">List of duration of up to 30 minutes during which beacons from a TEK were observed.</param>
-        public void ExposureDetected(ExposureSummary exposureSummary, IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
+        /// <param name="exposureConfiguration">Exposure configuration parameters that can be provided when detecting exposure.</param>
+        public void ExposureDetected(
+            ExposureSummary exposureSummary,
+            IList<DailySummary> dailySummaries,
+            IList<ExposureWindow> exposureWindows,
+            ExposureConfiguration exposureConfiguration
+            )
         {
             // do nothing
         }
@@ -61,7 +73,12 @@ namespace Chino
         /// </summary>
         /// <param name="exposureSummary">Summary information about recent exposures.</param>
         /// <param name="exposureInformations">List of information about an exposure.</param>
-        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
+        /// <param name="exposureConfiguration">Exposure configuration parameters that can be provided when detecting exposure.</param>
+        public void ExposureDetected(
+            ExposureSummary exposureSummary,
+            IList<ExposureInformation> exposureInformations,
+            ExposureConfiguration exposureConfiguration
+            )
         {
             // do nothing
         }
@@ -69,7 +86,8 @@ namespace Chino
         /// <summary>
         /// An event of Exposure is not detected.
         /// </summary>
-        public void ExposureNotDetected()
+        /// <param name="exposureConfiguration">Exposure configuration parameters that can be provided when detecting exposure.</param>
+        public void ExposureNotDetected(ExposureConfiguration exposureConfiguration)
         {
             // do nothing
         }

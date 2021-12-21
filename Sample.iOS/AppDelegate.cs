@@ -105,12 +105,12 @@ namespace Sample.iOS
             }
         }
 
-        public void PreExposureDetected()
+        public void PreExposureDetected(ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"PreExposureDetected: {DateTime.UtcNow}");
         }
 
-        public void ExposureDetected(ExposureSummary exposureSummary, IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows)
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows, ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureDetected V2: {DateTime.UtcNow}");
 
@@ -119,7 +119,7 @@ namespace Sample.iOS
                 var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
 
                 var exposureResult = new ExposureResult(
-                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    exposureConfiguration,
                     DateTime.Now,
                     exposureSummary,
                     null,
@@ -149,7 +149,7 @@ namespace Sample.iOS
             });
         }
 
-        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations)
+        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations, ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureDetected V1: {DateTime.UtcNow}");
 
@@ -158,7 +158,7 @@ namespace Sample.iOS
                 var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
 
                 var exposureResult = new ExposureResult(
-                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    exposureConfiguration,
                     DateTime.Now,
                     exposureSummary, exposureInformations
                     )
@@ -185,7 +185,7 @@ namespace Sample.iOS
             });
         }
 
-        public void ExposureNotDetected()
+        public void ExposureNotDetected(ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureNotDetected: {DateTime.UtcNow}");
 
@@ -194,7 +194,7 @@ namespace Sample.iOS
                 var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
 
                 var exposureResult = new ExposureResult(
-                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    exposureConfiguration,
                     DateTime.Now
                 )
                 {
