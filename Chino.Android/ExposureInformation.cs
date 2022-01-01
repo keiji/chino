@@ -23,6 +23,6 @@ namespace Chino.Android.Google
         }
 
         private static int[] ConvertToMillis(int[] attenuationDurationsInMinutes)
-            => attenuationDurationsInMinutes.Select(d => d * 60 * 1000).ToArray();
+            => attenuationDurationsInMinutes.Select(d => d * MINUTE_IN_MILLIS).ToArray();
     }
 }
