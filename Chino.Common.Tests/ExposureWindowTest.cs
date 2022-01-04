@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Chino.Tests
@@ -78,6 +79,7 @@ namespace Chino.Tests
         {
             var exposureWindow1 = CreateExposureWindow();
             var exposureWindow2 = CreateExposureWindow();
+            Assert.AreEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.True(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -88,6 +90,7 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow2.CalibrationConfidence = CalibrationConfidence.High;
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -98,6 +101,7 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow2.DateMillisSinceEpoch = 167545000;
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -108,6 +112,7 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow2.Infectiousness = Infectiousness.High;
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -118,6 +123,7 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow2.ReportType = ReportType.ConfirmedClinicalDiagnosis;
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -128,6 +134,7 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow2.ScanInstances = new List<ScanInstance>() { CreateScanInstance() };
+            Assert.AreEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.True(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -138,6 +145,7 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow2.ScanInstances = new List<ScanInstance>() { CreateScanInstance() };
+            Assert.AreEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.True(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -148,6 +156,7 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow2.ScanInstances = new List<ScanInstance>() { CreateScanInstance(), CreateScanInstance() };
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -160,6 +169,7 @@ namespace Chino.Tests
             var scanInstance = CreateScanInstance();
             scanInstance.MinAttenuationDb = 22;
             exposureWindow2.ScanInstances = new List<ScanInstance>() { scanInstance };
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -170,17 +180,20 @@ namespace Chino.Tests
             var exposureWindow2 = CreateExposureWindow();
 
             exposureWindow1.ScanInstances = null;
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
 
             exposureWindow1 = CreateExposureWindow();
             exposureWindow2 = CreateExposureWindow();
             exposureWindow2.ScanInstances = null;
+            Assert.AreNotEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.False(exposureWindow1.Equals(exposureWindow2));
 
             exposureWindow1 = CreateExposureWindow();
             exposureWindow2 = CreateExposureWindow();
             exposureWindow1.ScanInstances = null;
             exposureWindow2.ScanInstances = null;
+            Assert.AreEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.True(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -197,6 +210,7 @@ namespace Chino.Tests
             exposureWindow2 = CreateExposureWindow();
             exposureWindow1.ScanInstances = null;
             exposureWindow2.ScanInstances = null;
+            Assert.AreEqual(exposureWindow1.GetHashCode(), exposureWindow2.GetHashCode());
             Assert.True(exposureWindow1.Equals(exposureWindow2));
         }
 
@@ -209,6 +223,63 @@ namespace Chino.Tests
             exposureWindow1.ScanInstances = null;
             exposureWindow2.ScanInstances = null;
             Assert.True(exposureWindow1.Equals(exposureWindow2));
+        }
+
+        [Test]
+        public void UnionTest1()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+            exposureWindow2.Infectiousness = Infectiousness.High;
+
+            var exposureWindow3 = CreateExposureWindow();
+            var exposureWindow4 = CreateExposureWindow();
+            exposureWindow4.Infectiousness = Infectiousness.None;
+
+            var list1 = new List<ExposureWindow>() {
+                exposureWindow1,
+                exposureWindow2
+            };
+            var list2 = new List<ExposureWindow>() {
+                exposureWindow3,
+                exposureWindow4
+            };
+
+            var unionList = list1.Union(list2);
+            Assert.AreEqual(3, unionList.Count());
+            Assert.True(unionList.Contains(exposureWindow2));
+            Assert.True(unionList.Contains(exposureWindow4));
+
+            Assert.True(unionList.Contains(exposureWindow1));
+            Assert.True(unionList.Contains(exposureWindow3));
+        }
+
+        [Test]
+        public void SortTest1()
+        {
+            var exposureWindow1 = CreateExposureWindow();
+            var exposureWindow2 = CreateExposureWindow();
+            exposureWindow2.Infectiousness = Infectiousness.High;
+            var exposureWindow3 = CreateExposureWindow();
+            exposureWindow3.ReportType= ReportType.ConfirmedTest;
+            var exposureWindow4 = CreateExposureWindow();
+            exposureWindow4.Infectiousness = Infectiousness.None;
+            exposureWindow4.ReportType = ReportType.SelfReport;
+
+            var list = new List<ExposureWindow>() {
+                exposureWindow1,
+                exposureWindow2,
+                exposureWindow3,
+                exposureWindow4
+            };
+
+            list.Sort(new ExposureWindow.Comparer());
+            Assert.AreEqual(4, list.Count());
+
+            Assert.AreEqual(exposureWindow2, list[0]);
+            Assert.AreEqual(exposureWindow3, list[1]);
+            Assert.AreEqual(exposureWindow1, list[2]);
+            Assert.AreEqual(exposureWindow4, list[3]);
         }
     }
 }
