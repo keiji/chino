@@ -59,8 +59,7 @@ namespace Chino
             }
             else
             {
-                scanInstanceEqual = ScanInstances.SequenceEqual(
-                    window.ScanInstances, new ScanInstance.EqualityComparer());
+                scanInstanceEqual = ScanInstances.SequenceEqual(window.ScanInstances);
             }
 
             return
@@ -87,15 +86,6 @@ namespace Chino
             }
 
             return HashCode.Combine(CalibrationConfidence, DateMillisSinceEpoch, Infectiousness, ReportType, scanInstancesHashCode);
-        }
-
-        public class EqualityComparer : IEqualityComparer<ExposureWindow>
-        {
-            public bool Equals(ExposureWindow x, ExposureWindow y)
-                => x.Equals(y);
-
-            public int GetHashCode(ExposureWindow obj)
-                => obj.GetHashCode();
         }
 
         public class Comparer : Comparer<ExposureWindow>
@@ -206,15 +196,6 @@ namespace Chino
         public override int GetHashCode()
         {
             return HashCode.Combine(MinAttenuationDb, SecondsSinceLastScan, TypicalAttenuationDb);
-        }
-
-        public class EqualityComparer : IEqualityComparer<ScanInstance>
-        {
-            public bool Equals(ScanInstance x, ScanInstance y)
-                => x.Equals(y);
-
-            public int GetHashCode(ScanInstance obj)
-                => obj.GetHashCode();
         }
 
         public class Comparer : Comparer<ScanInstance>
