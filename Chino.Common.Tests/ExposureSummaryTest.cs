@@ -12,10 +12,10 @@ namespace Chino.Tests
             var exposureSummary = Utils.ReadObjectFromJsonPath<ExposureSummary>(PATH_JSON);
             Assert.IsNotNull(exposureSummary);
 
-            Assert.AreEqual(3, exposureSummary.AttenuationDurationsInMinutes.Length);
-            Assert.AreEqual(1800, exposureSummary.AttenuationDurationsInMinutes[0]);
-            Assert.AreEqual(1560, exposureSummary.AttenuationDurationsInMinutes[1]);
-            Assert.AreEqual(0, exposureSummary.AttenuationDurationsInMinutes[2]);
+            Assert.AreEqual(3, exposureSummary.AttenuationDurationsInMillis.Length);
+            Assert.AreEqual(1800000, exposureSummary.AttenuationDurationsInMillis[0]);
+            Assert.AreEqual(1560000, exposureSummary.AttenuationDurationsInMillis[1]);
+            Assert.AreEqual(0, exposureSummary.AttenuationDurationsInMillis[2]);
             Assert.AreEqual(0, exposureSummary.DaysSinceLastExposure);
             Assert.AreEqual(11, exposureSummary.MatchedKeyCount);
             Assert.AreEqual(255, exposureSummary.MaximumRiskScore);
@@ -24,9 +24,9 @@ namespace Chino.Tests
 
         private ExposureSummary CreateExposureSummary()
             => new ExposureSummary() {
-                AttenuationDurationsInMinutes = new int[] {
-                    1800,
-                    1560,
+                AttenuationDurationsInMillis = new int[] {
+                    1800000,
+                    1560000,
                     0
                 },
                 DaysSinceLastExposure = 0,
@@ -50,10 +50,10 @@ namespace Chino.Tests
             var exposureSummary1 = CreateExposureSummary();
             var exposureSummary2 = CreateExposureSummary();
 
-            exposureSummary2.AttenuationDurationsInMinutes = new int[]
+            exposureSummary2.AttenuationDurationsInMillis = new int[]
             {
-                1800,
-                1560,
+                1800000,
+                1560000,
                 0,
             };
             Assert.True(exposureSummary1.Equals(exposureSummary2));
@@ -65,9 +65,9 @@ namespace Chino.Tests
             var exposureSummary1 = CreateExposureSummary();
             var exposureSummary2 = CreateExposureSummary();
 
-            exposureSummary2.AttenuationDurationsInMinutes = new int[]
+            exposureSummary2.AttenuationDurationsInMillis = new int[]
             {
-                1800,
+                1800000,
                 0,
                 0,
             };

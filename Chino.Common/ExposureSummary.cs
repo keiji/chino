@@ -15,9 +15,9 @@ namespace Chino
     public class ExposureSummary
     {
         /// <summary>
-        /// Array of durations in minutes at certain radio signal attenuations.
+        /// Array of durations in milliseconds at certain radio signal attenuations.
         /// </summary>
-        public int[] AttenuationDurationsInMinutes { get; set; }
+        public int[] AttenuationDurationsInMillis { get; set; }
 
         /// <summary>
         /// Days since last match to a diagnosis key from the server.
@@ -46,22 +46,22 @@ namespace Chino
                 return false;
             }
 
-            bool attenuationDurationsInMinutesEqual;
-            if (AttenuationDurationsInMinutes == summary.AttenuationDurationsInMinutes)
+            bool attenuationDurationsInMillisEqual;
+            if (AttenuationDurationsInMillis == summary.AttenuationDurationsInMillis)
             {
-                attenuationDurationsInMinutesEqual = true;
+                attenuationDurationsInMillisEqual = true;
             }
-            else if (AttenuationDurationsInMinutes == null || summary.AttenuationDurationsInMinutes == null)
+            else if (AttenuationDurationsInMillis == null || summary.AttenuationDurationsInMillis == null)
             {
-                attenuationDurationsInMinutesEqual = false;
+                attenuationDurationsInMillisEqual = false;
             }
             else
             {
-                attenuationDurationsInMinutesEqual = AttenuationDurationsInMinutes.SequenceEqual(summary.AttenuationDurationsInMinutes);
+                attenuationDurationsInMillisEqual = AttenuationDurationsInMillis.SequenceEqual(summary.AttenuationDurationsInMillis);
             }
 
             return
-                   attenuationDurationsInMinutesEqual &&
+                   attenuationDurationsInMillisEqual &&
                    DaysSinceLastExposure == summary.DaysSinceLastExposure &&
                    MatchedKeyCount == summary.MatchedKeyCount &&
                    MaximumRiskScore == summary.MaximumRiskScore &&
@@ -70,7 +70,7 @@ namespace Chino
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(AttenuationDurationsInMinutes, DaysSinceLastExposure, MatchedKeyCount, MaximumRiskScore, SummationRiskScore);
+            return HashCode.Combine(AttenuationDurationsInMillis, DaysSinceLastExposure, MatchedKeyCount, MaximumRiskScore, SummationRiskScore);
         }
     }
 }
