@@ -59,7 +59,8 @@ namespace Chino
             }
             else
             {
-                scanInstanceEqual = ScanInstances.SequenceEqual(window.ScanInstances);
+                scanInstanceEqual = ScanInstances.SequenceEqual(
+                    window.ScanInstances, new ScanInstance.EqualityComparer());
             }
 
             return
@@ -72,8 +73,74 @@ namespace Chino
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(CalibrationConfidence, DateMillisSinceEpoch, Infectiousness, ReportType, ScanInstances);
+            const int seed = 487;
+            const int modifier = 31;
+
+            int scanInstancesHashCode;
+            if (ScanInstances == null)
+            {
+                scanInstancesHashCode = 0;
+            }
+            else
+            {
+                scanInstancesHashCode = ScanInstances.Aggregate(seed, (current, item) => (current * modifier) + item.GetHashCode());
+            }
+
+            return HashCode.Combine(CalibrationConfidence, DateMillisSinceEpoch, Infectiousness, ReportType, scanInstancesHashCode);
         }
+
+        public class EqualityComparer : IEqualityComparer<ExposureWindow>
+        {
+            public bool Equals(ExposureWindow x, ExposureWindow y)
+                => x.Equals(y);
+
+            public int GetHashCode(ExposureWindow obj)
+                => obj.GetHashCode();
+        }
+
+        public class Comparer : Comparer<ExposureWindow>
+        {
+            public override int Compare(ExposureWindow x, ExposureWindow y)
+            {
+                if (x.DateMillisSinceEpoch < y.DateMillisSinceEpoch)
+                {
+                    return -1;
+                }
+                else if (x.DateMillisSinceEpoch > y.DateMillisSinceEpoch)
+                {
+                    return 1;
+                }
+                else if (x.ReportType < y.ReportType)
+                {
+                    return -1;
+                }
+                else if (x.ReportType > y.ReportType)
+                {
+                    return 1;
+                }
+                else if (x.Infectiousness < y.Infectiousness)
+                {
+                    return 1;
+                }
+                else if (x.Infectiousness > y.Infectiousness)
+                {
+                    return -1;
+                }
+                else if (x.CalibrationConfidence < y.CalibrationConfidence)
+                {
+                    return 1;
+                }
+                else if (x.CalibrationConfidence > y.CalibrationConfidence)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
     }
 
     /// <summary>
@@ -139,6 +206,50 @@ namespace Chino
         public override int GetHashCode()
         {
             return HashCode.Combine(MinAttenuationDb, SecondsSinceLastScan, TypicalAttenuationDb);
+        }
+
+        public class EqualityComparer : IEqualityComparer<ScanInstance>
+        {
+            public bool Equals(ScanInstance x, ScanInstance y)
+                => x.Equals(y);
+
+            public int GetHashCode(ScanInstance obj)
+                => obj.GetHashCode();
+        }
+
+        public class Comparer : Comparer<ScanInstance>
+        {
+            public override int Compare(ScanInstance x, ScanInstance y)
+            {
+                if (x.MinAttenuationDb < y.MinAttenuationDb)
+                {
+                    return 1;
+                }
+                else if (x.MinAttenuationDb > y.MinAttenuationDb)
+                {
+                    return -1;
+                }
+                else if (x.SecondsSinceLastScan < y.SecondsSinceLastScan)
+                {
+                    return 1;
+                }
+                else if (x.SecondsSinceLastScan > y.SecondsSinceLastScan)
+                {
+                    return -1;
+                }
+                else if (x.TypicalAttenuationDb < y.TypicalAttenuationDb)
+                {
+                    return 1;
+                }
+                else if (x.TypicalAttenuationDb > y.TypicalAttenuationDb)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
         }
     }
 
