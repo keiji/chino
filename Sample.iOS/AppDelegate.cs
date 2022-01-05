@@ -264,7 +264,7 @@ namespace Sample.iOS
                 );
         }
 
-        public ExposureConfiguration GetExposureConfiguration()
-            => LoadExposureConfigurationAsync().GetAwaiter().GetResult();
+        public Task<ExposureConfiguration> GetExposureConfigurationAsync()
+            => LoadExposureConfigurationAsync();
     }
 }

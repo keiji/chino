@@ -267,7 +267,7 @@ namespace Chino.iOS
 
             long enAPiVersion = await GetVersionAsync();
 
-            ExposureConfiguration configuration = Handler.GetExposureConfiguration();
+            ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
 
             cancellationTokenSource ??= new CancellationTokenSource();
 

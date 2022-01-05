@@ -179,7 +179,7 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        ExposureConfiguration exposureConfiguration = handler.GetExposureConfiguration();
+                        ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
 
                         handler.PreExposureDetected(exposureConfiguration);
 
@@ -292,7 +292,7 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        ExposureConfiguration exposureConfiguration = handler.GetExposureConfiguration();
+                        ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
 
                         handler.PreExposureDetected(exposureConfiguration);
 
@@ -409,7 +409,7 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        ExposureConfiguration exposureConfiguration = handler.GetExposureConfiguration();
+                        ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
                         handler.ExposureNotDetected(exposureConfiguration);
                     }
                     finally
