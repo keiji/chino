@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Chino
 {
@@ -14,7 +13,7 @@ namespace Chino
         /// <summary>
         /// Get(provide) ExposureConfiguration to Cappuccino.
         /// </summary>
-        public Task<ExposureConfiguration> GetExposureConfigurationAsync();
+        public ExposureConfiguration GetExposureConfiguration();
 
         /// <summary>
         /// An event that TEKs are released by the Preauthorized API.

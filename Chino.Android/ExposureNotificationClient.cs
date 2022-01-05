@@ -213,7 +213,7 @@ namespace Chino.Android.Google
                 throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
-            ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
+            ExposureConfiguration configuration = Handler.GetExposureConfiguration();
 
             string token = Guid.NewGuid().ToString();
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -341,7 +341,7 @@ namespace Chino.Android.Google
                 throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
-            ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
+            ExposureConfiguration configuration = Handler.GetExposureConfiguration();
 
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 

@@ -265,10 +265,7 @@ namespace Sample.Android
                 );
         }
 
-        public async Task<ExposureConfiguration> GetExposureConfigurationAsync()
-        {
-            await LoadExposureConfigurationAsync();
-            return _exposureConfiguration;
-        }
+        public ExposureConfiguration GetExposureConfiguration()
+            => LoadExposureConfigurationAsync().GetAwaiter().GetResult();
     }
 }

@@ -43,7 +43,7 @@ namespace Sample.iOS
             return true;
         }
 
-        private async Task<ExposureConfiguration> LoadExposureConfiguration()
+        private async Task<ExposureConfiguration> LoadExposureConfigurationAsync()
         {
             var exposureConfigurationPath = Path.Combine(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
             if (File.Exists(exposureConfigurationPath))
@@ -264,9 +264,7 @@ namespace Sample.iOS
                 );
         }
 
-        public Task<ExposureConfiguration> GetExposureConfigurationAsync()
-        {
-            throw new NotImplementedException();
-        }
+        public ExposureConfiguration GetExposureConfiguration()
+            => LoadExposureConfigurationAsync().GetAwaiter().GetResult();
     }
 }
