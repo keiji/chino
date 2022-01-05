@@ -197,17 +197,6 @@ namespace Chino.Android.Google
             List<string> keyFiles,
             CancellationTokenSource? cancellationTokenSource = null
             )
-            => await ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration()
-            {
-                GoogleExposureConfig = new ExposureConfiguration.GoogleExposureConfiguration(),
-                GoogleDailySummariesConfig = new DailySummariesConfig()
-            }, cancellationTokenSource);
-
-        public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
-            List<string> keyFiles,
-            ExposureConfiguration configuration,
-            CancellationTokenSource? cancellationTokenSource = null
-            )
         {
             var enClient = GetEnClient();
 
@@ -223,6 +212,8 @@ namespace Chino.Android.Google
             {
                 throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
+
+            ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
 
             string token = Guid.NewGuid().ToString();
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -241,8 +232,6 @@ namespace Chino.Android.Google
             }
 
             cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
-
-            ExposureConfiguration = configuration;
 
             DiagnosisKeysDataMapping diagnosisKeysDataMapping = configuration.GoogleDiagnosisKeysDataMappingConfig.ToDiagnosisKeysDataMapping();
 
@@ -333,7 +322,6 @@ namespace Chino.Android.Google
 #pragma warning disable CS0618 // Type or member is obsolete
         public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
-            ExposureConfiguration configuration,
             string token,
             CancellationTokenSource? cancellationTokenSource = null
             )
@@ -347,6 +335,13 @@ namespace Chino.Android.Google
                 Logger.D($"No DiagnosisKey found.");
                 return ProvideDiagnosisKeysResult.NoDiagnosisKeyFound;
             }
+
+            if (Handler is null)
+            {
+                throw new IllegalStateException("IExposureNotificationHandler is not set.");
+            }
+
+            ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
 
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -364,8 +359,6 @@ namespace Chino.Android.Google
             }
 
             cancellationTokenSource ??= new CancellationTokenSource(API_PROVIDE_DIAGNOSIS_KEYS_TIMEOUT_MILLIS);
-
-            ExposureConfiguration = configuration;
 
             var files = keyFiles.Select(f => new File(f)).ToList();
 

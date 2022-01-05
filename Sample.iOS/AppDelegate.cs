@@ -24,6 +24,7 @@ namespace Sample.iOS
         private string _exposureDetectionResultDir;
 
         private string _configurationDir;
+        private ExposureConfiguration _exposureConfiguration;
 
         [Export("window")]
         public UIWindow Window { get; set; }
@@ -40,6 +41,23 @@ namespace Sample.iOS
             ExposureNotificationClientManager.Shared.IsTest = true;
 
             return true;
+        }
+
+        private async Task<ExposureConfiguration> LoadExposureConfiguration()
+        {
+            var exposureConfigurationPath = Path.Combine(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
+            if (File.Exists(exposureConfigurationPath))
+            {
+                return JsonConvert.DeserializeObject<ExposureConfiguration>(
+                    await File.ReadAllTextAsync(exposureConfigurationPath)
+                    );
+            }
+
+            var exposureConfiguration = new ExposureConfiguration();
+            var json = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(exposureConfigurationPath, json);
+
+            return _exposureConfiguration;
         }
 
         private void InitializeDirs()
@@ -134,7 +152,7 @@ namespace Sample.iOS
                 var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
                 var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    exposureConfiguration,
                     DeviceInfo.Model,
                     enVersion,
                     exposureSummary,
@@ -171,7 +189,7 @@ namespace Sample.iOS
                 var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
                 var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    exposureConfiguration,
                     DeviceInfo.Model,
                     enVersion,
                     exposureSummary, exposureInformations
@@ -206,7 +224,7 @@ namespace Sample.iOS
                 var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
                 var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    ExposureNotificationClientManager.Shared.ExposureConfiguration,
+                    exposureConfiguration,
                     DeviceInfo.Model,
                     enVersion
                     );
@@ -244,6 +262,11 @@ namespace Sample.iOS
                 filePath,
                 JsonConvert.SerializeObject(exposureDataResponse, Formatting.Indented)
                 );
+        }
+
+        public Task<ExposureConfiguration> GetExposureConfigurationAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

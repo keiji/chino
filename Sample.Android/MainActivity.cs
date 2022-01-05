@@ -53,7 +53,6 @@ namespace Sample.Android
         private AndroidFile _exposureDetectionDir;
 
         private DiagnosisKeyServerConfiguration _diagnosisKeyServerConfiguration;
-        private ExposureConfiguration _exposureConfiguration;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -198,8 +197,6 @@ namespace Sample.Android
 
             _diagnosisKeyServer = new DiagnosisKeyServer(_diagnosisKeyServerConfiguration);
 
-            _exposureConfiguration = await LoadExposureConfiguration();
-
             await InitializeExposureNotificationApiStatus();
 
             buttonProvideDiagnosisKeys.Enabled = true;
@@ -243,22 +240,6 @@ namespace Sample.Android
             {
                 _exposureDetectionDir.Mkdirs();
             }
-        }
-
-        private async Task<ExposureConfiguration> LoadExposureConfiguration()
-        {
-            var exposureConfigurationPath = new AndroidFile(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
-            if (exposureConfigurationPath.Exists())
-            {
-                string content = await File.ReadAllTextAsync(exposureConfigurationPath.AbsolutePath);
-                return JsonConvert.DeserializeObject<ExposureConfiguration>(content);
-            }
-
-            var exposureConfiguration = new ExposureConfiguration();
-            var json = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
-            await File.WriteAllTextAsync(exposureConfigurationPath.AbsolutePath, json);
-
-            return exposureConfiguration;
         }
 
         private async Task<DiagnosisKeyServerConfiguration> LoadDiagnosisKeyServerConfiguration()
@@ -342,7 +323,6 @@ namespace Sample.Android
             {
                 await EnClient.ProvideDiagnosisKeysAsync(
                     diagnosisKeyPaths,
-                    _exposureConfiguration,
                     _token
                     );
             }
@@ -371,7 +351,7 @@ namespace Sample.Android
 
             try
             {
-                await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
+                await EnClient.ProvideDiagnosisKeysAsync(diagnosisKeyPaths);
             }
             catch (TimeoutException exception)
             {

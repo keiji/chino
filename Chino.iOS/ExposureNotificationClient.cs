@@ -202,12 +202,6 @@ namespace Chino.iOS
             }
         }
 
-        public override Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
-            List<string> keyFiles,
-            CancellationTokenSource? cancellationTokenSource = null
-            )
-            => ProvideDiagnosisKeysAsync(keyFiles, new ExposureConfiguration(), cancellationTokenSource);
-
         // https://developer.apple.com/documentation/exposurenotification/enmanager/3586331-detectexposures
         private async Task<(string?, string?)> DecompressZip(string zipFilePath)
         {
@@ -256,7 +250,6 @@ namespace Chino.iOS
 
         public async override Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> zippedKeyFiles,
-            ExposureConfiguration configuration,
             CancellationTokenSource? cancellationTokenSource = null
             )
         {
@@ -274,9 +267,9 @@ namespace Chino.iOS
 
             long enAPiVersion = await GetVersionAsync();
 
-            cancellationTokenSource ??= new CancellationTokenSource();
+            ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
 
-            ExposureConfiguration = configuration;
+            cancellationTokenSource ??= new CancellationTokenSource();
 
             List<string> decompressedFiles = new List<string>();
 
@@ -384,11 +377,10 @@ namespace Chino.iOS
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
         public override async Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
-            ExposureConfiguration configuration,
             string token,
             CancellationTokenSource? cancellationTokenSource = null
             )
-            => await ProvideDiagnosisKeysAsync(keyFiles, configuration, cancellationTokenSource);
+            => await ProvideDiagnosisKeysAsync(keyFiles, cancellationTokenSource);
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
         private async Task GetExposureV2(ENExposureDetectionSummary summary, ExposureConfiguration exposureConfiguration, IExposureNotificationHandler handler)

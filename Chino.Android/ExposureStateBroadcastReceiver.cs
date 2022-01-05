@@ -179,10 +179,12 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        handler.PreExposureDetected(enClient.ExposureConfiguration);
+                        ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
+
+                        handler.PreExposureDetected(exposureConfiguration);
 
                         var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
-                        handler.ExposureDetected(exposureSummary, exposureInformations, enClient.ExposureConfiguration);
+                        handler.ExposureDetected(exposureSummary, exposureInformations, exposureConfiguration);
                     }
                     catch (ApiException exception)
                     {
@@ -290,11 +292,13 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        handler.PreExposureDetected(enClient.ExposureConfiguration);
+                        ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
 
-                        var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient);
+                        handler.PreExposureDetected(exposureConfiguration);
 
-                        handler.ExposureDetected(dailySummaries, exposureWindows, enClient.ExposureConfiguration);
+                        var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient, exposureConfiguration);
+
+                        handler.ExposureDetected(dailySummaries, exposureWindows, exposureConfiguration);
                     }
                     catch (ApiException exception)
                     {
@@ -326,13 +330,15 @@ namespace Chino.Android.Google
             }
 
             private async Task<(List<DailySummary> dailySummaries, List<ExposureWindow> exposureWindows)> GetExposureV2Async(
-                ExposureNotificationClient enClient
+                ExposureNotificationClient enClient,
+                ExposureConfiguration exposureConfiguration
                 )
             {
                 Logger.D($"GetExposureV2Async");
 
+
                 IList<AndroidDailySummary> dss = await enClient.EnClient.GetDailySummariesAsync(
-                    enClient.ExposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
+                    exposureConfiguration.GoogleDailySummariesConfig.ToAndroidDailySummariesConfig()
                     );
                 List<DailySummary> dailySummaries = dss.Select(ds => (DailySummary)new PlatformDailySummary(ds)).ToList();
 
@@ -403,7 +409,8 @@ namespace Chino.Android.Google
                 {
                     try
                     {
-                        handler.ExposureNotDetected(enClient.ExposureConfiguration);
+                        ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
+                        handler.ExposureNotDetected(exposureConfiguration);
                     }
                     finally
                     {

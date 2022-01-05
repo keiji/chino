@@ -17,11 +17,6 @@ namespace Chino
         /// An interface that receive events from Exposure Notification API.
         /// </summary>
         public static IExposureNotificationHandler? Handler { get; set; }
-
-        /// <summary>
-        /// The container class that contains configurations for each platform and version.
-        /// </summary>
-        public ExposureConfiguration? ExposureConfiguration { get; set; }
 #nullable disable
 
         /// <summary>
@@ -84,31 +79,15 @@ namespace Chino
         /// <summary>
         /// Provides diagnosis key files for exposure checking. The files are to be synced from the server.
         /// Old diagnosis keys (for example older than 14 days), will be ignored.
-        /// </summary>
-        /// <param name="keyFiles"></param>
-        /// <param name="configuration"></param>
-        /// <param name="cancellationTokenSource"></param>
-        /// <returns>ProvideDiagnosisKeysResult</returns>
-        public abstract Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
-            List<string> keyFiles,
-            ExposureConfiguration configuration,
-            CancellationTokenSource cancellationTokenSource = null
-            );
-
-        /// <summary>
-        /// Provides diagnosis key files for exposure checking. The files are to be synced from the server.
-        /// Old diagnosis keys (for example older than 14 days), will be ignored.
         ///
         /// This method is deprecated.
         /// </summary>
         /// <param name="keyFiles"></param>
-        /// <param name="configuration"></param>
         /// <param name="token"></param>
         /// <param name="cancellationTokenSource"></param>
         /// <returns>ProvideDiagnosisKeysResult</returns>
         public abstract Task<ProvideDiagnosisKeysResult> ProvideDiagnosisKeysAsync(
             List<string> keyFiles,
-            ExposureConfiguration configuration,
             string token,
             CancellationTokenSource cancellationTokenSource = null
             );
