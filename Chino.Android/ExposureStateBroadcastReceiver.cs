@@ -405,7 +405,7 @@ namespace Chino.Android.Google
                     return false;
                 }
 
-                _ = Task.Run(() =>
+                _ = Task.Run(async () =>
                 {
                     try
                     {
