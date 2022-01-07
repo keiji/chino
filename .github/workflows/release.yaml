@@ -76,15 +76,18 @@ jobs:
         nuget restore
     - name: Common
       run: |
+        msbuild ./Chino.Common/Chino.Common.csproj /t:pack /p:Configuration=Debug
         msbuild ./Chino.Common/Chino.Common.csproj /t:pack /p:Configuration=Release
     - name: Android
       run: |
+        msbuild ./Chino.Android/Chino.Android.csproj /t:pack /p:Configuration=Debug
         msbuild ./Chino.Android/Chino.Android.csproj /t:pack /p:Configuration=Release
     - name: iOS
       run: |
+        msbuild ./Chino.iOS/Chino.iOS.csproj /t:pack /p:Configuration=Debug
         msbuild ./Chino.iOS/Chino.iOS.csproj /t:pack /p:Configuration=Release
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: nuget_packages
-        path: ${{ github.workspace }}/**/bin/Release/*.nupkg
+        path: ${{ github.workspace }}/**/bin/**/*.nupkg
