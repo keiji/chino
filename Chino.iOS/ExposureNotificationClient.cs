@@ -39,8 +39,6 @@ namespace Chino.iOS
             })
         };
 
-        public bool IsTest = false;
-
         public string UserExplanation { private get; set; }
 
         private bool IsActivated = false;
@@ -181,16 +179,13 @@ namespace Chino.iOS
 
             try
             {
-                if (!IsTest)
-                {
-                    ENTemporaryExposureKey[] teks = await EnManager.Value.GetDiagnosisKeysAsync();
+#if DEBUG
+                ENTemporaryExposureKey[] teks = await EnManager.Value.GetTestDiagnosisKeysAsync();
+                return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
+#else
+                ENTemporaryExposureKey[] teks = await EnManager.Value.GetDiagnosisKeysAsync();
                     return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
-                }
-                else
-                {
-                    ENTemporaryExposureKey[] teks = await EnManager.Value.GetTestDiagnosisKeysAsync();
-                    return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
-                }
+#endif
             }
             catch (NSErrorException exception)
             {
