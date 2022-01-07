@@ -113,7 +113,7 @@ namespace Sample.iOS
 
         public AbsExposureNotificationClient GetEnClient() => ExposureNotificationClientManager.Shared;
 
-        public void TemporaryExposureKeyReleased(IList<TemporaryExposureKey> temporaryExposureKeys)
+        public Task TemporaryExposureKeyReleasedAsync(IList<TemporaryExposureKey> temporaryExposureKeys)
         {
             Logger.D("TemporaryExposureKeyReleased");
 
@@ -121,125 +121,122 @@ namespace Sample.iOS
             {
                 Logger.D(Convert.ToBase64String(tek.KeyData));
             }
+
+            return Task.CompletedTask;
         }
 
-        public void PreExposureDetected(ExposureConfiguration exposureConfiguration)
+        public Task PreExposureDetectedAsync(ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"PreExposureDetected: {DateTime.UtcNow}");
+
+            return Task.CompletedTask;
         }
 
-        public void ExposureDetected(ExposureSummary exposureSummary, IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows, ExposureConfiguration exposureConfiguration)
+        public async Task ExposureDetectedAsync(ExposureSummary exposureSummary, IList<DailySummary> dailySummaries, IList<ExposureWindow> exposureWindows, ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureDetected V2: {DateTime.UtcNow}");
 
-            Task.Run(async () =>
+            var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
+
+            var exposureResult = new ExposureResult(
+                exposureConfiguration,
+                DateTime.Now,
+                exposureSummary,
+                null,
+                dailySummaries, exposureWindows
+                )
             {
-                var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
+                Device = DeviceInfo.Model,
+                EnVersion = enVersion
+            };
+            var filePath = await SaveExposureResult(exposureResult);
 
-                var exposureResult = new ExposureResult(
-                    exposureConfiguration,
-                    DateTime.Now,
-                    exposureSummary,
-                    null,
-                    dailySummaries, exposureWindows
-                    )
-                {
-                    Device = DeviceInfo.Model,
-                    EnVersion = enVersion
-                };
-                var filePath = await SaveExposureResult(exposureResult);
+            var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
-                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+            var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                exposureConfiguration,
+                DeviceInfo.Model,
+                enVersion,
+                exposureSummary,
+                dailySummaries, exposureWindows
+                );
 
-                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    exposureConfiguration,
-                    DeviceInfo.Model,
-                    enVersion,
-                    exposureSummary,
-                    dailySummaries, exposureWindows
-                    );
-
-                if (exposureDataResponse != null)
-                {
-                    await SaveExposureResult(exposureDataResponse);
-                    File.Delete(filePath);
-                }
-            });
+            if (exposureDataResponse != null)
+            {
+                await SaveExposureResult(exposureDataResponse);
+                File.Delete(filePath);
+            }
         }
 
-        public void ExposureDetected(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations, ExposureConfiguration exposureConfiguration)
+        public async Task ExposureDetectedAsync(ExposureSummary exposureSummary, IList<ExposureInformation> exposureInformations, ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureDetected V1: {DateTime.UtcNow}");
 
-            Task.Run(async () =>
+            var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
+
+            var exposureResult = new ExposureResult(
+                exposureConfiguration,
+                DateTime.Now,
+                exposureSummary, exposureInformations
+                )
             {
-                var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
+                Device = DeviceInfo.Model,
+                EnVersion = enVersion
+            };
+            var filePath = await SaveExposureResult(exposureResult);
 
-                var exposureResult = new ExposureResult(
-                    exposureConfiguration,
-                    DateTime.Now,
-                    exposureSummary, exposureInformations
-                    )
-                {
-                    Device = DeviceInfo.Model,
-                    EnVersion = enVersion
-                };
-                var filePath = await SaveExposureResult(exposureResult);
+            var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
-                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+            var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                exposureConfiguration,
+                DeviceInfo.Model,
+                enVersion,
+                exposureSummary, exposureInformations
+                );
 
-                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    exposureConfiguration,
-                    DeviceInfo.Model,
-                    enVersion,
-                    exposureSummary, exposureInformations
-                    );
-
-                if (exposureDataResponse != null)
-                {
-                    await SaveExposureResult(exposureDataResponse);
-                    File.Delete(filePath);
-                }
-            });
+            if (exposureDataResponse != null)
+            {
+                await SaveExposureResult(exposureDataResponse);
+                File.Delete(filePath);
+            }
         }
 
-        public void ExposureNotDetected(ExposureConfiguration exposureConfiguration)
+        public async Task ExposureNotDetectedAsync(ExposureConfiguration exposureConfiguration)
         {
             Logger.D($"ExposureNotDetected: {DateTime.UtcNow}");
 
-            Task.Run(async () =>
+            var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
+
+            var exposureResult = new ExposureResult(
+                exposureConfiguration,
+                DateTime.Now
+            )
             {
-                var enVersion = (await ExposureNotificationClientManager.Shared.GetVersionAsync()).ToString();
+                Device = DeviceInfo.Model,
+                EnVersion = enVersion
+            };
+            var filePath = await SaveExposureResult(exposureResult);
 
-                var exposureResult = new ExposureResult(
-                    exposureConfiguration,
-                    DateTime.Now
-                )
-                {
-                    Device = DeviceInfo.Model,
-                    EnVersion = enVersion
-                };
-                var filePath = await SaveExposureResult(exposureResult);
+            var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
-                var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
+            var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
+                exposureConfiguration,
+                DeviceInfo.Model,
+                enVersion
+                );
 
-                var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    exposureConfiguration,
-                    DeviceInfo.Model,
-                    enVersion
-                    );
-
-                if (exposureDataResponse != null)
-                {
-                    await SaveExposureResult(exposureDataResponse);
-                    File.Delete(filePath);
-                }
-            });
+            if (exposureDataResponse != null)
+            {
+                await SaveExposureResult(exposureDataResponse);
+                File.Delete(filePath);
+            }
         }
 
-        public void ExceptionOccurred(Exception exception)
+        public Task ExceptionOccurredAsync(Exception exception)
         {
             Logger.E(exception);
+
+            return Task.CompletedTask;
         }
 
         private async Task<string> SaveExposureResult(ExposureResult exposureResult)

@@ -181,22 +181,22 @@ namespace Chino.Android.Google
                     {
                         ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
 
-                        handler.PreExposureDetected(exposureConfiguration);
+                        await handler.PreExposureDetectedAsync(exposureConfiguration);
 
                         var (exposureSummary, exposureInformations) = await GetExposureV1Async(enClient, token);
-                        handler.ExposureDetected(exposureSummary, exposureInformations, exposureConfiguration);
+                        await handler.ExposureDetectedAsync(exposureSummary, exposureInformations, exposureConfiguration);
                     }
                     catch (ApiException exception)
                     {
                         if (exception.IsENException())
                         {
                             var enException = exception.ToENException();
-                            handler.ExceptionOccurred(enException);
+                            await handler.ExceptionOccurredAsync(enException);
                             throw enException;
                         }
                         else
                         {
-                            handler.ExceptionOccurred(exception);
+                            await handler.ExceptionOccurredAsync(exception);
                             throw;
                         }
                     }
@@ -294,23 +294,23 @@ namespace Chino.Android.Google
                     {
                         ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
 
-                        handler.PreExposureDetected(exposureConfiguration);
+                        await handler.PreExposureDetectedAsync(exposureConfiguration);
 
                         var (dailySummaries, exposureWindows) = await GetExposureV2Async(enClient, exposureConfiguration);
 
-                        handler.ExposureDetected(dailySummaries, exposureWindows, exposureConfiguration);
+                        await handler.ExposureDetectedAsync(dailySummaries, exposureWindows, exposureConfiguration);
                     }
                     catch (ApiException exception)
                     {
                         if (exception.IsENException())
                         {
                             var enException = exception.ToENException();
-                            handler.ExceptionOccurred(enException);
+                            await handler.ExceptionOccurredAsync(enException);
                             throw enException;
                         }
                         else
                         {
-                            handler.ExceptionOccurred(exception);
+                            await handler.ExceptionOccurredAsync(exception);
                             throw;
                         }
                     }
@@ -410,7 +410,7 @@ namespace Chino.Android.Google
                     try
                     {
                         ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
-                        handler.ExposureNotDetected(exposureConfiguration);
+                        await handler.ExposureNotDetectedAsync(exposureConfiguration);
                     }
                     finally
                     {

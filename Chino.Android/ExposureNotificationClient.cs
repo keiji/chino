@@ -243,7 +243,7 @@ namespace Chino.Android.Google
                 if (!diagnosisKeysDataMapping.Equals(currentDiagnosisKeysDataMapping))
                 {
                     await enClient.SetDiagnosisKeysDataMappingAsync(diagnosisKeysDataMapping);
-                    Handler.DiagnosisKeysDataMappingApplied();
+                    await Handler.DiagnosisKeysDataMappingAppliedAsync();
 
                     Logger.I("DiagnosisKeysDataMapping have been updated.");
                 }
@@ -267,14 +267,8 @@ namespace Chino.Android.Google
                     }
                 }))
                 {
-
                     await enClient.ProvideDiagnosisKeysAsync(diagnosisKeyFileProvider);
                     _ = await taskCompletionSource.Task;
-
-                    lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
-                    {
-                        ExposureStateBroadcastReceiveTaskCompletionSourceDict.Remove(token);
-                    }
                 }
 
                 Logger.D("ExposureStateBroadcastReceiveTaskCompletionSource is completed.");
@@ -292,6 +286,13 @@ namespace Chino.Android.Google
                     throw exception.ToENException();
                 }
                 throw;
+            }
+            finally
+            {
+                lock (ExposureStateBroadcastReceiveTaskCompletionSourceDict)
+                {
+                    ExposureStateBroadcastReceiveTaskCompletionSourceDict.Remove(token);
+                }
             }
         }
 
@@ -475,7 +476,7 @@ namespace Chino.Android.Google
             try
             {
                 IList<TemporaryExposureKey> temporaryExposureKeys = await GetReleasedTemporaryExposureKeys(enClient, _appContext);
-                handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
+                await handler.TemporaryExposureKeyReleasedAsync(temporaryExposureKeys);
             }
             catch (JavaTimeoutException exception)
             {

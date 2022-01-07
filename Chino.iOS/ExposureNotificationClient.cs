@@ -26,7 +26,7 @@ namespace Chino.iOS
 
         private static ENManager CreateEnManager() => new ENManager()
         {
-            DiagnosisKeysAvailableHandler = new ENDiagnosisKeysAvailableHandler(teks =>
+            DiagnosisKeysAvailableHandler = new ENDiagnosisKeysAvailableHandler(async teks =>
             {
                 if (Handler is null)
                 {
@@ -35,7 +35,7 @@ namespace Chino.iOS
                 }
 
                 IList<TemporaryExposureKey> temporaryExposureKeys = teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
-                Handler.TemporaryExposureKeyReleased(temporaryExposureKeys);
+                await Handler.TemporaryExposureKeyReleasedAsync(temporaryExposureKeys);
             })
         };
 
@@ -318,7 +318,7 @@ namespace Chino.iOS
                 {
                     ENExposureDetectionSummary summary = await detectExposuresTask;
 
-                    Handler.DiagnosisKeysDataMappingApplied();
+                    await Handler.DiagnosisKeysDataMappingAppliedAsync();
 
                     if (enAPiVersion == 2 && UIDevice.CurrentDevice.CheckSystemVersion(13, 7))
                     {
@@ -345,12 +345,12 @@ namespace Chino.iOS
                 if (exception.IsENException())
                 {
                     var enException = exception.ToENException();
-                    Handler.ExceptionOccurred(enException);
+                    await Handler.ExceptionOccurredAsync(enException);
                     throw enException;
                 }
                 else
                 {
-                    Handler.ExceptionOccurred(exception);
+                    await Handler.ExceptionOccurredAsync(exception);
                     throw;
                 }
             }
@@ -391,17 +391,17 @@ namespace Chino.iOS
 
             if (dailySummaries.Count > 0)
             {
-                handler.PreExposureDetected(exposureConfiguration);
+                await handler.PreExposureDetectedAsync(exposureConfiguration);
 
                 ENExposureWindow[] ews = await EnManager.Value.GetExposureWindowsAsync(summary);
                 List<ExposureWindow> exposureWindows = ews.Select(ew => (ExposureWindow)new PlatformExposureWindow(ew)).ToList();
 
-                handler.ExposureDetected(dailySummaries, exposureWindows, exposureConfiguration);
-                handler.ExposureDetected(new PlatformExposureSummary(summary), dailySummaries, exposureWindows, exposureConfiguration);
+                await handler.ExposureDetectedAsync(dailySummaries, exposureWindows, exposureConfiguration);
+                await handler.ExposureDetectedAsync(new PlatformExposureSummary(summary), dailySummaries, exposureWindows, exposureConfiguration);
             }
             else
             {
-                handler.ExposureNotDetected(exposureConfiguration);
+                await handler.ExposureNotDetectedAsync(exposureConfiguration);
             }
         }
 
@@ -411,16 +411,16 @@ namespace Chino.iOS
 
             if (summary.MatchedKeyCount > 0)
             {
-                handler.PreExposureDetected(exposureConfiguration);
+                await handler.PreExposureDetectedAsync(exposureConfiguration);
 
                 ENExposureInfo[] eis = await EnManager.Value.GetExposureInfoAsync(summary, UserExplanation);
                 List<ExposureInformation> exposureInformations = eis.Select(ei => (ExposureInformation)new PlatformExposureInformation(ei)).ToList();
 
-                handler.ExposureDetected(new PlatformExposureSummary(summary), exposureInformations, exposureConfiguration);
+                await handler.ExposureDetectedAsync(new PlatformExposureSummary(summary), exposureInformations, exposureConfiguration);
             }
             else
             {
-                handler.ExposureNotDetected(exposureConfiguration);
+                await handler.ExposureNotDetectedAsync(exposureConfiguration);
             }
         }
 
