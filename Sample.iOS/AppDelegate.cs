@@ -38,7 +38,6 @@ namespace Sample.iOS
 
             AbsExposureNotificationClient.Handler = this;
             ExposureNotificationClientManager.Shared.UserExplanation = USER_EXPLANATION;
-            ExposureNotificationClientManager.Shared.IsTest = true;
 
             return true;
         }
