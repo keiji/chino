@@ -25,7 +25,6 @@ namespace Sample.iOS
         private string _exposureDetectionDir;
 
         private DiagnosisKeyServerConfiguration _diagnosisKeyServerConfiguration;
-        private ExposureConfiguration _exposureConfiguration;
 
         public ViewController(IntPtr handle) : base(handle)
         {
@@ -163,7 +162,6 @@ namespace Sample.iOS
                 }
             };
 
-            _exposureConfiguration = await LoadExposureConfiguration();
             _diagnosisKeyServerConfiguration = await LoadDiagnosisKeyServerConfiguration();
 
             _diagnosisKeyServer = new DiagnosisKeyServer(_diagnosisKeyServerConfiguration);
@@ -255,23 +253,6 @@ namespace Sample.iOS
             }
         }
 
-        private async Task<ExposureConfiguration> LoadExposureConfiguration()
-        {
-            var exposureConfigurationPath = Path.Combine(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
-            if (File.Exists(exposureConfigurationPath))
-            {
-                return JsonConvert.DeserializeObject<ExposureConfiguration>(
-                    await File.ReadAllTextAsync(exposureConfigurationPath)
-                    );
-            }
-
-            var exposureConfiguration = new ExposureConfiguration();
-            var json = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
-            await File.WriteAllTextAsync(exposureConfigurationPath, json);
-
-            return _exposureConfiguration;
-        }
-
         private async Task<DiagnosisKeyServerConfiguration> LoadDiagnosisKeyServerConfiguration()
         {
             var serverConfigurationPath = Path.Combine(_configurationDir, Constants.DIAGNOSIS_KEY_SERVER_CONFIGURATION_FILENAME);
@@ -315,7 +296,7 @@ namespace Sample.iOS
                 Logger.D($"path {path}");
             }
 
-            await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeysAsync(diagnosisKeyPaths, _exposureConfiguration);
+            await ExposureNotificationClientManager.Shared.ProvideDiagnosisKeysAsync(diagnosisKeyPaths);
         }
 
         private void ShowTeks(IList<TemporaryExposureKey> temporaryExposureKeys)

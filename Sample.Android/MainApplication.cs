@@ -13,6 +13,8 @@ using Sample.Common.Model;
 using Xamarin.Essentials;
 using Logger = Chino.ChinoLogger;
 
+using AndroidFile = Java.IO.File;
+
 namespace Sample.Android
 {
 
@@ -38,11 +40,28 @@ namespace Sample.Android
         private string _exposureDetectionResultDir;
 
         private string _configurationDir;
+        private ExposureConfiguration _exposureConfiguration;
 
         private ExposureNotificationClient EnClient = null;
 
         public MainApplication(IntPtr handle, JniHandleOwnership transfer) : base(handle, transfer)
         {
+        }
+
+        private async Task<ExposureConfiguration> LoadExposureConfigurationAsync()
+        {
+            var exposureConfigurationPath = new AndroidFile(_configurationDir, Constants.EXPOSURE_CONFIGURATION_FILENAME);
+            if (exposureConfigurationPath.Exists())
+            {
+                string content = await File.ReadAllTextAsync(exposureConfigurationPath.AbsolutePath);
+                return JsonConvert.DeserializeObject<ExposureConfiguration>(content);
+            }
+
+            var exposureConfiguration = new ExposureConfiguration();
+            var json = JsonConvert.SerializeObject(exposureConfiguration, Formatting.Indented);
+            await File.WriteAllTextAsync(exposureConfigurationPath.AbsolutePath, json);
+
+            return exposureConfiguration;
         }
 
         public override void OnCreate()
@@ -170,7 +189,7 @@ namespace Sample.Android
                 var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
                 var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    EnClient.ExposureConfiguration,
+                    exposureConfiguration,
                     DeviceInfo.Model,
                     enVersion,
                     exposureSummary, exposureInformations
@@ -205,7 +224,7 @@ namespace Sample.Android
                 var exposureDataServerConfiguration = await LoadExposureDataServerConfiguration();
 
                 var exposureDataResponse = await new ExposureDataServer(exposureDataServerConfiguration).UploadExposureDataAsync(
-                    EnClient.ExposureConfiguration,
+                    exposureConfiguration,
                     DeviceInfo.Model,
                     enVersion
                     );
@@ -245,5 +264,8 @@ namespace Sample.Android
                 JsonConvert.SerializeObject(exposureDataResponse, Formatting.Indented)
                 );
         }
+
+        public Task<ExposureConfiguration> GetExposureConfigurationAsync()
+            => LoadExposureConfigurationAsync();
     }
 }
