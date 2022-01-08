@@ -181,11 +181,10 @@ namespace Chino.iOS
             {
 #if DEBUG
                 ENTemporaryExposureKey[] teks = await EnManager.Value.GetTestDiagnosisKeysAsync();
-                return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
 #else
                 ENTemporaryExposureKey[] teks = await EnManager.Value.GetDiagnosisKeysAsync();
-                    return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
 #endif
+                return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
             }
             catch (NSErrorException exception)
             {
@@ -260,9 +259,11 @@ namespace Chino.iOS
                 throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
-            long enAPiVersion = await GetVersionAsync();
-
             ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
+            if (configuration is null)
+            {
+                throw new IllegalStateException("ExposureConfiguration is null.");
+            }
 
             cancellationTokenSource ??= new CancellationTokenSource();
 
@@ -292,6 +293,8 @@ namespace Chino.iOS
             {
                 Logger.D(url.AbsoluteString);
             }
+
+            long enAPiVersion = await GetVersionAsync();
 
             ENExposureConfiguration exposureConfiguration = enAPiVersion switch
             {

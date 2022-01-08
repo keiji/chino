@@ -180,6 +180,10 @@ namespace Chino.Android.Google
                     try
                     {
                         ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
+                        if (exposureConfiguration is null)
+                        {
+                            throw new IllegalStateException("ExposureConfiguration is null.");
+                        }
 
                         await handler.PreExposureDetectedAsync(exposureConfiguration);
 
@@ -293,6 +297,10 @@ namespace Chino.Android.Google
                     try
                     {
                         ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
+                        if (exposureConfiguration is null)
+                        {
+                            throw new IllegalStateException("ExposureConfiguration is null.");
+                        }
 
                         await handler.PreExposureDetectedAsync(exposureConfiguration);
 
@@ -410,6 +418,10 @@ namespace Chino.Android.Google
                     try
                     {
                         ExposureConfiguration exposureConfiguration = await handler.GetExposureConfigurationAsync();
+                        if (exposureConfiguration is null)
+                        {
+                            throw new IllegalStateException("ExposureConfiguration is null.");
+                        }
                         await handler.ExposureNotDetectedAsync(exposureConfiguration);
                     }
                     finally
