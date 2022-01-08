@@ -214,6 +214,10 @@ namespace Chino.Android.Google
             }
 
             ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
+            if (configuration is null)
+            {
+                throw new IllegalStateException("ExposureConfiguration is null.");
+            }
 
             string token = Guid.NewGuid().ToString();
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -343,6 +347,10 @@ namespace Chino.Android.Google
             }
 
             ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
+            if (configuration is null)
+            {
+                throw new IllegalStateException("ExposureConfiguration is null.");
+            }
 
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 

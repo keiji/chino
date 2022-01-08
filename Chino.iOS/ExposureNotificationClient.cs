@@ -260,9 +260,11 @@ namespace Chino.iOS
                 throw new IllegalStateException("IExposureNotificationHandler is not set.");
             }
 
-            long enAPiVersion = await GetVersionAsync();
-
             ExposureConfiguration configuration = await Handler.GetExposureConfigurationAsync();
+            if (configuration is null)
+            {
+                throw new IllegalStateException("ExposureConfiguration is null.");
+            }
 
             cancellationTokenSource ??= new CancellationTokenSource();
 
@@ -292,6 +294,8 @@ namespace Chino.iOS
             {
                 Logger.D(url.AbsoluteString);
             }
+
+            long enAPiVersion = await GetVersionAsync();
 
             ENExposureConfiguration exposureConfiguration = enAPiVersion switch
             {
