@@ -181,11 +181,10 @@ namespace Chino.iOS
             {
 #if DEBUG
                 ENTemporaryExposureKey[] teks = await EnManager.Value.GetTestDiagnosisKeysAsync();
-                return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
 #else
                 ENTemporaryExposureKey[] teks = await EnManager.Value.GetDiagnosisKeysAsync();
-                    return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
 #endif
+                return teks.Select(tek => (TemporaryExposureKey)new PlatformTemporaryExposureKey(tek)).ToList();
             }
             catch (NSErrorException exception)
             {
