@@ -22,6 +22,12 @@ namespace Chino.iOS
         }
 
         private static int[] ConvertToMillis(int[] attenuationDurations)
-            => attenuationDurations.Select(d => d * SECOND_IN_MILLIS).ToArray();
+        {
+            if (attenuationDurations == null)
+            {
+                return new int[0];
+            }
+            return attenuationDurations.Select(d => d * SECOND_IN_MILLIS).ToArray();
+        }
     }
 }
