@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -33,6 +34,15 @@ namespace Chino.Tests
         }
 
         [Test]
+        public void TestEquals()
+        {
+            var appleExposureV2Configuration1 = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
+            var appleExposureV2Configuration2 = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
+
+            Assert.True(appleExposureV2Configuration1.Equals(appleExposureV2Configuration2));
+        }
+
+        [Test]
         public void TestNotEquals()
         {
             var expected = new ExposureConfiguration.AppleExposureConfigurationV2
@@ -43,6 +53,28 @@ namespace Chino.Tests
             var appleExposureV2Configuration = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
 
             Assert.False(expected.Equals(appleExposureV2Configuration));
+        }
+
+        [Test]
+        public void TestInfectiousnessForDaysSinceOnsetOfSymptomsEquals1()
+        {
+            var appleExposureV2Configuration1 = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
+            var appleExposureV2Configuration2 = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
+
+            Assert.True(appleExposureV2Configuration1.InfectiousnessForDaysSinceOnsetOfSymptoms
+                .SequenceEqual(appleExposureV2Configuration2.InfectiousnessForDaysSinceOnsetOfSymptoms));
+        }
+
+        [Test]
+        public void TestInfectiousnessForDaysSinceOnsetOfSymptomsNotEquals1()
+        {
+            var appleExposureV2Configuration1 = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
+            var appleExposureV2Configuration2 = Utils.ReadObjectFromJsonPath<ExposureConfiguration.AppleExposureConfigurationV2>(PATH_JSON);
+
+            appleExposureV2Configuration2.InfectiousnessForDaysSinceOnsetOfSymptoms[0] = Infectiousness.None;
+
+            Assert.False(appleExposureV2Configuration1.InfectiousnessForDaysSinceOnsetOfSymptoms
+                .SequenceEqual(appleExposureV2Configuration2.InfectiousnessForDaysSinceOnsetOfSymptoms));
         }
     }
 }
