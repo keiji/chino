@@ -46,5 +46,18 @@ namespace Chino.Tests
 
             Assert.False(expected.Equals(googleDiagnosisKeysDataMappingConfiguration));
         }
+
+        [Test]
+        public void TestNotEquals2()
+        {
+            var googleDiagnosisKeysDataMappingConfiguration1 = Utils
+                .ReadObjectFromJsonPath<ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration>(PATH_JSON);
+            var googleDiagnosisKeysDataMappingConfiguration2 = Utils
+                .ReadObjectFromJsonPath<ExposureConfiguration.GoogleDiagnosisKeysDataMappingConfiguration>(PATH_JSON);
+
+            googleDiagnosisKeysDataMappingConfiguration2.InfectiousnessForDaysSinceOnsetOfSymptoms[0] = Infectiousness.None;
+
+            Assert.False(googleDiagnosisKeysDataMappingConfiguration1.Equals(googleDiagnosisKeysDataMappingConfiguration2));
+        }
     }
 }
