@@ -151,7 +151,7 @@
         <Reference Include="Xamarin.iOS" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
+      <PackageReference Include="Xamarin.Essentials" Version="1.7.2" />
       <PackageReference Include="NuGet.Build.Packaging">
         <Version>0.2.2</Version>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

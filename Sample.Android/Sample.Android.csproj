@@ -18,7 +18,7 @@
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
@@ -103,20 +103,20 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.3.1.3" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.4.1.1" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.5.0.2" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.2" />
     <PackageReference Include="Xamarin.AndroidX.Core">
-      <Version>1.6.0.3</Version>
+      <Version>1.7.0.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Arch.Core.Common">
-      <Version>2.1.0.11</Version>
+      <Version>2.1.0.14</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Arch.Core.Runtime">
-      <Version>2.1.0.11</Version>
+      <Version>2.1.0.14</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Activity">
-      <Version>1.3.1.2</Version>
+      <Version>1.4.0.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Basement">
       <Version>117.6.0.4</Version>

@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Chino</RootNamespace>
     <AssemblyName>Chino</AssemblyName>
-    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
     <PackageId>Chino.Android</PackageId>
@@ -68,7 +68,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Core">
-      <Version>1.6.0.3</Version>
+      <Version>1.7.0.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby.ExposureNotification">
       <Version>19.7.2-eap-alpha04</Version>
