@@ -86,8 +86,7 @@ namespace Chino.iOS
         {
             DateTime dateTime = (DateTime)date;
 
-            // TODO: Check TimeZone
-            var dto = new DateTimeOffset(dateTime.Ticks, new TimeSpan(0, 00, 00));
+            var dto = new DateTimeOffset(dateTime.Ticks, TimeSpan.Zero);
 
             return dto.ToUnixTimeMilliseconds();
         }
