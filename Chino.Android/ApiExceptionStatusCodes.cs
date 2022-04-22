@@ -17,34 +17,8 @@ namespace Chino.Android.Google
         public const int FAILED_TEMPORARILY_DISABLED = 39505;
         public const int FAILED_UNAUTHORIZED = 39507;
 
-        public static readonly int[] ERROR_ALL = new int[] {
-            CommonStatusCodes.ApiNotConnected,
-            CommonStatusCodes.Error,
-            CommonStatusCodes.InternalError,
-            CommonStatusCodes.Interrupted,
-            CommonStatusCodes.InvalidAccount,
-            CommonStatusCodes.NetworkError,
-            CommonStatusCodes.ReconnectionTimedOut,
-            CommonStatusCodes.ReconnectionTimedOutDuringUpdate,
-            CommonStatusCodes.RemoteException,
+        public static readonly int[] IGNORE_ERRORS = new int[] {
             CommonStatusCodes.ResolutionRequired,
-            CommonStatusCodes.ServiceDisabled,
-            CommonStatusCodes.ServiceVersionUpdateRequired,
-            CommonStatusCodes.SignInRequired,
-            CommonStatusCodes.Success,
-            CommonStatusCodes.SuccessCache,
-            CommonStatusCodes.Timeout,
-            FAILED_ALREADY_STARTED,
-            FAILED_BLUETOOTH_DISABLED,
-            FAILED_DISK_IO,
-            FAILED_KEY_RELEASE_NOT_PREAUTHORIZED,
-            FAILED_NOT_IN_FOREGROUND,
-            FAILED_NOT_SUPPORTED,
-            FAILED_RATE_LIMITED,
-            FAILED_REJECTED_OPT_IN,
-            FAILED_SERVICE_DISABLED,
-            FAILED_TEMPORARILY_DISABLED,
-            FAILED_UNAUTHORIZED,
         };
     }
 }

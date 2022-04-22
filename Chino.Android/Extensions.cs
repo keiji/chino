@@ -15,13 +15,12 @@ namespace Chino.Android.Google
     public static class Extensions
     {
         public static bool IsENException(this ApiException apiException)
-            => ApiExceptionStatusCodes.ERROR_ALL.Contains(apiException.StatusCode);
+            => !ApiExceptionStatusCodes.IGNORE_ERRORS.Contains(apiException.StatusCode);
 
         public static ENException ToENException(this ApiException apiException)
         {
             int code = apiException.StatusCode switch
             {
-                CommonStatusCodes.Error => ENException.Code_Android.FAILED,
                 CommonStatusCodes.ConnectionSuspendedDuringCall => ENException.Code_Android.SERVICE_CONNECTION_LOST,
                 CommonStatusCodes.InternalError => ENException.Code_Android.TIME_OUT,
                 ApiExceptionStatusCodes.FAILED_ALREADY_STARTED => ENException.Code_Android.FAILED_ALREADY_STARTED,
