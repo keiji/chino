@@ -15,13 +15,15 @@ namespace Chino.Android.Google
     public static class Extensions
     {
         public static bool IsENException(this ApiException apiException)
-            => ApiExceptionStatusCodes.FAILED_ALL.Contains(apiException.StatusCode);
+            => ApiExceptionStatusCodes.ERROR_ALL.Contains(apiException.StatusCode);
 
         public static ENException ToENException(this ApiException apiException)
         {
             int code = apiException.StatusCode switch
             {
-                ApiExceptionStatusCodes.FAILED => ENException.Code_Android.FAILED,
+                CommonStatusCodes.Error => ENException.Code_Android.FAILED,
+                CommonStatusCodes.ConnectionSuspendedDuringCall => ENException.Code_Android.SERVICE_CONNECTION_LOST,
+                CommonStatusCodes.InternalError => ENException.Code_Android.TIME_OUT,
                 ApiExceptionStatusCodes.FAILED_ALREADY_STARTED => ENException.Code_Android.FAILED_ALREADY_STARTED,
                 ApiExceptionStatusCodes.FAILED_BLUETOOTH_DISABLED => ENException.Code_Android.FAILED_BLUETOOTH_DISABLED,
                 ApiExceptionStatusCodes.FAILED_DISK_IO => ENException.Code_Android.FAILED_DISK_IO,
@@ -36,7 +38,7 @@ namespace Chino.Android.Google
                 _ => ENException.Code_Android.FAILED,
             };
 
-            return new ENException(code, apiException.Message);
+            return new ENException(code, $"{apiException.Message},{apiException.StatusCode}");
         }
 
         public static ExposureNotificationStatus ToExposureNotificationStatus(this AndroidExposureNotificationStatus status)

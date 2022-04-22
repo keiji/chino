@@ -1,9 +1,10 @@
-﻿namespace Chino.Android.Google
+﻿using Android.Gms.Common.Apis;
+
+namespace Chino.Android.Google
 {
     public static class ApiExceptionStatusCodes
     {
         // https://developers.google.com/android/reference/com/google/android/gms/nearby/exposurenotification/ExposureNotificationStatusCodes
-        public const int FAILED = 13;
         public const int FAILED_ALREADY_STARTED = 39500;
         public const int FAILED_BLUETOOTH_DISABLED = 39504;
         public const int FAILED_DISK_IO = 39506;
@@ -16,8 +17,23 @@
         public const int FAILED_TEMPORARILY_DISABLED = 39505;
         public const int FAILED_UNAUTHORIZED = 39507;
 
-        public static readonly int[] FAILED_ALL = new int[] {
-            FAILED,
+        public static readonly int[] ERROR_ALL = new int[] {
+            CommonStatusCodes.ApiNotConnected,
+            CommonStatusCodes.Error,
+            CommonStatusCodes.InternalError,
+            CommonStatusCodes.Interrupted,
+            CommonStatusCodes.InvalidAccount,
+            CommonStatusCodes.NetworkError,
+            CommonStatusCodes.ReconnectionTimedOut,
+            CommonStatusCodes.ReconnectionTimedOutDuringUpdate,
+            CommonStatusCodes.RemoteException,
+            CommonStatusCodes.ResolutionRequired,
+            CommonStatusCodes.ServiceDisabled,
+            CommonStatusCodes.ServiceVersionUpdateRequired,
+            CommonStatusCodes.SignInRequired,
+            CommonStatusCodes.Success,
+            CommonStatusCodes.SuccessCache,
+            CommonStatusCodes.Timeout,
             FAILED_ALREADY_STARTED,
             FAILED_BLUETOOTH_DISABLED,
             FAILED_DISK_IO,
