@@ -74,6 +74,16 @@ namespace Chino
             /// The client is unauthorized to access the APIs.
             /// </summary>
             public const int FAILED_UNAUTHORIZED = (int)PlatformType.Android + 11;
+
+            /// <summary>
+            /// The connection was suspended while the call was in-flight.
+            /// </summary>
+            public const int SERVICE_CONNECTION_LOST = (int)PlatformType.Android + 12;
+
+            /// <summary>
+            /// Timed out while awaiting the result.
+            /// </summary>
+            public const int TIME_OUT = (int)PlatformType.Android + 13;
         }
 
         // https://developer.apple.com/documentation/exposurenotification/enerror
